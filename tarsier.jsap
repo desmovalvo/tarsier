@@ -37,5 +37,13 @@
 	"ALL_NODES":{
 	    "sparql": "SELECT DISTINCT ?node WHERE {{ ?node ?p ?o } UNION { ?s ?p ?node }}"
 	}
+    },
+    "extended":{
+	"colors":{
+	    "dataProperties":"#00CC00",
+	    "objectProperties":"#3399FF",
+	    "instances":"#7F00FF",
+	    "classes":"#FF8000"
+	}
     }
 }

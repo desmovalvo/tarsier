@@ -9,10 +9,9 @@
     <script src="static/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="static/bootstrap-4.0.0-beta.2/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="static/plotly.min.js"></script>
     <script type="text/javascript" src="static/babylon.custom.js"></script>
     <script type="text/javascript" src="static/tarsier.js"></script>
-    <script type="text/javascript" src="static/SEPA_kpi.js"></script>   
+    <script type="text/javascript" src="static/SEPA_kpi.js"></script>
     <style>
       #renderCanvas {
       width   : 100%;
@@ -66,11 +65,41 @@
 		  <span class="input-group-addon" id="basic-addon1">Query URL</span>
 		  <input type="text" class="form-control" placeholder="http://wot.arces.unibo.it:8000/query" aria-describedby="basic-addon1" id="queryUriInput">
 		</div>
-		<button type="button" class="btn btn-dark btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Load</button>		
 	      </form>
 	    </div>
 	    <div class="card-footer">
 	      <small><i class="fas fa-info-circle"></i>&nbsp;Connection parameters</small>
+	    </div>
+	  </div>
+
+	  <!-- COLORS -->
+	  <div class="card border border-dark rounded-3 m-1 mt-2">
+	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;Colors</div>
+	    <div class="card-body font-weight-light">
+	      <form>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Classes</span>
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="classesColor">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Data Prop.</span>
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="datapropColor">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Object Prop.</span>
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="objpropColor">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Instances</span>
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="instancesColor">
+		</div>
+	      </form>
+	    </div>
+	    <div class="card-footer">
+	      <small><i class="fas fa-info-circle"></i>&nbsp;Colors</small>
 	    </div>
 	  </div>
 	  
@@ -79,13 +108,10 @@
 	<!-- COLUMN 2-->
 	<div class="col-9 p-0 m-2">
 
-	  <div class="card m-1 ">
-	    <div class="btn-group" role="group" aria-label="Basic example">
-	      <button type="button" class="btn btn-dark">Plot</button>
-	      <button type="button" class="btn btn-dark">Reset</button>
-	      <button type="button" class="btn btn-dark">Lock</button>
-	    </div>
-	  </div>
+	    <button type="button" class="btn btn-dark btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Get Data</button>		
+	    <button type="button" class="btn btn-dark btn-sm" onClick="javascript:draw();">Plot</button>
+	    <button type="button" class="btn btn-dark btn-sm">Reset</button>
+	    <button type="button" class="btn btn-dark btn-sm">Lock</button>
 
 	  <div class="card">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
@@ -244,9 +270,11 @@
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Help</div>
     	    <div class="card-body font-weight-light">
+	      <small>
     	      This program is released under GNU GPL v3 License. The SEPA
     	      LoadSimulator is maintained by Fabio Viola (fabio.viola at
     	      unibo dot it).
+	      </small>
     	    </div>
     	    <div class="card-footer">
     	      <small><i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator</small>
