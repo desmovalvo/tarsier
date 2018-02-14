@@ -1,0 +1,41 @@
+{
+    "parameters": {
+        "host": "localhost",
+        "ports": {
+            "http": 8000,
+            "https": 8443,
+            "ws": 9000,
+            "wss": 9443
+        },
+        "paths": {
+            "query": "/query",
+            "update": "/update",
+            "subscribe": "/subscribe",
+            "register": "/oauth/register",
+            "tokenRequest": "/oauth/token",
+            "securePath": "/secure"
+        }
+    },
+    "namespaces": {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "xsd": "http://www.w3.org/2001/XMLSchema"
+    },
+    "queries": {
+        "ALL_CLASSES": {
+            "sparql": "SELECT DISTINCT ?class WHERE {{ ?s rdf:type ?class } UNION { ?class rdf:type owl:Class } UNION { ?class rdf:type rdfs:Class }}"
+        },
+	"ALL_PROPERTIES": {
+	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o }"
+	},
+	"DATA_PROPERTIES": {
+	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER isLiteral(?o) }"
+	},
+	"OBJECT_PROPERTIES": {
+	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
+	},
+	"ALL_NODES":{
+	    "sparql": "SELECT DISTINCT ?node WHERE {{ ?node ?p ?o } UNION { ?s ?p ?node }}"
+	}
+    }
+}

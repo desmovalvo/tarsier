@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <title>Tarsier v0.1</title>
+
+    <link rel="stylesheet" href="static/fontawesome-free-5.0.6/web-fonts-with-css/css/fontawesome-all.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script src="static/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="static/bootstrap-4.0.0-beta.2/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/plotly.min.js"></script>
+    <script type="text/javascript" src="static/babylon.custom.js"></script>
+    <script type="text/javascript" src="static/tarsier.js"></script>
+    <script type="text/javascript" src="static/SEPA_kpi.js"></script>   
+    <style>
+      #renderCanvas {
+      width   : 100%;
+      height  : 100%;
+      touch-action: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-white">
+      <a class="navbar-brand" href="#">Tarsier v0.1</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+
+
+    <div class="container-fluid">
+      <div class="row">
+
+	<!-- COLUMN 1 -->
+	<div class="col p-0 m-2">
+	  
+	  <!-- LOAD JSAP -->
+	  <div class="card border border-dark rounded-3 m-1 mt-0">
+	    <div class="card-header text-white bg-dark rounded-0"><i class="fab fa-js-square"></i>&nbsp;Load JSAP</div>
+	    <div class="card-body font-weight-light">
+	      <form>
+		<div class="form-group">
+		  <input type="file" class="form-control-file" id="formFile1">
+		</div>
+		<button type="button" class="btn btn-dark btn-sm" onClick="javascript:loadJSAP();">Load</button>
+	      </form>
+	    </div>
+	    <div class="card-footer">
+	      <small><i class="fas fa-info-circle"></i>&nbsp;Load JSAP file</small>
+	    </div>
+	  </div>
+
+	  <!-- SEPA PARAMS -->
+	  <div class="card border border-dark rounded-3 m-1 mt-2">
+	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;SEPA Parameters</div>
+	    <div class="card-body font-weight-light">
+	      <form>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Subscribe URL</span>
+		  <input type="text" class="form-control" placeholder="ws://wot.arces.unibo.it:9000/subscribe" aria-describedby="basic-addon1" id="subscribeUriInput">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Query URL</span>
+		  <input type="text" class="form-control" placeholder="http://wot.arces.unibo.it:8000/query" aria-describedby="basic-addon1" id="queryUriInput">
+		</div>
+		<button type="button" class="btn btn-dark btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Load</button>		
+	      </form>
+	    </div>
+	    <div class="card-footer">
+	      <small><i class="fas fa-info-circle"></i>&nbsp;Connection parameters</small>
+	    </div>
+	  </div>
+	  
+	</div>
+
+	<!-- COLUMN 2-->
+	<div class="col-9 p-0 m-2">
+
+	  <div class="card m-1 ">
+	    <div class="btn-group" role="group" aria-label="Basic example">
+	      <button type="button" class="btn btn-dark">Plot</button>
+	      <button type="button" class="btn btn-dark">Reset</button>
+	      <button type="button" class="btn btn-dark">Lock</button>
+	    </div>
+	  </div>
+
+	  <div class="card">
+	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
+	    <!-- <script> -->
+	    <!--   window.addEventListener('DOMContentLoaded', function(){ -->
+	    <!--   // get the canvas DOM element -->
+	    <!--   var canvas = document.getElementById('renderCanvas'); -->
+
+	    <!--   // load the 3D engine -->
+	    <!--   var engine = new BABYLON.Engine(canvas, true); -->
+
+	    <!--   // createScene function that creates and return the scene -->
+	    <!--   var createScene = function(){ -->
+	    <!--   // create a basic BJS Scene object -->
+	    <!--   var scene = new BABYLON.Scene(engine); -->
+
+	    <!--   // create a FreeCamera, and set its position to (x:0, y:5, z:-10) -->
+	    <!--   var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5,-10), scene); -->
+
+	    <!--   // target the camera to scene origin -->
+	    <!--   camera.setTarget(BABYLON.Vector3.Zero()); -->
+
+	    <!--   // attach the camera to the canvas -->
+	    <!--   camera.attachControl(canvas, false); -->
+
+	    <!--   // create a basic light, aiming 0,1,0 - meaning, to the sky -->
+	    <!--   var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene); -->
+
+	    <!--   <\!-- // create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation -\-> -->
+	    <!--   <\!-- var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene); -\-> -->
+
+	    <!--   <\!-- // move the sphere upward 1/2 of its height -\-> -->
+	    <!--   <\!-- sphere.position.y = 1; -\-> -->
+
+	    <!--   <\!-- // create a built-in "ground" shape; -\-> -->
+	    <!--   <\!-- var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene); -\-> -->
+
+	    <!--   // return the created scene -->
+	    <!--   return scene; -->
+	    <!--   } -->
+
+	    <!--   // call the createScene function -->
+	    <!--   var scene = createScene(); -->
+
+	    <!--   // run the render loop -->
+	    <!--   engine.runRenderLoop(function(){ -->
+	    <!--   scene.render(); -->
+	    <!--   }); -->
+
+	    <!--   // the canvas/window resize event handler -->
+	    <!--   window.addEventListener('resize', function(){ -->
+	    <!--   engine.resize(); -->
+	    <!--   }); -->
+	    <!--   }); -->
+	    <!-- </script> -->
+	  </div>
+
+	</div>
+      </div>
+
+      <div class="row">
+	<div class="col p-0 m-2">
+	  <!-- CLASSES -->
+          <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0">
+    	      <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Classes
+    	    </div>
+    	    <div class="card-body">
+    	      <div class="card-text font-weight-light" id="logWindow">
+		<small>
+		<table id="classesTable">
+		</table>
+		</small>
+    	      </div>
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
+    	    </div>
+          </div>
+	</div>
+
+	<div class="col p-0 m-2">
+	  <!-- DATATYPE PROPERTIES -->
+          <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0">
+    	      <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Data Properties
+    	    </div>
+    	    <div class="card-body">
+    	      <div class="card-text font-weight-light" id="logWindow">
+		<small>
+		<table id="dataPropertiesTable">
+		</table>
+		</small>
+    	      </div>
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
+    	    </div>
+          </div>
+
+	</div>
+	<div class="col p-0 m-2">
+          <!-- OBJECT PROPERTIES -->
+          <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0">
+    	      <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Object Properties
+    	    </div>
+    	    <div class="card-body">
+    	      <div class="card-text font-weight-light" id="logWindow">
+		<small>
+		<table id="objectPropertiesTable">
+		</table>
+		</small>
+    	      </div>
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
+    	    </div>
+          </div>
+	</div>
+	<div class="col p-0 m-2">
+	  <!-- INSTANCES -->
+	  <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Instances</div>
+    	    <div class="card-body font-weight-light">
+	      <small>
+		<table id="instancesTable">
+		</table>
+	      </small>
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator</small>
+    	    </div>
+          </div>
+
+	</div>
+      </div>
+      
+      <div class="row">
+
+	<!-- COLUMN 1 -->
+	<div class="col p-0 m-2">
+	  <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;SPARQL Input</div>
+    	    <div class="card-body font-weight-light">
+
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator</small>
+    	    </div>
+          </div>
+	</div>
+
+	<!-- COLUMN 2 -->
+	<div class="col p-0 m-2">	    
+	  <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Help</div>
+    	    <div class="card-body font-weight-light">
+    	      This program is released under GNU GPL v3 License. The SEPA
+    	      LoadSimulator is maintained by Fabio Viola (fabio.viola at
+    	      unibo dot it).
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator</small>
+    	    </div>
+          </div>	    
+	</div>
+	
+      </div>		
+    </div>
+
+    <!--     <\!-- CARD GROUP -- FIRST ROW -\-> -->
+    <!--     <div class="container-fluid"> -->
+    
+    <!--       <\!-- File loader -\-> -->
+    <!--       <div class="card w-25 border border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"><i class="fab fa-js-square"></i>&nbsp;Load JSAP</div> -->
+    <!-- 	<div class="card-body font-weight-light"> -->
+    <!-- 	  <form> -->
+    <!-- 	    <div class="form-group"> -->
+    <!-- 	      <input type="file" class="form-control-file" id="formFile1"> -->
+    <!-- 	    </div> -->
+    <!-- 	    <button type="button" class="btn btn-dark btn-sm" onClick="javascript:loadJSAP();">Load</button> -->
+    <!-- 	  </form> -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <small><i class="fas fa-info-circle"></i>&nbsp;Load JSAP file</small> -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+    
+    <!--       <\!-- File loader -\->     -->
+    <!--       <div class="card w-25 border border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;SEPA Parameters</div> -->
+    <!-- 	<div class="card-body font-weight-light"> -->
+    <!-- 	  <form> -->
+    <!-- 	    <div class="input-group input-group-sm"> -->
+    <!-- 	    <span class="input-group-addon" id="basic-addon1">Subscribe URL</span> -->
+    <!-- 	    <input type="text" class="form-control" placeholder="ws://wot.arces.unibo.it:9000/subscribe" aria-describedby="basic-addon1" id="subscribeUriInput"> -->
+    <!-- </div> -->
+    <!-- 	  </form> -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <small><i class="fas fa-info-circle"></i>&nbsp;Connection parameters</small> -->
+    <!-- 	</div> -->
+    <!--       </div>       -->
+    <!--     </div> -->
+    
+    <!--     <\!-- CARD GROUP -- FIRST ROW -\-> -->
+    <!--     <div class="container-fluid"> -->
+
+    <!--       <div class="card w-25 border border-dark rounded-0"> -->
+    <!--       	<div class="card-header text-white bg-dark rounded-0"><i class="fas fa-cogs"></i>&nbsp;Settings</div> -->
+    <!--       	<div class="card-body font-weight-light"> -->
+
+    <!--       	</div> -->
+    <!--       </div> -->
+    
+    <!--       <div class="card w-75 border border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"><i class="fas fa-eye"></i>&nbsp;The view!</div> -->
+    <!-- 	<div class="card-body font-weight-light"> -->
+    
+    
+    <!--     	</div> -->
+    <!--       </div> -->
+    <!--     </div> -->
+
+    <!--     <\!-- THIRD ROW -\-> -->
+    <!--     <div class="card-group"> -->
+    
+    <!--       <\!-- Log -\-> -->
+    <!--       <div class="card w-50 border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"> -->
+    <!-- 	  <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Classes -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-body"> -->
+    <!-- 	  <div class="card-text font-weight-light collapse" id="logWindow"> -->
+    <!-- 	  </div> -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <i class="fas fa-info-circle"></i>&nbsp;Debug messages -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+    
+    <!--       <\!-- Log -\-> -->
+    <!--       <div class="card w-50 border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"> -->
+    <!-- 	  <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Data Properties -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-body"> -->
+    <!-- 	  <div class="card-text font-weight-light collapse" id="logWindow"> -->
+    <!-- 	  </div> -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <i class="fas fa-info-circle"></i>&nbsp;Debug messages -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+
+    <!--       <\!-- Log -\-> -->
+    <!--       <div class="card w-50 border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"> -->
+    <!-- 	  <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Object Properties -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-body"> -->
+    <!-- 	  <div class="card-text font-weight-light collapse" id="logWindow"> -->
+    <!-- 	  </div> -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <i class="fas fa-info-circle"></i>&nbsp;Debug messages -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+    
+    <!--       <\!-- Documentation -\-> -->
+    <!--       <div class="card w-50 border border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Instances</div> -->
+    <!-- 	<div class="card-body font-weight-light"> -->
+    <!-- 	  This program is released under GNU GPL v3 License. The SEPA -->
+    <!-- 	  LoadSimulator is maintained by Fabio Viola (fabio.viola at -->
+    <!-- 	  unibo dot it). -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+    <!--     </div> -->
+
+    <!--     <\!-- THIRD ROW -\-> -->
+    <!--     <div class="card-group"> -->
+    
+    <!--       <\!-- Log -\-> -->
+    <!--       <div class="card w-50 border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"> -->
+    <!-- 	  <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Log Window -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-body"> -->
+    <!-- 	  <div class="card-text font-weight-light collapse" id="logWindow"> -->
+    <!-- 	  </div> -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <i class="fas fa-info-circle"></i>&nbsp;Debug messages -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+    
+    <!--       <\!-- Documentation -\-> -->
+    <!--       <div class="card w-50 border border-dark rounded-0"> -->
+    <!-- 	<div class="card-header text-white bg-dark rounded-0"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Documentation</div> -->
+    <!-- 	<div class="card-body font-weight-light"> -->
+    <!-- 	  This program is released under GNU GPL v3 License. The SEPA -->
+    <!-- 	  LoadSimulator is maintained by Fabio Viola (fabio.viola at -->
+    <!-- 	  unibo dot it). -->
+    <!-- 	</div> -->
+    <!-- 	<div class="card-footer"> -->
+    <!-- 	  <i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator -->
+    <!-- 	</div> -->
+    <!--       </div> -->
+
+    <!--     </div> -->
+
+  </body>
+</html>
