@@ -2,11 +2,9 @@
 ws = null;
 scene = null;
 lastData = null;
+mesh = {}
 
 function sendRequest(serverUri){
-
-    // debug print
-    console.log("SendRequest invoked");
 
     // build the request
     req = {};
@@ -32,6 +30,7 @@ function sendRequest(serverUri){
 	    lastData = data;
 
 	    // get all the tables
+	    iis = document.getElementById("instancesTable");
 	    opt = document.getElementById("objectPropertiesTable");
 	    dpt = document.getElementById("dataPropertiesTable");
 	    clt = document.getElementById("classesTable");	    
@@ -57,7 +56,7 @@ function sendRequest(serverUri){
 		dpName = data["properties"]["datatype"][dp];
 		newRow = dpt.insertRow(-1);
 		newCell = newRow.insertCell(0);
-		newCell.innerHTML = '<input type="checkbox" value="" id="' + dpName + '_enabled">'
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + dpName + '_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = dpName;
 	    }
@@ -70,9 +69,22 @@ function sendRequest(serverUri){
 		opName = data["properties"]["object"][op];
 		newRow = opt.insertRow(-1);
 		newCell = newRow.insertCell(0);		
-		newCell.innerHTML = '<input type="checkbox" value="" id="' + opName + '_enabled">'
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + opName + '_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = opName;
+	    }
+	    
+	    // remove old instances and re-fill the table
+	    while(iis.rows.length > 0) {
+		iis.deleteRow(-1);
+	    };
+	    for (ii in data["instances"]){
+		iiName = ii;
+		newRow = iis.insertRow(-1);
+		newCell = newRow.insertCell(0);		
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + iiName + '_enabled" checked>'
+		newCell = newRow.insertCell(1);
+		newCell.innerHTML = iiName;
 	    }
 	    
 	    // console.log("Time to draw!");	   	    	    
@@ -114,8 +126,6 @@ function loadJSAP(){
 	    document.getElementById("queryUriInput").value = qURI;
 
 	    // retrieve colors
-	    console.log(myJson);
-	    console.log(myJson["extended"]["colors"]["classes"]);	   
 	    document.getElementById("classesColor").value = myJson["extended"]["colors"]["classes"];	   
 	    document.getElementById("datapropColor").value = myJson["extended"]["colors"]["dataProperties"];
 	    document.getElementById("objpropColor").value = myJson["extended"]["colors"]["objectProperties"];
@@ -166,7 +176,6 @@ function draw_old(data){
 	    nodes_positions.push([20 * Math.cos(i*node_angle / 180*Math.PI),
 				  20 * Math.sin(i*node_angle / 180*Math.PI)])
 	}
-	console.log(nodes_positions);
 	
 	// parse data
 	for (var k in data["nodes"]){
@@ -213,10 +222,32 @@ function draw(){
 
     // createScene function that creates and return the scene
     var createScene = function(){
-
+	
 	// create a basic BJS Scene object
 	var scene = new BABYLON.Scene(engine);
 	scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+
+	// create the colors for:
+
+	// - classes
+	rgbOrangeColor = hexToRGB(document.getElementById("classesColor").value);
+	var orangeMat = new BABYLON.StandardMaterial("orangeMat", scene);
+	orangeMat.diffuseColor = new BABYLON.Color3(rgbOrangeColor[0], rgbOrangeColor[1], rgbOrangeColor[2]);	
+
+	// - individuals
+	rgbPurpleColor = hexToRGB(document.getElementById("instancesColor").value);
+	var purpleMat = new BABYLON.StandardMaterial("purpleMat", scene);
+	purpleMat.diffuseColor = new BABYLON.Color3(rgbPurpleColor[0], rgbPurpleColor[1], rgbPurpleColor[2]);	
+	
+	// - data properties
+	rgbGreenColor = hexToRGB(document.getElementById("datapropColor").value);
+	var greenMat = new BABYLON.StandardMaterial("greenMat", scene);
+	greenMat.diffuseColor = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);	
+	
+	// - object properties
+	rgbBlueColor = hexToRGB(document.getElementById("objpropColor").value);
+	var blueMat = new BABYLON.StandardMaterial("blueMat", scene);
+	blueMat.diffuseColor = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
 	
 	// create a FreeCamera, and set its position (x,y,z)
 	var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2,  Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene)
@@ -234,23 +265,100 @@ function draw(){
 	var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
 
 	// draw classes
-	rgbColor = hexToRGB(document.getElementById("classesColor").value);
-	var orangeMat = new BABYLON.StandardMaterial("orangeMat", scene);
-	orangeMat.diffuseColor = new BABYLON.Color3(rgbColor[0], rgbColor[1], rgbColor[2]);	
 	nsize = Object.keys(lastData["classes"]).length;
 	node_angle = 360 / nsize;
-	
 	for (var k in lastData["classes"]){
-
 	    // check if it's enabled
 	    if (document.getElementById(lastData["classes"][k] + "_enabled").checked){	
 		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], 16, 1, scene);
 		sphere.position.z = 5 * Math.sin(k*node_angle / 180*Math.PI);
 		sphere.position.x = 5 * Math.cos(k*node_angle / 180*Math.PI);
 		sphere.material = orangeMat;
+
+		// store the mesh in an Object using the URI as the key
+		mesh[lastData["classes"][k]] = sphere;
 	    }
 	}
 	
+	// draw instances
+	nsize = Object.keys(lastData["instances"]).length;
+	node_angle = 360 / nsize;
+
+	c = 0;
+	for (var k in lastData["instances"]){
+
+	    // check if it's enabled
+	    if (document.getElementById(k + "_enabled").checked){	
+
+		// TODO -- check if the individual has been already designed as a class
+		// ex.: wot:Thing can be a class, but also an individual of the class owl:Class
+		
+		var sphere = BABYLON.Mesh.CreateSphere(k, 16, 1, scene);
+		c += 1;
+		sphere.position.z = 15 * Math.sin(c * node_angle / 180*Math.PI);
+		sphere.position.x = 15 * Math.cos(c * node_angle / 180*Math.PI);
+		sphere.material = purpleMat;
+
+		localOrigin = [sphere.position.x, sphere.position.y, sphere.position.z];
+		
+		// store the mesh in an Object using the URI as the key
+		mesh[k] = sphere;
+		
+		// now it's time to draw its data properties
+		// but only if they're enabled
+
+		dpnsize = Object.keys(lastData["instances"][k]).length;
+		dpnode_angle = 360 / dpnsize;
+		
+		for (dp in lastData["instances"][k]) {
+
+		    console.log(dp);
+		    console.log(lastData["instances"][k][dp]);
+
+		    // calculate positions
+
+		    // build a green sphere
+		    var sphere = BABYLON.Mesh.CreateSphere(dp, 16, 1, scene);
+		    sphere.position.x = localOrigin[0] + 2 * Math.sin(c * dpnode_angle / 180*Math.PI);
+		    sphere.position.z = localOrigin[2] + 2 * Math.cos(c * dpnode_angle / 180*Math.PI);
+		    sphere.material = greenMat;
+
+		    var lines = BABYLON.Mesh.CreateLines("lines", [
+		    	new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
+			new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)],
+							 scene)
+		    lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
+		}
+	    }
+	}
+    	    // // draw object properties
+	// for (var op in lastData["properties"]["object"]){
+
+	//     // check if it's enabled
+	//     if (document.getElementById(lastData["properties"]["object"][op] + "_enabled").checked){
+
+	// 	key = lastData["properties"]["object"][op]
+	// 	console.log(key);
+	// 	console.log(lastData["pvalues"]["object"][key]);
+		
+	// 	// iterate over the statements with that property
+	// 	for (statement in lastData["pvalues"]["datatype"][key]){
+		
+	// 	    // get the subject, then find the coordinates of its mesh
+	// 	    subj = lastData["pvalues"]["object"][key][statement]["s"]
+	// 	    obj =  lastData["pvalues"]["object"][key][statement]["o"]
+	// 	    console.log("drawing an arc from " + subj + " to " + obj)
+	// 	}
+	//     }
+		    
+	// // var lines = BABYLON.Mesh.CreateLines("lines", [
+        // //     new BABYLON.Vector3(-10, 0, 0),
+        // //     new BABYLON.Vector3(10, 0, 0),
+        // //     new BABYLON.Vector3(0, 0, -10),
+        // //     new BABYLON.Vector3(0, 0, 10)
+	//     // ], scene);
+	// }
+		
 	// return the created scene
 	return scene;
     }

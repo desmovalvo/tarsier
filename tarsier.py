@@ -47,44 +47,62 @@ class HTTPHandler(tornado.web.RequestHandler):
 
             # initialize results
             f_results = {}
-            f_results["nodes"] = {}
+            f_results["instances"] = {}
             f_results["properties"] = {}
             f_results["properties"]["datatype"] = []
             f_results["properties"]["object"] = []
+            f_results["pvalues"] = {}
+            f_results["pvalues"]["datatype"] = {}
+            f_results["pvalues"]["object"] = {}
+ 
             f_results["classes"] = []
 
-            # get all the nodes
-            status, results = kp.query(msg["queryURI"], jsap.getQuery("ALL_NODES", {}))
-            logging.info("NODES:")
-            logging.info(results)
+            # get all the instances
+            status, results = kp.query(msg["queryURI"], jsap.getQuery("ALL_INSTANCES", {}))
             for r in results["results"]["bindings"]:
-                key = r["node"]["value"]
+                key = r["instance"]["value"]
                 logging.info(r)
-                logging.info(r["node"])
-                f_results["nodes"][key] = {}
-                f_results["nodes"][key]["type"] = r["node"]["type"]
-                f_results["nodes"][key]["level"] = 0
+                logging.info(r["instance"])
+                if not key in f_results["instances"]:
+                    f_results["instances"][key] = {}                
             
             # get all the data properties
             status, results = kp.query(msg["queryURI"], jsap.getQuery("DATA_PROPERTIES", {}))
-            logging.info("DATA PROPERTIES:")
-            logging.info(results)
             for r in results["results"]["bindings"]:
                 key = r["p"]["value"]
                 f_results["properties"]["datatype"].append(key)
 
+            # get all the data properties and their values
+            status, results = kp.query(msg["queryURI"], jsap.getQuery("DATA_PROPERTIES_AND_VALUES", {}))
+            for r in results["results"]["bindings"]:
+                key = r["p"]["value"]
+                if not(key in f_results["pvalues"]["datatype"]):
+                    f_results["pvalues"]["datatype"][key] = []
+
+                # bind the property to the proper structure
+                f_results["pvalues"]["datatype"][key].append({"s":r["s"]["value"], "o":r["o"]["value"]})
+
+                # also bind the property to the individual
+                newkey = r["s"]["value"]
+                f_results["instances"][newkey][key] = r["o"]["value"]
+                
             # get all the object properties
             status, results = kp.query(msg["queryURI"], jsap.getQuery("OBJECT_PROPERTIES", {}))
-            logging.info("OBJECT PROPERTIES:")
-            logging.info(results)
             for r in results["results"]["bindings"]:
                 key = r["p"]["value"]
                 f_results["properties"]["object"].append(key)
+
+            # get all the object properties and their values
+            status, results = kp.query(msg["queryURI"], jsap.getQuery("OBJECT_PROPERTIES_AND_VALUES", {}))
+            logging.info(results)
+            for r in results["results"]["bindings"]:
+                key = r["p"]["value"]
+                if not(key in f_results["pvalues"]["object"]):
+                    f_results["pvalues"]["object"][key] = []
+                f_results["pvalues"]["object"][key].append({"s":r["s"]["value"], "o":r["o"]["value"]})
                 
             # get the list of classes
             status, results = kp.query(msg["queryURI"], jsap.getQuery("ALL_CLASSES", {}))
-            logging.info("CLASSES")
-            logging.info(results)            
             for r in results["results"]["bindings"]:
                 key = r["class"]["value"]
                 f_results["classes"].append(key)

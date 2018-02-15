@@ -31,12 +31,21 @@
 	"DATA_PROPERTIES": {
 	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER isLiteral(?o) }"
 	},
+	"DATA_PROPERTIES_AND_VALUES": {
+	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER isLiteral(?o) }"
+	},	
 	"OBJECT_PROPERTIES": {
 	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
 	},
+	"OBJECT_PROPERTIES_AND_VALUES": {
+	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
+	},	
 	"ALL_NODES":{
 	    "sparql": "SELECT DISTINCT ?node WHERE {{ ?node ?p ?o } UNION { ?s ?p ?node }}"
-	}
+	},
+	"ALL_INSTANCES":{
+	    "sparql": "SELECT DISTINCT ?instance WHERE { ?instance rdf:type ?class . FILTER (isIRI(?instance) || isBlank(?instance)) }"
+	}	
     },
     "extended":{
 	"colors":{
