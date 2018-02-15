@@ -263,10 +263,10 @@ function draw(){
 	   
 	// create a built-in "ground" shape;
 	var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
-
+	
 	// draw classes
-	nsize = Object.keys(lastData["classes"]).length;
-	node_angle = 360 / nsize;
+	n5 = Object.keys(lastData["classes"]).length;
+	node_angle = 360 / n5;
 	for (var k in lastData["classes"]){
 	    // check if it's enabled
 	    if (document.getElementById(lastData["classes"][k] + "_enabled").checked){	
@@ -277,6 +277,10 @@ function draw(){
 
 		// store the mesh in an Object using the URI as the key
 		mesh[lastData["classes"][k]] = sphere;
+
+		// draw the label
+		var zChar = makeTextPlane(lastData["classes"][k], "white", 5 / 10);
+		zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 	    }
 	}
 	
@@ -306,21 +310,23 @@ function draw(){
 		
 		// now it's time to draw its data properties
 		// but only if they're enabled
-
 		dpnsize = Object.keys(lastData["instances"][k]).length;
 		dpnode_angle = 360 / dpnsize;
-		
+
+		cc = 0;
 		for (dp in lastData["instances"][k]) {
 
 		    console.log(dp);
 		    console.log(lastData["instances"][k][dp]);
 
+		    cc += 1;
+		    
 		    // calculate positions
 
 		    // build a green sphere
 		    var sphere = BABYLON.Mesh.CreateSphere(dp, 16, 1, scene);
-		    sphere.position.x = localOrigin[0] + 2 * Math.sin(c * dpnode_angle / 180*Math.PI);
-		    sphere.position.z = localOrigin[2] + 2 * Math.cos(c * dpnode_angle / 180*Math.PI);
+		    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
+		    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 		    sphere.material = greenMat;
 
 		    var lines = BABYLON.Mesh.CreateLines("lines", [
@@ -328,6 +334,11 @@ function draw(){
 			new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)],
 							 scene)
 		    lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
+
+		    // draw the label
+		    var zChar = makeTextPlane(lastData["instances"][k][dp], "white", 5 / 10);
+		    zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
+
 		}
 	    }
 	}
@@ -387,3 +398,15 @@ function hexToRGB(hexColor){
     b = parseInt(cutHex(hexColor).substring(4,6),16).toFixed(2)/255;
     return [r,g,b]
 }
+
+function makeTextPlane(text, color) {
+    var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 350, scene, true);
+    dynamicTexture.hasAlpha = true;
+    dynamicTexture.drawText(text, 5, 30, "bold 10px Arial", color , "transparent", true);
+    var plane = BABYLON.Mesh.CreatePlane("TextPlane", 5, scene, true);
+    plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
+    plane.material.backFaceCulling = false;
+    plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+    plane.material.diffuseTexture = dynamicTexture;
+    return plane;
+};
