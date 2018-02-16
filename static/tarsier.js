@@ -3,6 +3,9 @@ ws = null;
 scene = null;
 lastData = null;
 mesh = {}
+dpMesh = {}
+dpEdgeMesh = {}
+opEdgeMesh = {}
 
 function sendRequest(serverUri){
 
@@ -141,77 +144,6 @@ function loadJSAP(){
     
 };
 
-
-function draw_old(data){
-
-    // get the canvas
-    var canvas = document.getElementById('renderCanvas');
-
-    // load the 3D engine
-    var engine = new BABYLON.Engine(canvas, true);
-
-    // createScene function that creates and return the scene
-    var createScene = function(){
-
-	// create a basic BJS Scene object
-	var scene = new BABYLON.Scene(engine);
-	
-	// create a FreeCamera, and set its position to (x:0, y:5, z:-10)
-	var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5,-10), scene);
-	
-	// target the camera to scene origin
-	camera.setTarget(BABYLON.Vector3.Zero());
-	
-	// attach the camera to the canvas
-	camera.attachControl(canvas, false);
-	
-	// create a basic light, aiming 0,1,0 - meaning, to the sky
-	var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
-
-	// determine position for nodes
-	nodes_positions = [];
-	nsize = Object.keys(data["nodes"]).length;
-	node_angle = 360 / nsize;
-	for (i=0; i<nsize; i++){
-	    nodes_positions.push([20 * Math.cos(i*node_angle / 180*Math.PI),
-				  20 * Math.sin(i*node_angle / 180*Math.PI)])
-	}
-	
-	// parse data
-	for (var k in data["nodes"]){
-
-	    // create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
-	    var sphere = BABYLON.Mesh.CreateSphere('k', 16, 0.3, scene);
-	    
-	    // move the sphere upward 1/2 of its height
-	    var p = nodes_positions.pop();
-	    sphere.position.y = p[1];
-	    sphere.position.x = p[0];
-	   
-	    // <!-- // create a built-in "ground" shape; -->
-	    // <!-- var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene); -->
-	}
-	    
-	// return the created scene
-	return scene;
-    }
-    
-    // call the createScene function
-    var scene = createScene();
-    
-    // run the render loop
-    engine.runRenderLoop(function(){
-	scene.render();
-    });
-    
-    // the canvas/window resize event handler
-    // window.addEventListener('resize', function(){
-    // 	engine.resize();
-    // });
-    
-}
-
-
 function draw(){
 
     // get the canvas
@@ -248,7 +180,12 @@ function draw(){
 	rgbBlueColor = hexToRGB(document.getElementById("objpropColor").value);
 	var blueMat = new BABYLON.StandardMaterial("blueMat", scene);
 	blueMat.diffuseColor = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
-	
+
+	// - object properties
+	rgbGroundColor = hexToRGB(document.getElementById("groundColor").value);
+	var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
+	groundMat.diffuseColor = new BABYLON.Color3(rgbGroundColor[0], rgbGroundColor[1], rgbGroundColor[2]);
+
 	// create a FreeCamera, and set its position (x,y,z)
 	var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2,  Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene)
 	
@@ -261,8 +198,18 @@ function draw(){
 	// create a basic light, aiming 0,1,0 - meaning, to the sky
 	var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
 	   
-	// create a built-in "ground" shape;
-	var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
+	// create a plane
+	var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
+	groundMat.diffuseColor = new BABYLON.Color3(rgbGroundColor[0], rgbGroundColor[1], rgbGroundColor[2]);
+	groundMat.alpha = 0.5;
+	var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 50, height: 50, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
+	myPlane.material = groundMat;	
+	console.log(myPlane);
+
+	var axis = new BABYLON.Vector3(1, 0, 0);
+	var angle = Math.PI / 2;
+	var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
+	myPlane.rotationQuaternion = quaternion;
 	
 	// draw classes
 	n5 = Object.keys(lastData["classes"]).length;
@@ -272,6 +219,7 @@ function draw(){
 	    if (document.getElementById(lastData["classes"][k] + "_enabled").checked){	
 		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], 16, 1, scene);
 		sphere.position.z = 5 * Math.sin(k*node_angle / 180*Math.PI);
+		sphere.position.y = 1;
 		sphere.position.x = 5 * Math.cos(k*node_angle / 180*Math.PI);
 		sphere.material = orangeMat;
 
@@ -301,6 +249,7 @@ function draw(){
 		c += 1;
 		sphere.position.z = 15 * Math.sin(c * node_angle / 180*Math.PI);
 		sphere.position.x = 15 * Math.cos(c * node_angle / 180*Math.PI);
+		sphere.position.y = 1;
 		sphere.material = purpleMat;
 
 		localOrigin = [sphere.position.x, sphere.position.y, sphere.position.z];
@@ -315,11 +264,7 @@ function draw(){
 
 		cc = 0;
 		for (dp in lastData["instances"][k]) {
-		    console.log(dp);
-		    console.log(dp + "_enabled");
 		    if (document.getElementById(dp + "_enabled").checked){		
-			console.log(dp);
-			console.log(lastData["instances"][k][dp]);
 			
 			cc += 1;
 			
@@ -329,6 +274,7 @@ function draw(){
 			var sphere = BABYLON.Mesh.CreateSphere(dp, 16, 1, scene);
 			sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
 			sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
+			sphere.position.y = 1;
 			sphere.material = greenMat;
 			
 			// draw the edge
@@ -341,44 +287,17 @@ function draw(){
 			var zChar = makeTextPlane(lastData["instances"][k][dp], "white", 5 / 10);
 			zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 			
-			// TODO -- store the edge and the sphere
+			// store the sphere (as a key we use subj+prop)
+			dpMesh[k + "_" + dp] = sphere;
+
+			// store the edge (as a key we use subj+prop_EDGE)
+			dpEdgeMesh[k + "_" + dp + "_EDGE"] = lines;
+
 		    }
 		}
 	    }
 	}
-	
-    	// draw object properties
-	console.log(lastData["properties"]["object"])
-	for (var op in lastData["properties"]["object"]){
-
-	    // check if it's enabled
-	    if (document.getElementById(lastData["properties"]["object"][op] + "_enabled").checked){
-
-		key = lastData["properties"]["object"][op]
-		console.log(key);
-		console.log(lastData["pvalues"]["object"][key]);
-		
-		// iterate over the statements with that property
-		for (statement in lastData["pvalues"]["object"][key]){
-		
-		    // get the subject, then find the coordinates of its mesh
-		    subj = lastData["pvalues"]["object"][key][statement]["s"]
-		    obj =  lastData["pvalues"]["object"][key][statement]["o"]
-
-		    // retrieve the meshes to get their position
-		    console.log(subj + "  --> " + obj);
-		    console.log(mesh[subj]);
-		    console.log(mesh[obj]);
-		    console.log("INVOKING GET CURVED");
-		    
-   
-		    // draw the edge
-		    var lines = BABYLON.Mesh.CreateLines("lines", getCurvedEdge(mesh[subj], mesh[obj], 2, 10), scene)
-		    lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
-		    
-		}
-	    }
-	}
+	drawObjectProperties();
 		
 	// return the created scene
 	return scene;
@@ -479,15 +398,14 @@ function getCurvedEdge(point1, point2, bump, steps){
 	}
 
 	points.push(new BABYLON.Vector3(new_point_x, new_point_y, new_point_z));	
-	console.log(new_point_x + " -- " + new_point_y + " -- " + new_point_z);
     }
 
     // add bump
     for (var i=0; i<steps+2; i++){
 	if (point1.position.y < point2.position.y){
-	    points[i]["y"] -= bump_vector[i]
+	    points[i]["y"] -= bump_vector[i]*0.5
 	} else {
-	    points[i]["y"] += bump_vector[i]
+	    points[i]["y"] += bump_vector[i]*0.5
 	}
     }
     
@@ -497,8 +415,6 @@ function getCurvedEdge(point1, point2, bump, steps){
 
 function selectAll(what, select){
 
-    console.log("selectAll invoked")
-    
     switch(what){
     case "classes":
 	for (var k in lastData["classes"]){		
@@ -522,4 +438,152 @@ function selectAll(what, select){
 	break;
     }
         
+}
+
+function raise(up){
+
+    // for all the classes selected to be raised
+    // - check if they have been designed
+    // - increment the 'y' coordinate
+    for (var k in lastData["classes"]){
+	
+	// check if it's enabled
+	if (document.getElementById(lastData["classes"][k] + "_enabled").checked){
+
+	    // check if it's present in the canvas
+	    if (lastData["classes"][k] in mesh){
+		sphere = mesh[lastData["classes"][k]];
+		if (up){
+		    sphere.position.y += 3;
+		}
+		else {
+		    sphere.position.y -= 3;
+		}
+	    }
+	}
+    }
+    
+    // get all the individuals
+    for (var k in lastData["instances"]){
+	
+	// check if it's enabled
+	if (document.getElementById(k + "_enabled").checked){
+
+	    // check if it's present in the canvas
+	    if (k in mesh){
+
+		// raise the sphere
+		sphere = mesh[k];		
+		if (up){
+		    sphere.position.y += 3;
+		}
+		else {
+		    sphere.position.y -= 3;
+		}
+
+		// cycle over data properties
+		for (dp in lastData["instances"][k]) {
+
+		    // check if raising the dp it's requested
+		    if (document.getElementById(dp + "_enabled").checked){
+
+			// raise the sphere
+			key1 = k + "_" + dp
+			key2 = key1 + "_EDGE"
+			if (key1 in dpMesh){
+			    dpsphere = dpMesh[key1]
+			    if (up)
+				dpsphere.position.y += 3;
+			    else dpsphere.position.y -= 3;
+
+			}
+
+			// delete and re-draw the edge
+			if (key2 in dpEdgeMesh){
+			    // draw the edge
+			    var lines = BABYLON.Mesh.CreateLines("lines", [
+		    		new BABYLON.Vector3(dpsphere.position.x, dpsphere.position.y, dpsphere.position.z),
+				new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
+			    lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
+			    dpEdgeMesh[key2].dispose();
+			    dpEdgeMesh[key2] = lines;
+			}			
+		    }
+		}		
+	    }
+	}
+    }
+
+    // re-draw all the object properties
+    drawObjectProperties();
+}
+
+function drawObjectProperties(){   
+
+    // draw object properties
+    console.log(lastData["properties"]["object"])
+    for (var op in lastData["properties"]["object"]){
+	
+	// check if it's enabled
+	if (document.getElementById(lastData["properties"]["object"][op] + "_enabled").checked){
+	    
+	    key = lastData["properties"]["object"][op]
+	    console.log(key);
+	    console.log(lastData["pvalues"]["object"][key]);
+	    
+	    // iterate over the statements with that property
+	    for (statement in lastData["pvalues"]["object"][key]){
+		
+		// get the subject and object
+		subj = lastData["pvalues"]["object"][key][statement]["s"]
+		obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
+
+		// determine if both subject and object are enabled
+		if (subj in mesh && obj in mesh){
+		
+		    // draw the edge
+		    var lines = BABYLON.Mesh.CreateLines("lines", getCurvedEdge(mesh[subj], mesh[obj], 2, 10), scene)
+		    lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+		    
+		    // delete the old edge, if any
+		    // we temporarily use the mesh named as "subj_pred_obj_EDGE"
+		    k = subj + "_" + key  + "_" + obj
+		    
+		    // store the edge
+		    if (k in opEdgeMesh){
+			opEdgeMesh[k].dispose();
+		    }
+		    opEdgeMesh[k] = lines;
+		}
+		
+	    }
+	}
+    }   
+}
+
+function resetPlanes(){
+
+    // iterate over all the classes/individuals meshes
+    for (m in mesh){
+	mesh[m].position.y = 1;
+    }
+
+    // redraw all the data properties
+    for (m in dpMesh){
+	dpMesh[m].position.y = 1;
+    }
+
+    // redraw all the data properties edges
+    for (m in dpEdgeMesh){
+
+	// delete the old one
+	dpEdgeMesh[m].dispose();
+
+	// get subject and object and redraw
+	
+    }
+    
+    // redraw object properties
+    drawObjectProperties();
+    
 }

@@ -52,7 +52,8 @@
 	    "dataProperties":"#00CC00",
 	    "objectProperties":"#3399FF",
 	    "instances":"#7F00FF",
-	    "classes":"#FF8000"
+	    "classes":"#FF8000",
+	    "ground":"#121212"
 	}
     }
 }

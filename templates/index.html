@@ -98,6 +98,10 @@
 		  <span class="input-group-addon" id="basic-addon1">Instances</span>
 		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="instancesColor">
 		</div>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Planes</span>
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="groundColor">
+		</div>
 	      </form>
 	    </div>
 	    <div class="card-footer">
@@ -110,10 +114,13 @@
 	<!-- COLUMN 2-->
 	<div class="col-9 p-0 m-2">
 
-	    <button type="button" class="btn btn-dark btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Get Data</button>		
-	    <button type="button" class="btn btn-dark btn-sm" onClick="javascript:draw();">Plot</button>
-	    <button type="button" class="btn btn-dark btn-sm">Reset</button>
-	    <button type="button" class="btn btn-dark btn-sm">Lock</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Get Data</button>		
+	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();">Plot</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);">Raise</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);">Lower</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();">Reset planes</button>	    
+	    <!-- <button type="button" class="btn btn-dark btn-sm">Reset</button> -->
+	    <!-- <button type="button" class="btn btn-dark btn-sm">Lock</button> -->
 
 	  <div class="card">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
@@ -185,8 +192,6 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', false);">Deselect All</button>		
-		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body">
@@ -213,8 +218,6 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', false);">Deselect All</button>		
-		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body">
@@ -241,8 +244,6 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>		
-		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body">
@@ -266,8 +267,6 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', false);">Deselect All</button>		
-		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light">
