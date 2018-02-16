@@ -494,3 +494,32 @@ function getCurvedEdge(point1, point2, bump, steps){
     return points;
 
 }
+
+function selectAll(what, select){
+
+    console.log("selectAll invoked")
+    
+    switch(what){
+    case "classes":
+	for (var k in lastData["classes"]){		
+	    document.getElementById(lastData["classes"][k] + "_enabled").checked = select
+	}
+	break;
+    case "objectProperties":
+	for (var k in lastData["properties"]["object"]){		
+	    document.getElementById(lastData["properties"]["object"][k] + "_enabled").checked = select
+	}
+	break;
+    case "dataProperties":
+	for (var k in lastData["properties"]["datatype"]){		
+	    document.getElementById(lastData["properties"]["datatype"][k] + "_enabled").checked = select
+	}
+	break;
+    case "instances":
+	for (var k in lastData["instances"]){
+	    document.getElementById(k + "_enabled").checked = select
+	}
+	break;
+    }
+        
+}

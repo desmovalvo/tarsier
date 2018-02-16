@@ -81,7 +81,7 @@
 	      <form>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Classes</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="classesColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="classesColor">		  
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
@@ -181,6 +181,14 @@
     	    <div class="card-header text-white bg-dark rounded-0">
     	      <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Classes
     	    </div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', true);">Select All</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
+	      </div>	      
+	    </div>
     	    <div class="card-body">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
@@ -201,6 +209,14 @@
     	    <div class="card-header text-white bg-dark rounded-0">
     	      <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Data Properties
     	    </div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', true);">Select All</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
+	      </div>	      
+	    </div>
     	    <div class="card-body">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
@@ -221,6 +237,14 @@
     	    <div class="card-header text-white bg-dark rounded-0">
     	      <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Object Properties
     	    </div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', true);">Select All</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
+	      </div>	      
+	    </div>
     	    <div class="card-body">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
@@ -238,6 +262,14 @@
 	  <!-- INSTANCES -->
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Instances</div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', true);">Select All</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="">Raise</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="">Lower</button>
+	      </div>	      
+	    </div>
     	    <div class="card-body font-weight-light">
 	      <small>
 		<table id="instancesTable">
