@@ -315,32 +315,34 @@ function draw(){
 
 		cc = 0;
 		for (dp in lastData["instances"][k]) {
-
 		    console.log(dp);
-		    console.log(lastData["instances"][k][dp]);
-
-		    cc += 1;
-		    
-		    // calculate positions
-
-		    // build a green sphere
-		    var sphere = BABYLON.Mesh.CreateSphere(dp, 16, 1, scene);
-		    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
-		    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
-		    sphere.material = greenMat;
-
-		    // draw the edge
-		    var lines = BABYLON.Mesh.CreateLines("lines", [
-		    	new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
-			new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
-		    lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
-
-		    // draw the label
-		    var zChar = makeTextPlane(lastData["instances"][k][dp], "white", 5 / 10);
-		    zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
-
-		    // TODO -- store the edge and the sphere
-		    
+		    console.log(dp + "_enabled");
+		    if (document.getElementById(dp + "_enabled").checked){		
+			console.log(dp);
+			console.log(lastData["instances"][k][dp]);
+			
+			cc += 1;
+			
+			// calculate positions
+			
+			// build a green sphere
+			var sphere = BABYLON.Mesh.CreateSphere(dp, 16, 1, scene);
+			sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
+			sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
+			sphere.material = greenMat;
+			
+			// draw the edge
+			var lines = BABYLON.Mesh.CreateLines("lines", [
+		    	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
+			    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
+			lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
+			
+			// draw the label
+			var zChar = makeTextPlane(lastData["instances"][k][dp], "white", 5 / 10);
+			zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
+			
+			// TODO -- store the edge and the sphere
+		    }
 		}
 	    }
 	}
@@ -400,7 +402,6 @@ function cutHex(nStr) {
 };
 
 function hexToRGB(hexColor){
-
     r = parseInt(cutHex(hexColor).substring(0,2),16).toFixed(2)/255;
     g = parseInt(cutHex(hexColor).substring(2,4),16).toFixed(2)/255;
     b = parseInt(cutHex(hexColor).substring(4,6),16).toFixed(2)/255;
