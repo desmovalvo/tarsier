@@ -329,46 +329,54 @@ function draw(){
 		    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 		    sphere.material = greenMat;
 
+		    // draw the edge
 		    var lines = BABYLON.Mesh.CreateLines("lines", [
 		    	new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
-			new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)],
-							 scene)
+			new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
 		    lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
 
 		    // draw the label
 		    var zChar = makeTextPlane(lastData["instances"][k][dp], "white", 5 / 10);
 		    zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 
+		    // TODO -- store the edge and the sphere
+		    
 		}
 	    }
 	}
-    	    // // draw object properties
-	// for (var op in lastData["properties"]["object"]){
+	
+    	// draw object properties
+	console.log(lastData["properties"]["object"])
+	for (var op in lastData["properties"]["object"]){
 
-	//     // check if it's enabled
-	//     if (document.getElementById(lastData["properties"]["object"][op] + "_enabled").checked){
+	    // check if it's enabled
+	    if (document.getElementById(lastData["properties"]["object"][op] + "_enabled").checked){
 
-	// 	key = lastData["properties"]["object"][op]
-	// 	console.log(key);
-	// 	console.log(lastData["pvalues"]["object"][key]);
+		key = lastData["properties"]["object"][op]
+		console.log(key);
+		console.log(lastData["pvalues"]["object"][key]);
 		
-	// 	// iterate over the statements with that property
-	// 	for (statement in lastData["pvalues"]["datatype"][key]){
+		// iterate over the statements with that property
+		for (statement in lastData["pvalues"]["object"][key]){
 		
-	// 	    // get the subject, then find the coordinates of its mesh
-	// 	    subj = lastData["pvalues"]["object"][key][statement]["s"]
-	// 	    obj =  lastData["pvalues"]["object"][key][statement]["o"]
-	// 	    console.log("drawing an arc from " + subj + " to " + obj)
-	// 	}
-	//     }
+		    // get the subject, then find the coordinates of its mesh
+		    subj = lastData["pvalues"]["object"][key][statement]["s"]
+		    obj =  lastData["pvalues"]["object"][key][statement]["o"]
+
+		    // retrieve the meshes to get their position
+		    console.log(subj + "  --> " + obj);
+		    console.log(mesh[subj]);
+		    console.log(mesh[obj]);
+		    console.log("INVOKING GET CURVED");
 		    
-	// // var lines = BABYLON.Mesh.CreateLines("lines", [
-        // //     new BABYLON.Vector3(-10, 0, 0),
-        // //     new BABYLON.Vector3(10, 0, 0),
-        // //     new BABYLON.Vector3(0, 0, -10),
-        // //     new BABYLON.Vector3(0, 0, 10)
-	//     // ], scene);
-	// }
+   
+		    // draw the edge
+		    var lines = BABYLON.Mesh.CreateLines("lines", getCurvedEdge(mesh[subj], mesh[obj], 2, 10), scene)
+		    lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+		    
+		}
+	    }
+	}
 		
 	// return the created scene
 	return scene;
@@ -410,3 +418,78 @@ function makeTextPlane(text, color) {
     plane.material.diffuseTexture = dynamicTexture;
     return plane;
 };
+
+function getCurvedEdge(point1, point2, bump, steps){
+
+    // TODO -- optimize this code!
+    
+    // initialize the array of points
+    points = []
+    
+    // calculate difference on x, y and z
+    x_diff = Math.abs(point1.position.x - point2.position.x)
+    y_diff = Math.abs(point1.position.y - point2.position.y)
+    z_diff = Math.abs(point1.position.z - point2.position.z)
+    
+    // divide the three differences by the number of steps
+    x_step = x_diff / (steps+2)
+    y_step = y_diff / (steps+2)
+    z_step = z_diff / (steps+2)
+    
+    // iteratively increment x1 with the result of the division, then y1, then z1
+    new_point_x = point1.position.x
+    new_point_y = point1.position.y
+    new_point_z = point1.position.z
+    points.push(new BABYLON.Vector3(new_point_x, new_point_y, new_point_z));
+
+    // calculate the bump
+    // if even number:
+    if (steps%2 === 0){
+	bump_vector = math.range(0, (steps+2)/2-1, 1, true)._data
+	bump_vector = bump_vector.concat(math.range((steps+2)/2-1, 0, -1, true)._data)
+    } else { // if odd number:
+	bump_vector = math.range(0, Math.floor(steps+2)/2, 1, false)._data
+	bump_vector = bump_vector.concat(math.range(Math.floor(steps+2)/2, 0, -1, true)._data)
+    }
+    
+    // we use steps+2 because we always have the start and end of the segment
+    // and the steps are only the halfway points.
+    for (var i=0; i<steps+2; i++){
+
+	// update x
+	if (point1.position.x < point2.position.x){
+	    new_point_x += x_step
+	} else {
+	    new_point_x -= x_step
+	}
+
+	// update y -- consider the bump		    	
+	if (point1.position.y < point2.position.y){	    
+	    new_point_y +=  y_step 
+	} else {	    
+	    new_point_y -=  y_step
+	}
+
+	// update z
+	if (point1.position.z < point2.position.z){	    
+	    new_point_z += z_step
+	} else {
+	    new_point_z -= z_step
+	}
+
+	points.push(new BABYLON.Vector3(new_point_x, new_point_y, new_point_z));	
+	console.log(new_point_x + " -- " + new_point_y + " -- " + new_point_z);
+    }
+
+    // add bump
+    for (var i=0; i<steps+2; i++){
+	if (point1.position.y < point2.position.y){
+	    points[i]["y"] -= bump_vector[i]
+	} else {
+	    points[i]["y"] += bump_vector[i]
+	}
+    }
+    
+    return points;
+
+}
