@@ -74,9 +74,9 @@
 	    </div>
 	  </div>
 
-	  <!-- COLORS -->
+	  <!-- SETTINGS -->
 	  <div class="card border border-dark rounded-3 m-1 mt-2">
-	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;Colors</div>
+	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;Settings</div>
 	    <div class="card-body font-weight-light">
 	      <form>
 		<div class="input-group input-group-sm">
@@ -98,9 +98,30 @@
 		  <span class="input-group-addon" id="basic-addon1">Instances</span>
 		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="instancesColor">
 		</div>
+		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Planes</span>
 		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="groundColor">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Level of detail</span>
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="lod">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Mesh - Plane gap</span>
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="meshPlaneGap">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Plane - Plane gap</span>
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="planePlaneGap">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Bump</span>
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="bump">
 		</div>
 	      </form>
 	    </div>
@@ -113,71 +134,14 @@
 
 	<!-- COLUMN 2-->
 	<div class="col-9 p-0 m-2">
-
 	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Get Data</button>		
 	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();">Plot</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);">Raise</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);">Lower</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();">Reset planes</button>	    
-	    <!-- <button type="button" class="btn btn-dark btn-sm">Reset</button> -->
-	    <!-- <button type="button" class="btn btn-dark btn-sm">Lock</button> -->
-
 	  <div class="card">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
-	    <!-- <script> -->
-	    <!--   window.addEventListener('DOMContentLoaded', function(){ -->
-	    <!--   // get the canvas DOM element -->
-	    <!--   var canvas = document.getElementById('renderCanvas'); -->
-
-	    <!--   // load the 3D engine -->
-	    <!--   var engine = new BABYLON.Engine(canvas, true); -->
-
-	    <!--   // createScene function that creates and return the scene -->
-	    <!--   var createScene = function(){ -->
-	    <!--   // create a basic BJS Scene object -->
-	    <!--   var scene = new BABYLON.Scene(engine); -->
-
-	    <!--   // create a FreeCamera, and set its position to (x:0, y:5, z:-10) -->
-	    <!--   var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5,-10), scene); -->
-
-	    <!--   // target the camera to scene origin -->
-	    <!--   camera.setTarget(BABYLON.Vector3.Zero()); -->
-
-	    <!--   // attach the camera to the canvas -->
-	    <!--   camera.attachControl(canvas, false); -->
-
-	    <!--   // create a basic light, aiming 0,1,0 - meaning, to the sky -->
-	    <!--   var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene); -->
-
-	    <!--   <\!-- // create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation -\-> -->
-	    <!--   <\!-- var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene); -\-> -->
-
-	    <!--   <\!-- // move the sphere upward 1/2 of its height -\-> -->
-	    <!--   <\!-- sphere.position.y = 1; -\-> -->
-
-	    <!--   <\!-- // create a built-in "ground" shape; -\-> -->
-	    <!--   <\!-- var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene); -\-> -->
-
-	    <!--   // return the created scene -->
-	    <!--   return scene; -->
-	    <!--   } -->
-
-	    <!--   // call the createScene function -->
-	    <!--   var scene = createScene(); -->
-
-	    <!--   // run the render loop -->
-	    <!--   engine.runRenderLoop(function(){ -->
-	    <!--   scene.render(); -->
-	    <!--   }); -->
-
-	    <!--   // the canvas/window resize event handler -->
-	    <!--   window.addEventListener('resize', function(){ -->
-	    <!--   engine.resize(); -->
-	    <!--   }); -->
-	    <!--   }); -->
-	    <!-- </script> -->
 	  </div>
-
 	</div>
       </div>
 

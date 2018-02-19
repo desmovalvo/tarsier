@@ -53,7 +53,13 @@
 	    "objectProperties":"#3399FF",
 	    "instances":"#7F00FF",
 	    "classes":"#FF8000",
-	    "ground":"#121212"
+	    "ground":"#444444"
+	},
+	"values":{
+	    "planesGap":10,
+	    "meshPlaneGap":1,
+	    "LOD":16,
+	    "bump":0
 	}
     }
 }
