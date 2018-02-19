@@ -134,12 +134,12 @@
 
 	<!-- COLUMN 2-->
 	<div class="col-9 p-0 m-2">
-	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');">Get Data</button>		
-	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();">Plot</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);">Raise</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);">Lower</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();">Reset planes</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();">Reset view</button>	    
+	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>		
+	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();"><i class="fas fa-pencil-alt"></i>&nbsp;Plot</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);"><i class="fas fa-arrow-up"></i>&nbsp;Raise</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>	    
 	  <div class="card" id="renderCard">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
 	  </div>
