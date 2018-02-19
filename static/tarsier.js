@@ -226,7 +226,19 @@ function draw(){
 
 		// store the mesh in an Object using the URI as the key
 		mesh[lastData["classes"][k]] = sphere;
-
+		sphere.statement = "Class: " + lastData["classes"][k];
+		sphere.actionManager = new BABYLON.ActionManager(scene);
+		sphere.actionManager.registerAction(
+		    new BABYLON.ExecuteCodeAction(
+			BABYLON.ActionManager.OnPickTrigger,
+			function(evt){
+			    // Find the clicked mesh
+			    var meshClicked = evt.meshUnderPointer;
+			    alert(meshClicked.statement);
+			}
+		    )
+		);
+			
 		// draw the label
 		var zChar = makeTextPlane(lastData["classes"][k], "white", 5 / 10);
 		zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
