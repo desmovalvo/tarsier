@@ -519,8 +519,20 @@ function drawObjectProperties(){
 		if (subj in mesh && obj in mesh){
 
 		    // draw the edge
-		    var lines = BABYLON.Mesh.CreateLines("lines", getCurvedEdge(mesh[subj], mesh[obj], bump, 10), scene)
+		    var lines = BABYLON.Mesh.CreateLines(op, getCurvedEdge(mesh[subj], mesh[obj], bump, 10), scene)
+		    lines.statement = sphere.statement = "Property: " + lastData["properties"]["object"][op] + "\nSubject: " + subj + "\nObject: " + obj;
 		    lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+		    lines.actionManager = new BABYLON.ActionManager(scene);
+		    lines.actionManager.registerAction(
+			new BABYLON.ExecuteCodeAction(
+			    BABYLON.ActionManager.OnPickTrigger,
+			    function(evt){
+				// Find the clicked mesh
+				var meshClicked = evt.meshUnderPointer;
+				alert(meshClicked.statement);
+			    }
+			)
+		    );
 		    
 		    // delete the old edge, if any
 		    // we temporarily use the mesh named as "subj_pred_obj_EDGE"
@@ -616,6 +628,9 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
     // iterate over the data properties
     cc = 0;
     for (dp in subj_dict) {
+
+	console.log(dp);
+	
 	if (document.getElementById(dp + "_enabled").checked){		
 
 	    // delete old sphere and edge, if any
@@ -629,8 +644,22 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.y = parseInt(meshPlaneGap);
+	    sphere.statement = "Property: " + dp + "\nSubject: " + subj + "\nValue: " + lastData["instances"][subj][dp];
 	    sphere.material = material;
-	    	    
+
+	    // attach an action to the sphere
+	    sphere.actionManager = new BABYLON.ActionManager(scene);
+	    sphere.actionManager.registerAction(
+		new BABYLON.ExecuteCodeAction(
+		    BABYLON.ActionManager.OnPickTrigger,
+		    function(evt){
+			// Find the clicked mesh
+			var meshClicked = evt.meshUnderPointer;
+			alert("Property: " + meshClicked.statement);
+		    }
+		)
+	    );
+	    
 	    // draw the label
 	    var zChar = makeTextPlane(subj_dict[dp], "white", 5 / 10);
 	    zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
@@ -678,6 +707,19 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
 	    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
 	lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
+	lines.statement = "Property: " + dp + "\nSubject: " + subj + "\nValue: " + lastData["instances"][subj][dp];
+	lines.actionManager = new BABYLON.ActionManager(scene);
+	lines.actionManager.registerAction(
+	    new BABYLON.ExecuteCodeAction(
+		BABYLON.ActionManager.OnPickTrigger,
+		function(evt){
+		    // Find the clicked mesh
+		    var meshClicked = evt.meshUnderPointer;
+		    alert(meshClicked.statement);
+		}
+	    )
+	);
+
 	
 	// store the edge (as a key we use subj+prop_EDGE)
 	dpEdgeMesh[key2] = lines;
