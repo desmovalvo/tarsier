@@ -177,7 +177,7 @@ function draw(){
     dpMesh = {};
     dpEdgeMesh = {};
     opEdgeMesh = {};
-    planes = {};
+    // planes = {};
 
     // get the canvas
     var canvas = document.getElementById('renderCanvas');
@@ -214,7 +214,7 @@ function draw(){
 	var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
 	   
 	// create a plane
-	drawPlane(0);
+	// drawPlane(0);
 	
 	// draw classes
 	n5 = Object.keys(lastData["classes"]).length;
@@ -278,6 +278,9 @@ function draw(){
     engine.runRenderLoop(function(){
 	scene.render();
     });
+
+    // draw planes
+    drawPlanes();
 
 }
 
@@ -500,6 +503,10 @@ function raise(up){
     // re-draw all the object properties
     console.log("[INFO] Re-drawing object properties");
     drawObjectProperties();
+
+    // draw planes
+    drawPlanes();
+    
 }
 
 function drawObjectProperties(){   
@@ -729,4 +736,47 @@ function getColors(){
     groundMat.diffuseColor = new BABYLON.Color3(rgbGroundColor[0], rgbGroundColor[1], rgbGroundColor[2]);
     groundMat.alpha = 0.5;
 
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// get planes
+//
+///////////////////////////////////////////////////////////////////////
+function drawPlanes(){
+
+    // log
+    console.log("[INFO] drawPlanes() invoked");
+    
+    // delete the existing planes
+    for (p in planes){
+	planes[p].dispose();
+	delete p;
+    };
+    planes = {};
+    
+    // iterate over meshes
+    for (m in mesh){
+	
+	// get the y coordinate of the mesh
+	y = mesh[m].position.y - meshPlaneGap;
+
+	console.log(planes);
+	
+	// check if a plane already exists
+	if (!(y in planes)){
+
+	    // 3 - if needed, draw a plane
+	    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 50, height: 50, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
+	    myPlane.material = groundMat;	
+	    var axis = new BABYLON.Vector3(1, 0, 0);
+	    var angle = Math.PI / 2;
+	    var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
+	    myPlane.rotationQuaternion = quaternion;
+	    myPlane.translate(BABYLON.Axis.Y, y, BABYLON.Space.WORLD);
+	    
+	    // store the plane using the y coordinate of the mesh (not the plane)
+	    planes[y] = myPlane;	    
+	}
+    }
 }
