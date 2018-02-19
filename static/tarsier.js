@@ -264,10 +264,24 @@ function draw(){
 		sphere.position.x = 15 * Math.cos(c * node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
 		sphere.material = purpleMat;
-
+		
 		// store the mesh in an Object using the URI as the key
 		mesh[k] = sphere;
 
+		// bind an action
+		sphere.statement = "Individual: " + k;
+		sphere.actionManager = new BABYLON.ActionManager(scene);
+		sphere.actionManager.registerAction(
+		    new BABYLON.ExecuteCodeAction(
+			BABYLON.ActionManager.OnPickTrigger,
+			function(evt){
+			    // Find the clicked mesh
+			    var meshClicked = evt.meshUnderPointer;
+			    alert(meshClicked.statement);
+			}
+		    )
+		);
+		
 		drawDataProperties(k, lastData["instances"][k], sphere, greenMat);
 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, greenMat);
 	    }	    
