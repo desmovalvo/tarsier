@@ -218,7 +218,7 @@ function draw(){
 	for (var k in lastData["classes"]){
 	    // check if it's enabled
 	    if (document.getElementById(lastData["classes"][k] + "_enabled").checked){	
-		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], 16, 1, scene);
+		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], lod, 1, scene);
 		sphere.position.z = 5 * Math.sin(k*node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
 		sphere.position.x = 5 * Math.cos(k*node_angle / 180*Math.PI);
@@ -258,7 +258,7 @@ function draw(){
 		// TODO -- check if the individual has been already designed as a class
 		// ex.: wot:Thing can be a class, but also an individual of the class owl:Class
 		
-		var sphere = BABYLON.Mesh.CreateSphere(k, 16, 1, scene);
+		var sphere = BABYLON.Mesh.CreateSphere(k, lod, 1, scene);
 		c += 1;
 		sphere.position.z = 15 * Math.sin(c * node_angle / 180*Math.PI);
 		sphere.position.x = 15 * Math.cos(c * node_angle / 180*Math.PI);
@@ -520,6 +520,8 @@ function raise(up){
     
 }
 
+
+
 function drawObjectProperties(){   
 
     // log
@@ -666,7 +668,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	    }
 	    
 	    // build a green sphere
-	    var sphere = BABYLON.Mesh.CreateSphere(dp, 16, 1, scene);
+	    var sphere = BABYLON.Mesh.CreateSphere(dp, lod, 1, scene);
 	    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.y = parseInt(meshPlaneGap);

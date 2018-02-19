@@ -101,6 +101,10 @@ class HTTPHandler(tornado.web.RequestHandler):
                     f_results["pvalues"]["object"][key] = []
                 f_results["pvalues"]["object"][key].append({"s":r["s"]["value"], "o":r["o"]["value"]})
                 
+                # also bind the property to the individual
+                newkey = r["s"]["value"]
+                f_results["instances"][newkey][key] = r["o"]["value"]
+                
             # get the list of classes
             status, results = kp.query(msg["queryURI"], jsap.getQuery("ALL_CLASSES", {}))
             for r in results["results"]["bindings"]:
