@@ -109,9 +109,6 @@ function sendRequest(serverUri){
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = iiName;
 	    }
-	    
-	    // console.log("Time to draw!");	   	    	    
-	    // draw(data);
 	}
     });
     
@@ -457,7 +454,6 @@ function raise(up){
 
 	    // check if it's present in the canvas
 	    if (k in mesh){
-		console.log("MESH TROVATA")
 		// raise the sphere
 		sphere = mesh[k];		
 		if (up){
@@ -482,17 +478,7 @@ function raise(up){
 				dpsphere.position.y += planesGap;
 			    else dpsphere.position.y -= planesGap;
 
-			}			
-			// // delete and re-draw the edge
-			// if (key2 in dpEdgeMesh){
-			//     // draw the edge
-			//     var lines = BABYLON.Mesh.CreateLines("lines", [
-		    	// 	new BABYLON.Vector3(dpsphere.position.x, dpsphere.position.y, dpsphere.position.z),
-			// 	new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
-			//     lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
-			//     dpEdgeMesh[key2].dispose();
-			//     dpEdgeMesh[key2] = lines;
-			// }			
+			}					
 		    }
 		}
 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, greenMat);
@@ -761,8 +747,6 @@ function drawPlanes(){
 	// get the y coordinate of the mesh
 	y = mesh[m].position.y - meshPlaneGap;
 
-	console.log(planes);
-	
 	// check if a plane already exists
 	if (!(y in planes)){
 
