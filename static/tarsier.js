@@ -174,7 +174,6 @@ function draw(){
     dpMesh = {};
     dpEdgeMesh = {};
     opEdgeMesh = {};
-    // planes = {};
 
     // get the canvas
     var canvas = document.getElementById('renderCanvas');
@@ -186,7 +185,7 @@ function draw(){
     var createScene = function(){
 	
 	// create a basic BJS Scene object
-	var scene = new BABYLON.Scene(engine);
+	scene = new BABYLON.Scene(engine);
 	scene.ambientColor = new BABYLON.Color3(1, 1, 1);
 
 	// get colors
@@ -269,7 +268,7 @@ function draw(){
     }
     
     // call the createScene function
-    var scene = createScene();
+    scene = createScene();
     
     // run the render loop
     engine.runRenderLoop(function(){
@@ -763,4 +762,35 @@ function drawPlanes(){
 	    planes[y] = myPlane;	    
 	}
     }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// reset view
+//
+///////////////////////////////////////////////////////////////////////
+function resetView(){
+
+    // clear the canvas
+    // TODO -- the standard way to clear the canvas does not work
+    // so we are using a more brutal way
+    card = document.getElementById("renderCard");
+    card.innerHTML = '<canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>'
+
+    // clear the scene and all the mesh
+    for (m in mesh){
+	mesh[m].dispose();
+    }
+    for (dp in dpMesh){
+	dpMesh[dp].dispose();
+    }
+    for (dp in dpEdgeMesh){
+	dpEdgeMesh[dp].dispose();
+    }
+    for (op in opEdgeMesh){
+	opEdgeMesh[op].dispose();
+    }
+    scene.dispose();
+    
+    
 }
