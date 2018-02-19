@@ -681,7 +681,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	// get the object sphere
 	key1 = subj + "_" + dp
 	sphere = dpMesh[key1]
-	
+
 	// delete old sphere and edge, if any
 	key2 = subj + "_" + dp + "_EDGE"
 	if (key2 in dpEdgeMesh){
