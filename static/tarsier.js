@@ -21,11 +21,13 @@ rgbOrangeColor = null;
 rgbPurpleColor = null;
 rgbGreenColor = null;
 rgbBlueColor = null;
+rgbRedColor = null;
 purpleMat = null;
 orangeMat = null;
 groundMat = null;
 greenMat = null;
 blueMat = null;
+redMat = null;
 
 function sendRequest(serverUri){
 
@@ -149,6 +151,7 @@ function loadJSAP(){
 	    document.getElementById("classesColor").value = myJson["extended"]["colors"]["classes"];	   
 	    document.getElementById("datapropColor").value = myJson["extended"]["colors"]["dataProperties"];
 	    document.getElementById("objpropColor").value = myJson["extended"]["colors"]["objectProperties"];
+	    document.getElementById("rdftypeColor").value = myJson["extended"]["colors"]["rdftype"];
 	    document.getElementById("instancesColor").value = myJson["extended"]["colors"]["instances"];
 
 	    // other settings
@@ -542,14 +545,18 @@ function drawObjectProperties(){
 		// get the subject and object
 		subj = lastData["pvalues"]["object"][key][statement]["s"]
 		obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
-		
+
 		// determine if both subject and object are both drawn
 		if (subj in mesh && obj in mesh){
 
 		    // draw the edge
 		    var lines = BABYLON.Mesh.CreateLines(op, getCurvedEdge(mesh[subj], mesh[obj], bump, 10), scene)
 		    lines.statement = sphere.statement = "Property: " + lastData["properties"]["object"][op] + "\nSubject: " + subj + "\nObject: " + obj;
-		    lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+		    if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
+			lines.color = new BABYLON.Color3(rgbRedColor[0], rgbRedColor[1], rgbRedColor[2]);
+		    } else {
+			lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+		    }
 		    lines.actionManager = new BABYLON.ActionManager(scene);
 		    lines.actionManager.registerAction(
 			new BABYLON.ExecuteCodeAction(
@@ -784,6 +791,11 @@ function getColors(){
     rgbBlueColor = hexToRGB(document.getElementById("objpropColor").value);
     blueMat = new BABYLON.StandardMaterial("blueMat", scene);
     blueMat.diffuseColor = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+
+    // - object properties
+    rgbRedColor = hexToRGB(document.getElementById("rdftypeColor").value);
+    redMat = new BABYLON.StandardMaterial("redMat", scene);
+    redMat.diffuseColor = new BABYLON.Color3(rgbRedColor[0], rgbRedColor[1], rgbRedColor[2]);
     
     // - ground
     rgbGroundColor = hexToRGB(document.getElementById("groundColor").value);
