@@ -17,17 +17,17 @@ bump = 0;
 
 // colors and materials
 rgbGroundColor = null;
-rgbOrangeColor = null;
-rgbPurpleColor = null;
-rgbGreenColor = null;
-rgbBlueColor = null;
-rgbRedColor = null;
-purpleMat = null;
-orangeMat = null;
+rgbClassColor = null;
+rgbIndivColor = null;
+rgbDpColor = null;
+rgbOpColor = null;
+rgbRdftypeColor = null;
+indivMat = null;
+classMat = null;
 groundMat = null;
-greenMat = null;
-blueMat = null;
-redMat = null;
+dpMat = null;
+opMat = null;
+rdftypeMat = null;
 
 function sendRequest(serverUri){
 
@@ -225,7 +225,7 @@ function draw(){
 		sphere.position.z = 5 * Math.sin(k*node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
 		sphere.position.x = 5 * Math.cos(k*node_angle / 180*Math.PI);
-		sphere.material = orangeMat;
+		sphere.material = classMat;
 
 		// store the mesh in an Object using the URI as the key
 		mesh[lastData["classes"][k]] = sphere;
@@ -266,7 +266,7 @@ function draw(){
 		sphere.position.z = 15 * Math.sin(c * node_angle / 180*Math.PI);
 		sphere.position.x = 15 * Math.cos(c * node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
-		sphere.material = purpleMat;
+		sphere.material = indivMat;
 		
 		// store the mesh in an Object using the URI as the key
 		mesh[k] = sphere;
@@ -285,8 +285,8 @@ function draw(){
 		    )
 		);
 		
-		drawDataProperties(k, lastData["instances"][k], sphere, greenMat);
-		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, greenMat);
+		drawDataProperties(k, lastData["instances"][k], sphere, dpMat);
+		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
 	    }	    
 	}
 
@@ -509,7 +509,7 @@ function raise(up){
 			}					
 		    }
 		}
-		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, greenMat);
+		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
 	    }
 	}
     }
@@ -553,9 +553,9 @@ function drawObjectProperties(){
 		    var lines = BABYLON.Mesh.CreateLines(op, getCurvedEdge(mesh[subj], mesh[obj], bump, 10), scene)
 		    lines.statement = sphere.statement = "Property: " + lastData["properties"]["object"][op] + "\nSubject: " + subj + "\nObject: " + obj;
 		    if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
-			lines.color = new BABYLON.Color3(rgbRedColor[0], rgbRedColor[1], rgbRedColor[2]);
+			lines.color = new BABYLON.Color3(rgbRdftypeColor[0], rgbRdftypeColor[1], rgbRdftypeColor[2]);
 		    } else {
-			lines.color = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+			lines.color = new BABYLON.Color3(rgbOpColor[0], rgbOpColor[1], rgbOpColor[2]);
 		    }
 		    lines.actionManager = new BABYLON.ActionManager(scene);
 		    lines.actionManager.registerAction(
@@ -741,7 +741,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	var lines = BABYLON.Mesh.CreateLines("lines", [
 	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
 	    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
-	lines.color = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);
+	lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
 	lines.statement = "Property: " + dp + "\nSubject: " + subj + "\nValue: " + lastData["instances"][subj][dp];
 	lines.actionManager = new BABYLON.ActionManager(scene);
 	lines.actionManager.registerAction(
@@ -773,29 +773,29 @@ function getColors(){
     // create the colors for:
     
     // - classes
-    rgbOrangeColor = hexToRGB(document.getElementById("classesColor").value);
-    orangeMat = new BABYLON.StandardMaterial("orangeMat", scene);
-    orangeMat.diffuseColor = new BABYLON.Color3(rgbOrangeColor[0], rgbOrangeColor[1], rgbOrangeColor[2]);	
+    rgbClassColor = hexToRGB(document.getElementById("classesColor").value);
+    classMat = new BABYLON.StandardMaterial("classMat", scene);
+    classMat.diffuseColor = new BABYLON.Color3(rgbClassColor[0], rgbClassColor[1], rgbClassColor[2]);	
     
     // - individuals
-    rgbPurpleColor = hexToRGB(document.getElementById("instancesColor").value);
-    purpleMat = new BABYLON.StandardMaterial("purpleMat", scene);
-    purpleMat.diffuseColor = new BABYLON.Color3(rgbPurpleColor[0], rgbPurpleColor[1], rgbPurpleColor[2]);	
+    rgbIndivColor = hexToRGB(document.getElementById("instancesColor").value);
+    indivMat = new BABYLON.StandardMaterial("indivMat", scene);
+    indivMat.diffuseColor = new BABYLON.Color3(rgbIndivColor[0], rgbIndivColor[1], rgbIndivColor[2]);	
     
     // - data properties
-    rgbGreenColor = hexToRGB(document.getElementById("datapropColor").value);
-    greenMat = new BABYLON.StandardMaterial("greenMat", scene);
-    greenMat.diffuseColor = new BABYLON.Color3(rgbGreenColor[0], rgbGreenColor[1], rgbGreenColor[2]);	
+    rgbDpColor = hexToRGB(document.getElementById("datapropColor").value);
+    dpMat = new BABYLON.StandardMaterial("dpMat", scene);
+    dpMat.diffuseColor = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);	
     
     // - object properties
-    rgbBlueColor = hexToRGB(document.getElementById("objpropColor").value);
-    blueMat = new BABYLON.StandardMaterial("blueMat", scene);
-    blueMat.diffuseColor = new BABYLON.Color3(rgbBlueColor[0], rgbBlueColor[1], rgbBlueColor[2]);
+    rgbOpColor = hexToRGB(document.getElementById("objpropColor").value);
+    opMat = new BABYLON.StandardMaterial("opMat", scene);
+    opMat.diffuseColor = new BABYLON.Color3(rgbOpColor[0], rgbOpColor[1], rgbOpColor[2]);
 
     // - object properties
-    rgbRedColor = hexToRGB(document.getElementById("rdftypeColor").value);
-    redMat = new BABYLON.StandardMaterial("redMat", scene);
-    redMat.diffuseColor = new BABYLON.Color3(rgbRedColor[0], rgbRedColor[1], rgbRedColor[2]);
+    rgbRdftypeColor = hexToRGB(document.getElementById("rdftypeColor").value);
+    rdftypeMat = new BABYLON.StandardMaterial("rdftypeMat", scene);
+    rdftypeMat.diffuseColor = new BABYLON.Color3(rgbRdftypeColor[0], rgbRdftypeColor[1], rgbRdftypeColor[2]);
     
     // - ground
     rgbGroundColor = hexToRGB(document.getElementById("groundColor").value);
@@ -985,7 +985,7 @@ function raiseList(lst){
     // 			}					
     // 		    }
     // 		}
-    // 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, greenMat);
+    // 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
     // 	    }
     // 	}
     // }
