@@ -180,7 +180,10 @@ function draw(){
 
     // get the canvas
     var canvas = document.getElementById('renderCanvas');
-
+    canvas.oncontextmenu = function (e) {
+	e.preventDefault();
+    };
+    
     // load the 3D engine
     var engine = new BABYLON.Engine(canvas, true);
 
@@ -233,7 +236,7 @@ function draw(){
 		sphere.actionManager = new BABYLON.ActionManager(scene);
 		sphere.actionManager.registerAction(
 		    new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnPickTrigger,
+			BABYLON.ActionManager.OnLeftPickTrigger,
 			function(evt){
 			    // Find the clicked mesh
 			    var meshClicked = evt.meshUnderPointer;
@@ -241,7 +244,25 @@ function draw(){
 			}
 		    )
 		);
-			
+		sphere.actionManager
+		    .registerAction(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    sphere,
+			    'visibility',
+			    0.3,
+			    1000
+			)
+		    ).then(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    sphere,
+			    'visibility',
+			    1.0,
+			    1000
+			)
+		    );
+		
 		// draw the label
 		var zChar = makeTextPlane(lastData["classes"][k], "white", 5 / 10);
 		zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
@@ -276,7 +297,7 @@ function draw(){
 		sphere.actionManager = new BABYLON.ActionManager(scene);
 		sphere.actionManager.registerAction(
 		    new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnPickTrigger,
+			BABYLON.ActionManager.OnLeftPickTrigger,
 			function(evt){
 			    // Find the clicked mesh
 			    var meshClicked = evt.meshUnderPointer;
@@ -284,6 +305,24 @@ function draw(){
 			}
 		    )
 		);
+		sphere.actionManager
+		    .registerAction(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    sphere,
+			    'visibility',
+			    0.3,
+			    1000
+			)
+		    ).then(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    sphere,
+			    'visibility',
+			    1.0,
+			    1000
+			)
+		    );
 		
 		drawDataProperties(k, lastData["instances"][k], sphere, dpMat);
 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
@@ -686,7 +725,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	    sphere.actionManager = new BABYLON.ActionManager(scene);
 	    sphere.actionManager.registerAction(
 		new BABYLON.ExecuteCodeAction(
-		    BABYLON.ActionManager.OnPickTrigger,
+		    BABYLON.ActionManager.OnLeftPickTrigger,
 		    function(evt){
 			// Find the clicked mesh
 			var meshClicked = evt.meshUnderPointer;
@@ -694,6 +733,24 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 		    }
 		)
 	    );
+	    sphere.actionManager
+		.registerAction(
+		    new BABYLON.InterpolateValueAction(
+			BABYLON.ActionManager.OnRightPickTrigger,
+			sphere,
+			'visibility',
+			0.3,
+			1000
+		    )
+		).then(
+		    new BABYLON.InterpolateValueAction(
+			BABYLON.ActionManager.OnRightPickTrigger,
+			sphere,
+			'visibility',
+			1.0,
+			1000
+		    )
+		);
 	    
 	    // draw the label
 	    var zChar = makeTextPlane(subj_dict[dp], "white", 5 / 10);
