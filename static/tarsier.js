@@ -599,7 +599,7 @@ function drawObjectProperties(){
 		    lines.actionManager = new BABYLON.ActionManager(scene);
 		    lines.actionManager.registerAction(
 			new BABYLON.ExecuteCodeAction(
-			    BABYLON.ActionManager.OnPickTrigger,
+			    BABYLON.ActionManager.OnLeftPickTrigger,
 			    function(evt){
 				// Find the clicked mesh
 				var meshClicked = evt.meshUnderPointer;
@@ -607,6 +607,25 @@ function drawObjectProperties(){
 			    }
 			)
 		    );
+		    lines.actionManager
+		    .registerAction(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    lines,
+			    'alpha',
+			    0.3,
+			    1000
+			)
+		    ).then(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    lines,
+			    'alpha',
+			    1.0,
+			    1000
+			)
+		    );
+		
 		    
 		    // delete the old edge, if any
 		    // we temporarily use the mesh named as "subj_pred_obj_EDGE"
@@ -803,7 +822,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	lines.actionManager = new BABYLON.ActionManager(scene);
 	lines.actionManager.registerAction(
 	    new BABYLON.ExecuteCodeAction(
-		BABYLON.ActionManager.OnPickTrigger,
+		BABYLON.ActionManager.OnLeftPickTrigger,
 		function(evt){
 		    // Find the clicked mesh
 		    var meshClicked = evt.meshUnderPointer;
@@ -811,6 +830,25 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 		}
 	    )
 	);
+	lines.actionManager
+	    .registerAction(
+		new BABYLON.InterpolateValueAction(
+		    BABYLON.ActionManager.OnRightPickTrigger,
+		    lines,
+		    'alpha',
+		    0.3,
+		    1000
+		)
+	    ).then(
+		new BABYLON.InterpolateValueAction(
+		    BABYLON.ActionManager.OnRightPickTrigger,
+		    lines,
+		    'alpha',
+		    1.0,
+		    1000
+		)
+	    );
+		
 
 	
 	// store the edge (as a key we use subj+prop_EDGE)
