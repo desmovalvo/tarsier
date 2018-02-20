@@ -255,7 +255,11 @@
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;SPARQL Input</div>
     	    <div class="card-body font-weight-light">
-
+	      <textarea class="form-control" id="sparql" rows="10"></textarea>
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"><i class="fas fa-window-minimize"></i></i>&nbsp;Filter</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"><i class="fas fa-bars"></i></i>&nbsp;Filter (multi-layer)</button>		
+	      </div>	      	      
     	    </div>
     	    <div class="card-footer">
     	      <small><i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator</small>

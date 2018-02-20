@@ -66,7 +66,7 @@ function sendRequest(serverUri){
 		cName = data["classes"][c];		
 		newRow = clt.insertRow(-1);
 		newCell = newRow.insertCell(0);
-		newCell.innerHTML = '<input type="checkbox" value="" id="' + cName + '_enabled" checked>'
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + cName + '_C_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = cName;
 	    }
@@ -79,7 +79,7 @@ function sendRequest(serverUri){
 		dpName = data["properties"]["datatype"][dp];
 		newRow = dpt.insertRow(-1);
 		newCell = newRow.insertCell(0);
-		newCell.innerHTML = '<input type="checkbox" value="" id="' + dpName + '_enabled" checked>'
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + dpName + '_D_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = dpName;
 	    }
@@ -92,7 +92,7 @@ function sendRequest(serverUri){
 		opName = data["properties"]["object"][op];
 		newRow = opt.insertRow(-1);
 		newCell = newRow.insertCell(0);		
-		newCell.innerHTML = '<input type="checkbox" value="" id="' + opName + '_enabled" checked>'
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + opName + '_O_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = opName;
 	    }
@@ -105,7 +105,7 @@ function sendRequest(serverUri){
 		iiName = ii;
 		newRow = iis.insertRow(-1);
 		newCell = newRow.insertCell(0);		
-		newCell.innerHTML = '<input type="checkbox" value="" id="' + iiName + '_enabled" checked>'
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + iiName + '_I_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = iiName;
 	    }
@@ -217,7 +217,7 @@ function draw(){
 	node_angle = 360 / n5;
 	for (var k in lastData["classes"]){
 	    // check if it's enabled
-	    if (document.getElementById(lastData["classes"][k] + "_enabled").checked){	
+	    if (document.getElementById(lastData["classes"][k] + "_C_enabled").checked){	
 		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], lod, 1, scene);
 		sphere.position.z = 5 * Math.sin(k*node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
@@ -253,7 +253,7 @@ function draw(){
 	for (var k in lastData["instances"]){
 
 	    // check if it's enabled
-	    if (document.getElementById(k + "_enabled").checked){	
+	    if (document.getElementById(k + "_I_enabled").checked){	
 
 		// TODO -- check if the individual has been already designed as a class
 		// ex.: wot:Thing can be a class, but also an individual of the class owl:Class
@@ -421,22 +421,22 @@ function selectAll(what, select){
     switch(what){
     case "classes":
 	for (var k in lastData["classes"]){		
-	    document.getElementById(lastData["classes"][k] + "_enabled").checked = select
+	    document.getElementById(lastData["classes"][k] + "_C_enabled").checked = select
 	}
 	break;
     case "objectProperties":
 	for (var k in lastData["properties"]["object"]){		
-	    document.getElementById(lastData["properties"]["object"][k] + "_enabled").checked = select
+	    document.getElementById(lastData["properties"]["object"][k] + "_O_enabled").checked = select
 	}
 	break;
     case "dataProperties":
 	for (var k in lastData["properties"]["datatype"]){		
-	    document.getElementById(lastData["properties"]["datatype"][k] + "_enabled").checked = select
+	    document.getElementById(lastData["properties"]["datatype"][k] + "_D_enabled").checked = select
 	}
 	break;
     case "instances":
 	for (var k in lastData["instances"]){
-	    document.getElementById(k + "_enabled").checked = select
+	    document.getElementById(k + "_I_enabled").checked = select
 	}
 	break;
     }
@@ -454,7 +454,7 @@ function raise(up){
     for (var k in lastData["classes"]){
 	
 	// check if it's enabled
-	if (document.getElementById(lastData["classes"][k] + "_enabled").checked){
+	if (document.getElementById(lastData["classes"][k] + "_C_enabled").checked){
 
 	    // check if it's present in the canvas
 	    if (lastData["classes"][k] in mesh){
@@ -475,7 +475,7 @@ function raise(up){
     for (var k in lastData["instances"]){
 	
 	// check if it's enabled
-	if (document.getElementById(k + "_enabled").checked){
+	if (document.getElementById(k + "_I_enabled").checked){
 
 	    // check if it's present in the canvas
 	    if (k in mesh){
@@ -492,7 +492,7 @@ function raise(up){
 		for (dp in lastData["instances"][k]) {
 
 		    // check if raising the dp it's requested
-		    if (document.getElementById(dp + "_enabled").checked){
+		    if (document.getElementById(dp + "_D_enabled").checked){
 
 			// raise the sphere
 			key1 = k + "_" + dp
@@ -659,7 +659,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 
 	console.log(dp);
 	
-	if (document.getElementById(dp + "_enabled").checked){		
+	if (document.getElementById(dp + "_D_enabled").checked){		
 
 	    // delete old sphere and edge, if any
 	    key1 = subj + "_" + dp
@@ -862,5 +862,127 @@ function resetView(){
     }
     scene.dispose();
     
+    
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// filter using sparql
+// 
+///////////////////////////////////////////////////////////////////////
+function sparqlFilter(serverUri, multilayer){
+
+    // get the sparql query
+    sparqlQuery = document.getElementById("groundColor").value;
+
+    // build the request
+    req = {};
+    req["command"] = "sparql";
+    req["sparql"] = document.getElementById("sparql").value;    
+    req["queryURI"] = document.getElementById("queryUriInput").value;    
+    
+    // do the request to the tarsier server
+    $.ajax({
+	url: serverUri,
+	crossOrigin: true,
+	method: 'POST',
+	contentType: "application/json",
+	data: JSON.stringify(req),	
+	error: function(event){
+	    console.log("[DEBUG] Connection failed!");
+	    return false;
+	},
+	success: function(data){
+	    console.log("[DEBUG] Connection ok");
+	    console.log(data);
+
+	    // analyze results of the query
+	    console.log(data);
+	    raiseList(data);			    
+	}
+    });
+    
+}
+
+function raiseList(lst){
+
+    // read colors
+    getColors();
+
+    // get the list of variables
+    vList = []
+    for (v in list["head"]["variables"]){
+	vList.push(v);
+    }
+    
+    // // for all the classes selected to be raised
+    // // - check if they have been designed
+    // // - increment the 'y' coordinate
+    // for (var k in lastData["classes"]){
+	
+    // 	// check if it's enabled
+    // 	if (document.getElementById(lastData["classes"][k] + "_enabled").checked){
+
+    // 	    // check if it's present in the canvas
+    // 	    if (lastData["classes"][k] in mesh){
+    // 		sphere = mesh[lastData["classes"][k]];
+    // 		if (up){
+    // 		    sphere.position.y += planesGap;
+    // 		    drawPlane(sphere.position.y - meshPlaneGap)
+    // 		}
+    // 		else {
+    // 		    sphere.position.y -= planesGap;
+    // 		    drawPlane(sphere.position.y - meshPlaneGap)
+    // 		}
+    // 	    }
+    // 	}
+    // }
+    
+    // // get all the individuals
+    // for (var k in lastData["instances"]){
+	
+    // 	// check if it's enabled
+    // 	if (document.getElementById(k + "_enabled").checked){
+
+    // 	    // check if it's present in the canvas
+    // 	    if (k in mesh){
+    // 		// raise the sphere
+    // 		sphere = mesh[k];		
+    // 		if (up){
+    // 		    sphere.position.y += planesGap;
+    // 		}
+    // 		else {
+    // 		    sphere.position.y -= planesGap;
+    // 		}
+
+    // 		// cycle over data properties
+    // 		for (dp in lastData["instances"][k]) {
+
+    // 		    // check if raising the dp it's requested
+    // 		    if (document.getElementById(dp + "_enabled").checked){
+
+    // 			// raise the sphere
+    // 			key1 = k + "_" + dp
+    // 			key2 = key1 + "_EDGE"
+    // 			if (key1 in dpMesh){
+    // 			    dpsphere = dpMesh[key1]
+    // 			    if (up)
+    // 				dpsphere.position.y += planesGap;
+    // 			    else dpsphere.position.y -= planesGap;
+
+    // 			}					
+    // 		    }
+    // 		}
+    // 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, greenMat);
+    // 	    }
+    // 	}
+    // }
+
+    // // re-draw all the object properties
+    // console.log("[INFO] Re-drawing object properties");
+    // drawObjectProperties();
+
+    // // draw planes
+    // drawPlanes();
     
 }

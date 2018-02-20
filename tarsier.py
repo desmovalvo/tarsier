@@ -54,7 +54,6 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results["pvalues"] = {}
             f_results["pvalues"]["datatype"] = {}
             f_results["pvalues"]["object"] = {}
- 
             f_results["classes"] = []
 
             # get all the instances
@@ -107,9 +106,20 @@ class HTTPHandler(tornado.web.RequestHandler):
                 key = r["class"]["value"]
                 f_results["classes"].append(key)
 
-        # send the reply
-        self.write(f_results)
-        
+            # send the reply
+            self.write(f_results)
+    
+        elif msg["command"] == "sparql":
+
+            # debug
+            logging.info(self.request)
+            logging.info(msg)
+            
+            # do the query            
+            status, results = kp.query(msg["queryURI"], msg["sparql"])
+            logging.info(results)
+            self.write(results)
+            
 
 ########################################################################
 #
