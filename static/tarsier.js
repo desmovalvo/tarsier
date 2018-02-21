@@ -48,7 +48,9 @@ function sendRequest(serverUri){
 	data: JSON.stringify(req),	
 	error: function(event){
 	    console.log("[DEBUG] Connection failed!");
-	    alert("Connection failed! Is tarsier server running?");
+	    ab = document.getElementById("alertBox");
+	    ab.className="alert alert-danger";
+	    ab.innerHTML = "Connection failed!";
 	    return false;
 	},
 	success: function(data){
@@ -117,7 +119,10 @@ function sendRequest(serverUri){
 		newCell.innerHTML = iiName;
 	    }
 
-	    alert("Data retrieved! Ready to plot the graph!");
+	    ab = document.getElementById("alertBox");
+	    ab.className="alert alert-success";
+	    ab.innerHTML = "Ready to plot graph!";
+
 	}	
 	
     });
@@ -175,6 +180,10 @@ function loadJSAP(){
 	};
 	fr.readAsText(file);	
     }
+
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "JSAP Loaded!";
     
 };
 
@@ -242,7 +251,7 @@ function draw(){
 
 		// store the mesh in an Object using the URI as the key
 		mesh[lastData["classes"][k]] = sphere;
-		sphere.statement = "Class: " + lastData["classes"][k];
+		sphere.statement = "<b>Class:</b>&nbsp;" + lastData["classes"][k];
 		sphere.actionManager = new BABYLON.ActionManager(scene);
 		sphere.actionManager.registerAction(
 		    new BABYLON.ExecuteCodeAction(
@@ -250,7 +259,9 @@ function draw(){
 			function(evt){
 			    // Find the clicked mesh
 			    var meshClicked = evt.meshUnderPointer;
-			    alert(meshClicked.statement);
+			    ab = document.getElementById("alertBox");
+			    ab.className="alert alert-success";
+			    ab.innerHTML = meshClicked.statement;
 			}
 		    )
 		);
@@ -301,7 +312,7 @@ function draw(){
 		mesh[k] = sphere;
 
 		// bind an action
-		sphere.statement = "Individual: " + k;
+		sphere.statement = "<b>Individual:</b>&nbsp;" + k;
 		sphere.actionManager = new BABYLON.ActionManager(scene);
 		sphere.actionManager.registerAction(
 		    new BABYLON.ExecuteCodeAction(
@@ -309,7 +320,9 @@ function draw(){
 			function(evt){
 			    // Find the clicked mesh
 			    var meshClicked = evt.meshUnderPointer;
-			    alert(meshClicked.statement);
+			    ab = document.getElementById("alertBox");
+			    ab.className="alert alert-success";
+			    ab.innerHTML = meshClicked.statement;			    
 			}
 		    )
 		);
@@ -353,6 +366,12 @@ function draw(){
 
     // draw planes
     drawPlanes();
+
+    // confirm
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Graph drawn!";
+
 
 }
 
@@ -508,7 +527,7 @@ function drawObjectProperties(){
 		    // draw the curve
 		    var quadraticBezierVectors = BABYLON.Curve3.CreateQuadraticBezier(sta_point, mid_point, end_point, 15);
 		    lines = BABYLON.Mesh.CreateLines("qbezier", quadraticBezierVectors.getPoints(), scene);
-		    lines.statement = sphere.statement = "Property: " + lastData["properties"]["object"][op] + "\nSubject: " + subj + "\nObject: " + obj;
+		    lines.statement = sphere.statement = "<b>Subject:</b>&nbsp;" + subj + "<br><b>Property:</b>&nbsp;" + lastData["properties"]["object"][op] + "<br><b>Object:</b>&nbsp;" + obj;		    
 		    if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
 		    	lines.color = rdftypeMat.diffuseColor;
 		    } else {
@@ -522,7 +541,9 @@ function drawObjectProperties(){
 		    	    function(evt){
 		    		// Find the clicked mesh
 		    		var meshClicked = evt.meshUnderPointer;
-		    		alert(meshClicked.statement);
+				ab = document.getElementById("alertBox");
+				ab.className="alert alert-success";
+				ab.innerHTML = meshClicked.statement;
 		    	    }
 		    	)
 		    );
@@ -544,8 +565,7 @@ function drawObjectProperties(){
 		    	    1000
 		    	)
 		    );
-		
-		    
+				    
 		    // delete the old edge, if any
 		    // we temporarily use the mesh named as "subj_pred_obj_EDGE"
 		    k = subj + "_" + key  + "_" + obj
@@ -659,7 +679,8 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.y = parseInt(meshPlaneGap);
-	    sphere.statement = "Property: " + dp + "\nSubject: " + subj + "\nValue: " + lastData["instances"][subj][dp];
+	    sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["instances"][subj][dp];
+	    
 	    sphere.material = material;
 
 	    // attach an action to the sphere
@@ -670,7 +691,9 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 		    function(evt){
 			// Find the clicked mesh
 			var meshClicked = evt.meshUnderPointer;
-			alert("Property: " + meshClicked.statement);
+			ab = document.getElementById("alertBox");
+			ab.className="alert alert-success";
+			ab.innerHTML = meshClicked.statement;			
 		    }
 		)
 	    );
@@ -735,7 +758,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
 	    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
 	lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
-	lines.statement = "Property: " + dp + "\nSubject: " + subj + "\nValue: " + lastData["instances"][subj][dp];
+	lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["instances"][subj][dp];
 	lines.actionManager = new BABYLON.ActionManager(scene);
 	lines.actionManager.registerAction(
 	    new BABYLON.ExecuteCodeAction(
@@ -743,7 +766,9 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 		function(evt){
 		    // Find the clicked mesh
 		    var meshClicked = evt.meshUnderPointer;
-		    alert(meshClicked.statement);
+		    ab = document.getElementById("alertBox");
+		    ab.className="alert alert-success";
+		    ab.innerHTML = meshClicked.statement;
 		}
 	    )
 	);
