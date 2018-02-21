@@ -57,15 +57,15 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results["classes"] = []
 
             # get all the instances
+            logging.info("Getting instances")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("ALL_INSTANCES", {}))
             for r in results["results"]["bindings"]:
                 key = r["instance"]["value"]
-                # logging.info(r)
-                # logging.info(r["instance"])
                 if not key in f_results["instances"]:
                     f_results["instances"][key] = {}                
             
             # get all the data properties
+            logging.info("Getting data properties")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("DATA_PROPERTIES", {}))
             print(results)
             print(type(results))
@@ -74,6 +74,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                 f_results["properties"]["datatype"].append(key)
 
             # get all the data properties and their values
+            logging.info("Getting data properties values")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("DATA_PROPERTIES_AND_VALUES", {}))
             for r in results["results"]["bindings"]:
                 key = r["p"]["value"]
@@ -90,14 +91,15 @@ class HTTPHandler(tornado.web.RequestHandler):
                 f_results["instances"][newkey][key] = r["o"]["value"]
                 
             # get all the object properties
+            logging.info("Getting object properties")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("OBJECT_PROPERTIES", {}))
             for r in results["results"]["bindings"]:
                 key = r["p"]["value"]
                 f_results["properties"]["object"].append(key)
 
             # get all the object properties and their values
+            logging.info("Getting object properties values")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("OBJECT_PROPERTIES_AND_VALUES", {}))
-            logging.info(results)
             for r in results["results"]["bindings"]:
                 key = r["p"]["value"]
                 if not(key in f_results["pvalues"]["object"]):
@@ -105,11 +107,15 @@ class HTTPHandler(tornado.web.RequestHandler):
                 f_results["pvalues"]["object"][key].append({"s":r["s"]["value"], "o":r["o"]["value"]})
                                 
             # get the list of classes
+            logging.info("Getting classes")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("ALL_CLASSES", {}))
             for r in results["results"]["bindings"]:
                 key = r["class"]["value"]
                 f_results["classes"].append(key)
 
+            # done
+            logging.info("Done!")
+                
             # send the reply
             self.write(f_results)
     
