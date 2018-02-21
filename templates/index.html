@@ -162,10 +162,11 @@
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', true);">Select All</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', false);">Deselect All</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">Show/Hide</button>
 	      </div>	      
 	    </div>
-    	    <div class="card-body">
+    	    <div class="card-body font-weight-light collapse" id="collapseClasses">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
 		<table id="classesTable">
@@ -188,10 +189,11 @@
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', true);">Select All</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', false);">Deselect All</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseDps" aria-expanded="false" aria-controls="collapseDps">Show/Hide</button>
 	      </div>	      
 	    </div>
-    	    <div class="card-body">
+    	    <div class="card-body font-weight-light collapse" id="collapseDps">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
 		<table id="dataPropertiesTable">
@@ -214,10 +216,11 @@
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', true);">Select All</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseOps" aria-expanded="false" aria-controls="collapseOps">Show/Hide</button>
 	      </div>	      
 	    </div>
-    	    <div class="card-body">
+    	    <div class="card-body font-weight-light collapse" id="collapseOps">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
 		<table id="objectPropertiesTable">
@@ -237,10 +240,11 @@
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', true);">Select All</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('instances', false);">Deselect All</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseInstances" aria-expanded="false" aria-controls="collapseInstances">Show/Hide</button>
 	      </div>	      
 	    </div>
-    	    <div class="card-body font-weight-light">
+    	    <div class="card-body font-weight-light collapse" id="collapseInstances">
 	      <small>
 		<table id="instancesTable">
 		</table>
