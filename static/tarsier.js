@@ -1,7 +1,10 @@
 // global variables
-ws = null;
-scene = null;
 lastData = null;
+
+// babylon objects
+engine = null;
+camera = null;
+scene = null;
 
 // mesh
 mesh = {};
@@ -185,7 +188,7 @@ function draw(){
     };
     
     // load the 3D engine
-    var engine = new BABYLON.Engine(canvas, true);
+    engine = new BABYLON.Engine(canvas, true);
 
     // createScene function that creates and return the scene
     var createScene = function(){
@@ -204,7 +207,7 @@ function draw(){
 	meshPlaneGap = parseInt(document.getElementById("meshPlaneGap").value);
 	
 	// create a FreeCamera, and set its position (x,y,z)
-	var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2,  Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene)
+	camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2,  Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene)
 	
 	// target the camera to scene origin
 	camera.setTarget(BABYLON.Vector3.Zero());
@@ -977,6 +980,7 @@ function resetView(){
 // filter using sparql
 // 
 ///////////////////////////////////////////////////////////////////////
+
 function sparqlFilter(serverUri, multilayer){
 
     // get the sparql query
@@ -1005,91 +1009,20 @@ function sparqlFilter(serverUri, multilayer){
 
 	    // analyze results of the query
 	    console.log(data);
-	    raiseList(data);			    
 	}
     });
     
 }
 
-function raiseList(lst){
+///////////////////////////////////////////////////////////////////////
+//
+// screenshot
+// 
+///////////////////////////////////////////////////////////////////////
+function screenshot(){
 
-    // read colors
-    getColors();
-
-    // get the list of variables
-    vList = []
-    for (v in list["head"]["variables"]){
-	vList.push(v);
-    }
-    
-    // // for all the classes selected to be raised
-    // // - check if they have been designed
-    // // - increment the 'y' coordinate
-    // for (var k in lastData["classes"]){
-	
-    // 	// check if it's enabled
-    // 	if (document.getElementById(lastData["classes"][k] + "_enabled").checked){
-
-    // 	    // check if it's present in the canvas
-    // 	    if (lastData["classes"][k] in mesh){
-    // 		sphere = mesh[lastData["classes"][k]];
-    // 		if (up){
-    // 		    sphere.position.y += planesGap;
-    // 		    drawPlane(sphere.position.y - meshPlaneGap)
-    // 		}
-    // 		else {
-    // 		    sphere.position.y -= planesGap;
-    // 		    drawPlane(sphere.position.y - meshPlaneGap)
-    // 		}
-    // 	    }
-    // 	}
-    // }
-    
-    // // get all the individuals
-    // for (var k in lastData["instances"]){
-	
-    // 	// check if it's enabled
-    // 	if (document.getElementById(k + "_enabled").checked){
-
-    // 	    // check if it's present in the canvas
-    // 	    if (k in mesh){
-    // 		// raise the sphere
-    // 		sphere = mesh[k];		
-    // 		if (up){
-    // 		    sphere.position.y += planesGap;
-    // 		}
-    // 		else {
-    // 		    sphere.position.y -= planesGap;
-    // 		}
-
-    // 		// cycle over data properties
-    // 		for (dp in lastData["instances"][k]) {
-
-    // 		    // check if raising the dp it's requested
-    // 		    if (document.getElementById(dp + "_enabled").checked){
-
-    // 			// raise the sphere
-    // 			key1 = k + "_" + dp
-    // 			key2 = key1 + "_EDGE"
-    // 			if (key1 in dpMesh){
-    // 			    dpsphere = dpMesh[key1]
-    // 			    if (up)
-    // 				dpsphere.position.y += planesGap;
-    // 			    else dpsphere.position.y -= planesGap;
-
-    // 			}					
-    // 		    }
-    // 		}
-    // 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
-    // 	    }
-    // 	}
-    // }
-
-    // // re-draw all the object properties
-    // console.log("[INFO] Re-drawing object properties");
-    // drawObjectProperties();
-
-    // // draw planes
-    // drawPlanes();
+    console.log("[INFO] screenshot() invoked;");
+    canvas = document.getElementById('renderCanvas');    
+    BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera,  {width: canvas.width, height: canvas.height});
     
 }
