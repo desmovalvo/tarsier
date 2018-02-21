@@ -268,10 +268,6 @@ function draw(){
 			    1000
 			)
 		    );
-		
-		// draw the label
-		var zChar = makeTextPlane(lastData["classes"][k], "white", 5 / 10);
-		zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 	    }
 	}
 	
@@ -352,7 +348,7 @@ function draw(){
     });
 
     // draw planes
-    drawPlanes(3 * Math.max(Object.keys(lastData["instances"]).length, Object.keys(lastData["classes"]).length));
+    drawPlanes();
 
 }
 
@@ -369,18 +365,6 @@ function hexToRGB(hexColor){
     b = parseInt(cutHex(hexColor).substring(4,6),16).toFixed(2)/255;
     return [r,g,b]
 }
-
-function makeTextPlane(text, color) {
-    var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 350, scene, true);
-    dynamicTexture.hasAlpha = true;
-    dynamicTexture.drawText(text, 5, 30, "bold 10px Arial", color , "transparent", true);
-    var plane = BABYLON.Mesh.CreatePlane("TextPlane", 5, scene, true);
-    plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
-    plane.material.backFaceCulling = false;
-    plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
-    plane.material.diffuseTexture = dynamicTexture;
-    return plane;
-};
 
 function selectAll(what, select){
 
@@ -598,6 +582,9 @@ function resetPlanes(){
     
     // redraw object properties
     drawObjectProperties();
+
+    // redraw planes
+    drawPlanes();
     
 }
 
@@ -702,10 +689,6 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 		    )
 		);
 	    
-	    // draw the label
-	    var zChar = makeTextPlane(subj_dict[dp], "white", 5 / 10);
-	    zChar.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
-	    
 	    // store the sphere (as a key we use subj+prop)
 	    dpMesh[key1] = sphere;
 
@@ -715,7 +698,6 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	}
     }
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -836,7 +818,7 @@ function getColors(){
 // get planes
 //
 ///////////////////////////////////////////////////////////////////////
-function drawPlanes(size){
+function drawPlanes(){
 
     // log
     console.log("[INFO] drawPlanes() invoked");
@@ -847,6 +829,9 @@ function drawPlanes(size){
 	delete p;
     };
     planes = {};
+
+    // determine plane size
+    size = 3 * Math.max(Object.keys(lastData["instances"]).length, Object.keys(lastData["classes"]).length);
     
     // iterate over meshes
     for (m in mesh){
@@ -937,6 +922,8 @@ function sparqlFilter(serverUri, multilayer){
 
 	    // analyze results of the query
 	    console.log(data);
+	    raiseQueryResults(data, multilayer);
+	    
 	}
     });
     
@@ -952,5 +939,88 @@ function screenshot(){
     console.log("[INFO] screenshot() invoked;");
     canvas = document.getElementById('renderCanvas');    
     BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera,  {width: canvas.width, height: canvas.height});
+    
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// raiseNodes
+// 
+///////////////////////////////////////////////////////////////////////
+function raiseQueryResults(results, multilayer){
+
+    // debug
+    console.log("[INFO] raiseNodes() invoked;");
+
+    // read settings
+    planesGap = parseInt(document.getElementById("planePlaneGap").value);
+    
+    // memory of raised objects
+    raised = []
+    
+    // get the list of variables
+    variables = results["head"]["vars"]
+
+    // iterate over the results
+    for (r in results["results"]["bindings"]){
+
+	// iterate over the variables
+	currentBinding = results["results"]["bindings"][r]
+	for (v in variables){
+	    if (variables[v] in currentBinding){
+
+		// check if it is an URI
+		if (currentBinding[variables[v]]["type"] === "uri"){
+
+		    // retrieve the mesh -- check between both classes and instances
+		    k = currentBinding[variables[v]]["value"]
+		    if (k in mesh){		    
+			
+			if (! (raised.includes(k))){
+			    
+			    console.log("Raising " + k + " to layer " + v);
+			    console.log(raised);
+			    m = mesh[k]
+			    
+			    // raise the mesh (check if multilayer)
+			    new_y = null;
+			    console.log(multilayer);
+			    if (multilayer){
+				m.position.y += planesGap * (parseInt(v)+1);
+				new_y = m.position.y
+			    } else {
+				m.position.y += planesGap;
+				new_y = m.position.y
+			    }
+
+			    // iterate over data properties
+			    for (dp in lastData["instances"][k]) {
+
+				// raise the sphere
+				key1 = k + "_" + dp
+				console.log(key1)
+				// key2 = key1 + "_EDGE"
+				if (key1 in dpMesh){
+				    dpsphere = dpMesh[key1];
+				    dpsphere.position.y = new_y;
+				}					
+
+			    }
+			    drawDataPropertiesEdges(k, lastData["instances"][k], m, dpMat);
+
+			    // save this!
+			    raised.push(currentBinding[variables[v]]["value"]);
+			}			
+		    }		    		    
+		}
+	    }
+	}	
+    }
+
+    // redraw object properties
+    drawObjectProperties();
+
+    // redraw planes
+    drawPlanes();
     
 }
