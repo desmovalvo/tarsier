@@ -115,7 +115,10 @@ function sendRequest(serverUri){
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = iiName;
 	    }
-	}
+
+	    alert("Data retrieved! Ready to plot the graph!");
+	}	
+	
     });
     
 }
@@ -1023,4 +1026,16 @@ function raiseQueryResults(results, multilayer){
     // redraw planes
     drawPlanes();
     
+}
+
+function help(t){
+
+    // TODO: add other help messages here.
+    
+    switch(t){
+    case "filter":
+	alert("Input a SPARQL query. Results will be put on a new layer (if you click on Filter).\nThe multi-layer function will draw one layer for every new variable.");
+	break;
+    }
+        
 }

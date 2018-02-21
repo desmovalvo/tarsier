@@ -267,8 +267,9 @@
     	    <div class="card-body font-weight-light">
 	      <textarea class="form-control" id="sparql" rows="10"></textarea>
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"><i class="fas fa-window-minimize"></i></i>&nbsp;Filter</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"><i class="fas fa-bars"></i></i>&nbsp;Filter (multi-layer)</button>		
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"></i><i class="fas fa-window-minimize"></i>&nbsp;Filter</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"></i><i class="fas fa-bars"></i>&nbsp;Filter (multi-layer)</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:help('filter');"><i class="fas fa-life-ring"></i>&nbsp;Help</button>
 	      </div>	      	      
     	    </div>
     	    <div class="card-footer">
