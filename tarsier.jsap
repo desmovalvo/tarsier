@@ -23,26 +23,20 @@
     },
     "queries": {
         "ALL_CLASSES": {
-            "sparql": "SELECT DISTINCT ?class WHERE {{ ?s rdf:type ?class } UNION { ?class rdf:type owl:Class } UNION { ?class rdf:type rdfs:Class }} LIMIT 150"
+            "sparql": "SELECT DISTINCT ?class WHERE {{ ?s rdf:type ?class } UNION { ?class rdf:type owl:Class } UNION { ?class rdf:type rdfs:Class }}"
         },
-	"ALL_PROPERTIES": {
-	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o }  LIMIT 150"
-	},
 	"DATA_PROPERTIES": {
-	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER isLiteral(?o) } LIMIT 150"
+	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER isLiteral(?o) }"
 	},
 	"DATA_PROPERTIES_AND_VALUES": {
-	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER isLiteral(?o) } LIMIT 150"
+	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER isLiteral(?o) }"
 	},	
 	"OBJECT_PROPERTIES": {
-	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) } LIMIT 150"
+	    "sparql": "SELECT DISTINCT ?p WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
 	},
 	"OBJECT_PROPERTIES_AND_VALUES": {
-	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) } LIMIT 150"
+	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
 	},	
-	"ALL_NODES":{
-	    "sparql": "SELECT DISTINCT ?node WHERE {{ ?node ?p ?o } UNION { ?s ?p ?node }} LIMIT 150"
-	},
 	"ALL_INSTANCES":{
 	    "sparql": "SELECT DISTINCT ?instance WHERE { ?instance rdf:type ?class . FILTER (isIRI(?instance) || isBlank(?instance)) } LIMIT 150"
 	}	
@@ -57,10 +51,10 @@
 	    "rdftype":"#FF0000"
 	},
 	"values":{
-	    "planesGap":10,
+	    "planesGap":20,
 	    "meshPlaneGap":1,
 	    "LOD":16,
-	    "bump":0
+	    "bump":5
 	}
     }
 }

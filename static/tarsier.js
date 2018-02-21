@@ -12,6 +12,7 @@ dpMesh = {};
 dpEdgeMesh = {};
 opEdgeMesh = {};
 planes = {};
+bez = []
 
 // other settings
 meshPlaneGap = 1;
@@ -377,90 +378,6 @@ function makeTextPlane(text, color) {
     return plane;
 };
 
-function getCurvedEdge(point1, point2, bump, steps){
-
-    // log
-    console.log("[INFO] getCurvedEdge() invoked");
-    
-    // TODO -- optimize this code!
-    
-    // initialize the array of points
-    points = []
-    
-    // calculate difference on x, y and z
-    x_diff = Math.abs(point1.position.x - point2.position.x)
-    y_diff = Math.abs(point1.position.y - point2.position.y)
-    z_diff = Math.abs(point1.position.z - point2.position.z)
-    
-    // divide the three differences by the number of steps
-    x_step = x_diff / (steps+2)
-    y_step = y_diff / (steps+2)
-    z_step = z_diff / (steps+2)
-    
-    // iteratively increment x1 with the result of the division, then y1, then z1
-    new_point_x = point1.position.x
-    new_point_y = point1.position.y
-    new_point_z = point1.position.z
-    points.push(new BABYLON.Vector3(new_point_x, new_point_y, new_point_z));
-
-    // calculate the bump
-    // if even number:
-    if (bump > 0){
-	if (steps%2 === 0){
-	    bump_vector = math.range(0, (steps+2)/2-1, 1, true)._data
-	    bump_vector = bump_vector.concat(math.range((steps+2)/2-1, 0, -1, true)._data)
-	} else { // if odd number:
-	    bump_vector = math.range(0, Math.floor(steps+2)/2, 1, false)._data
-	    bump_vector = bump_vector.concat(math.range(Math.floor(steps+2)/2, 0, -1, true)._data)
-	}
-	// TODO -- "normalize" bump
-    }
-    else {
-	bump_vector = math.zeros(2 + steps);
-    }
-    
-    // we use steps+2 because we always have the start and end of the segment
-    // and the steps are only the halfway points.
-    for (var i=0; i<steps+2; i++){
-
-	// update x
-	if (point1.position.x < point2.position.x){
-	    new_point_x += x_step
-	} else {
-	    new_point_x -= x_step
-	}
-
-	// update y -- consider the bump		    	
-	if (point1.position.y < point2.position.y){	    
-	    new_point_y +=  y_step 
-	} else {	    
-	    new_point_y -=  y_step
-	}
-
-	// update z
-	if (point1.position.z < point2.position.z){	    
-	    new_point_z += z_step
-	} else {
-	    new_point_z -= z_step
-	}
-	points.push(new BABYLON.Vector3(new_point_x, new_point_y, new_point_z));	
-    }
-
-    // add bump
-    if (bump > 0){
-	for (var i=0; i<steps+2; i++){
-    	    if (point1.position.y < point2.position.y){
-    		points[i]["y"] -= bump_vector[i] //*0.5
-    	    } else {
-    		points[i]["y"] += bump_vector[i] //*0.5
-    	    }
-	}
-    }
-    
-    return points;
-
-}
-
 function selectAll(what, select){
 
     switch(what){
@@ -563,8 +480,7 @@ function raise(up){
     // draw planes
     drawPlanes();
     
-}
-
+}    
 
 
 function drawObjectProperties(){   
@@ -591,42 +507,50 @@ function drawObjectProperties(){
 		// determine if both subject and object are both drawn
 		if (subj in mesh && obj in mesh){
 
-		    // draw the edge
-		    var lines = BABYLON.Mesh.CreateLines(op, getCurvedEdge(mesh[subj], mesh[obj], bump, 10), scene)
+		    // get the points
+		    sta_point = mesh[subj].position.clone();
+		    end_point = mesh[obj].position.clone();
+		    mid_point = sta_point.clone(); //  mesh[subj].position.clone().add(mesh[obj].position).divide(new BABYLON.Vector3(2,2,2));
+		    mid_point.y += bump;
+
+		    // draw the curve
+		    var quadraticBezierVectors = BABYLON.Curve3.CreateQuadraticBezier(sta_point, mid_point, end_point, 15);
+		    lines = BABYLON.Mesh.CreateLines("qbezier", quadraticBezierVectors.getPoints(), scene);
 		    lines.statement = sphere.statement = "Property: " + lastData["properties"]["object"][op] + "\nSubject: " + subj + "\nObject: " + obj;
 		    if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
-			lines.color = new BABYLON.Color3(rgbRdftypeColor[0], rgbRdftypeColor[1], rgbRdftypeColor[2]);
+		    	lines.color = rdftypeMat.diffuseColor;
 		    } else {
-			lines.color = new BABYLON.Color3(rgbOpColor[0], rgbOpColor[1], rgbOpColor[2]);
+		    	lines.color = opMat.diffuseColor;
 		    }
+
 		    lines.actionManager = new BABYLON.ActionManager(scene);
 		    lines.actionManager.registerAction(
-			new BABYLON.ExecuteCodeAction(
-			    BABYLON.ActionManager.OnLeftPickTrigger,
-			    function(evt){
-				// Find the clicked mesh
-				var meshClicked = evt.meshUnderPointer;
-				alert(meshClicked.statement);
-			    }
-			)
+		    	new BABYLON.ExecuteCodeAction(
+		    	    BABYLON.ActionManager.OnLeftPickTrigger,
+		    	    function(evt){
+		    		// Find the clicked mesh
+		    		var meshClicked = evt.meshUnderPointer;
+		    		alert(meshClicked.statement);
+		    	    }
+		    	)
 		    );
 		    lines.actionManager
 		    .registerAction(
-			new BABYLON.InterpolateValueAction(
-			    BABYLON.ActionManager.OnRightPickTrigger,
-			    lines,
-			    'alpha',
-			    0.3,
-			    1000
-			)
+		    	new BABYLON.InterpolateValueAction(
+		    	    BABYLON.ActionManager.OnRightPickTrigger,
+		    	    lines,
+		    	    'alpha',
+		    	    0.3,
+		    	    1000
+		    	)
 		    ).then(
-			new BABYLON.InterpolateValueAction(
-			    BABYLON.ActionManager.OnRightPickTrigger,
-			    lines,
-			    'alpha',
-			    1.0,
-			    1000
-			)
+		    	new BABYLON.InterpolateValueAction(
+		    	    BABYLON.ActionManager.OnRightPickTrigger,
+		    	    lines,
+		    	    'alpha',
+		    	    1.0,
+		    	    1000
+		    	)
 		    );
 		
 		    
@@ -636,7 +560,7 @@ function drawObjectProperties(){
 		    
 		    // store the edge
 		    if (k in opEdgeMesh){
-			opEdgeMesh[k].dispose();
+		    	opEdgeMesh[k].dispose();
 		    }
 		    opEdgeMesh[k] = lines;
 		}
