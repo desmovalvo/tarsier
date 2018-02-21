@@ -224,14 +224,16 @@ function draw(){
 	
 	// draw classes
 	n5 = Object.keys(lastData["classes"]).length;
+	console.log(n5);
+	console.log(typeof(n5));
 	node_angle = 360 / n5;
 	for (var k in lastData["classes"]){
 	    // check if it's enabled
 	    if (document.getElementById(lastData["classes"][k] + "_C_enabled").checked){	
 		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], lod, 1, scene);
-		sphere.position.z = 5 * Math.sin(k*node_angle / 180*Math.PI);
+		sphere.position.z = n5 * Math.sin(k*node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
-		sphere.position.x = 5 * Math.cos(k*node_angle / 180*Math.PI);
+		sphere.position.x = n5 * Math.cos(k*node_angle / 180*Math.PI);
 		sphere.material = classMat;
 
 		// store the mesh in an Object using the URI as the key
@@ -285,11 +287,13 @@ function draw(){
 
 		// TODO -- check if the individual has been already designed as a class
 		// ex.: wot:Thing can be a class, but also an individual of the class owl:Class
-		
+
+		// TODO -- note: in this way we may experience problems if the number of
+		// classes is equal to the number of individuals!
 		var sphere = BABYLON.Mesh.CreateSphere(k, lod, 1, scene);
 		c += 1;
-		sphere.position.z = 15 * Math.sin(c * node_angle / 180*Math.PI);
-		sphere.position.x = 15 * Math.cos(c * node_angle / 180*Math.PI);
+		sphere.position.z = nsize * Math.sin(c * node_angle / 180*Math.PI);
+		sphere.position.x = nsize * Math.cos(c * node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
 		sphere.material = indivMat;
 		
@@ -348,7 +352,7 @@ function draw(){
     });
 
     // draw planes
-    drawPlanes();
+    drawPlanes(3 * Math.max(Object.keys(lastData["instances"]).length, Object.keys(lastData["classes"]).length));
 
 }
 
@@ -832,7 +836,7 @@ function getColors(){
 // get planes
 //
 ///////////////////////////////////////////////////////////////////////
-function drawPlanes(){
+function drawPlanes(size){
 
     // log
     console.log("[INFO] drawPlanes() invoked");
@@ -854,7 +858,7 @@ function drawPlanes(){
 	if (!(y in planes)){
 
 	    // 3 - if needed, draw a plane
-	    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 50, height: 50, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
+	    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: size, height: size, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
 	    myPlane.material = groundMat;	
 	    var axis = new BABYLON.Vector3(1, 0, 0);
 	    var angle = Math.PI / 2;
