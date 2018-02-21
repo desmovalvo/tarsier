@@ -48,6 +48,7 @@ function sendRequest(serverUri){
 	data: JSON.stringify(req),	
 	error: function(event){
 	    console.log("[DEBUG] Connection failed!");
+	    alert("Connection failed! Is tarsier server running?");
 	    return false;
 	},
 	success: function(data){
@@ -1028,6 +1029,12 @@ function raiseQueryResults(results, multilayer){
     
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// help
+// 
+///////////////////////////////////////////////////////////////////////
+
 function help(t){
 
     // TODO: add other help messages here.
@@ -1038,4 +1045,38 @@ function help(t){
 	break;
     }
         
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// move camera
+// 
+///////////////////////////////////////////////////////////////////////
+
+function moveCamera(direction, step){
+
+    console.log("[INFO] moveCamera() invoked!");
+
+    // get the old position
+    p = camera.position.clone();
+    
+    switch(direction){
+	
+    case "up":
+	p.y += step;
+	break;    
+    case "down":
+	p.y -= step;
+	break;
+    case "left":
+	p.x -= step;
+	break;
+    case "right":
+	p.x += step;
+	break;
+    }
+
+    // move the camera
+    camera.setPosition(p);
+    
 }

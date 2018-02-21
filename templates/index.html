@@ -145,10 +145,22 @@
 	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:screenshot();"><i class="fas fa-image"></i>&nbsp;Save PNG</button>	    
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:screenshot();"><i class="fas fa-image"></i>&nbsp;Save PNG</button>
+	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:debugMode();"><i class="fas fa-image"></i>&nbsp;Debug Mode</button>
 	  <div class="card" id="renderCard">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
 	  </div>
+	  Move Camera:
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('up', 5);"><i class="fas fa-angle-up"></i></button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('left', 5);"><i class="fas fa-angle-left"></i></button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('right', 5);"><i class="fas fa-angle-right"></i></button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('down', 5);"><i class="fas fa-angle-down"></i></button>
+	 
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('up', 20);"><i class="fas fa-angle-double-up"></i></button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('left', 20);"><i class="fas fa-angle-double-left"></i></button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('right', 20);"><i class="fas fa-angle-double-right"></i></button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:moveCamera('down', 20);"><i class="fas fa-angle-double-down"></i></button>
+	  
 	</div>
       </div>
 
