@@ -33,12 +33,15 @@ dpMat = null;
 opMat = null;
 rdftypeMat = null;
 
-function sendRequest(serverUri){
+function sendRequest(serverUri, getAll){
 
     // build the request
     req = {};
     req["command"] = "info";
-    req["queryURI"] = document.getElementById("queryUriInput").value;    
+    req["queryURI"] = document.getElementById("queryUriInput").value;
+    if (!(getAll)){
+	req["sparql"] = document.getElementById("sparql").value;
+    }
     
     $.ajax({
 	url: serverUri,
@@ -123,10 +126,8 @@ function sendRequest(serverUri){
 	    ab.className="alert alert-success";
 	    ab.innerHTML = "Ready to plot graph!";
 
-	}	
-	
-    });
-    
+	}
+    });    
 }
 
 function loadJSAP(){
@@ -213,7 +214,7 @@ function draw(){
 
 	// get colors
 	getColors();
-   
+	
 	// read other settings
 	lod = parseInt(document.getElementById("lod").value);
 	bump = parseInt(document.getElementById("bump").value);
@@ -231,7 +232,7 @@ function draw(){
 	
 	// create a basic light, aiming 0,1,0 - meaning, to the sky
 	var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
-	   
+	
 	// create a plane
 	// drawPlane(0);
 	
@@ -351,7 +352,7 @@ function draw(){
 	}
 
 	drawObjectProperties();
-		
+	
 	// return the created scene
 	return scene;
     }
@@ -413,7 +414,7 @@ function selectAll(what, select){
 	}
 	break;
     }
-        
+    
 }
 
 function raise(up){
@@ -505,49 +506,49 @@ function drawObjectProperties(){
 	// // check if it's enabled
 	// if (document.getElementById(lastData["properties"]["object"][op] + "_enabled").checked){
 	// TODO -- find a way to determine when op must be hidden or not
+	
+	key = lastData["properties"]["object"][op]
+	
+	// iterate over the statements with that property
+	for (statement in lastData["pvalues"]["object"][key]){
 	    
-	    key = lastData["properties"]["object"][op]
-	  	    
-	    // iterate over the statements with that property
-	    for (statement in lastData["pvalues"]["object"][key]){
-		
-		// get the subject and object
-		subj = lastData["pvalues"]["object"][key][statement]["s"]
-		obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
+	    // get the subject and object
+	    subj = lastData["pvalues"]["object"][key][statement]["s"]
+	    obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
 
-		// determine if both subject and object are both drawn
-		if (subj in mesh && obj in mesh){
+	    // determine if both subject and object are both drawn
+	    if (subj in mesh && obj in mesh){
 
-		    // get the points
-		    sta_point = mesh[subj].position.clone();
-		    end_point = mesh[obj].position.clone();
-		    mid_point = sta_point.clone(); //  mesh[subj].position.clone().add(mesh[obj].position).divide(new BABYLON.Vector3(2,2,2));
-		    mid_point.y += bump;
+		// get the points
+		sta_point = mesh[subj].position.clone();
+		end_point = mesh[obj].position.clone();
+		mid_point = sta_point.clone(); //  mesh[subj].position.clone().add(mesh[obj].position).divide(new BABYLON.Vector3(2,2,2));
+		mid_point.y += bump;
 
-		    // draw the curve
-		    var quadraticBezierVectors = BABYLON.Curve3.CreateQuadraticBezier(sta_point, mid_point, end_point, 15);
-		    lines = BABYLON.Mesh.CreateLines("qbezier", quadraticBezierVectors.getPoints(), scene);
-		    lines.statement = sphere.statement = "<b>Subject:</b>&nbsp;" + subj + "<br><b>Property:</b>&nbsp;" + lastData["properties"]["object"][op] + "<br><b>Object:</b>&nbsp;" + obj;		    
-		    if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
-		    	lines.color = rdftypeMat.diffuseColor;
-		    } else {
-		    	lines.color = opMat.diffuseColor;
-		    }
+		// draw the curve
+		var quadraticBezierVectors = BABYLON.Curve3.CreateQuadraticBezier(sta_point, mid_point, end_point, 15);
+		lines = BABYLON.Mesh.CreateLines("qbezier", quadraticBezierVectors.getPoints(), scene);
+		lines.statement = sphere.statement = "<b>Subject:</b>&nbsp;" + subj + "<br><b>Property:</b>&nbsp;" + lastData["properties"]["object"][op] + "<br><b>Object:</b>&nbsp;" + obj;		    
+		if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
+		    lines.color = rdftypeMat.diffuseColor;
+		} else {
+		    lines.color = opMat.diffuseColor;
+		}
 
-		    lines.actionManager = new BABYLON.ActionManager(scene);
-		    lines.actionManager.registerAction(
-		    	new BABYLON.ExecuteCodeAction(
-		    	    BABYLON.ActionManager.OnLeftPickTrigger,
-		    	    function(evt){
-		    		// Find the clicked mesh
-		    		var meshClicked = evt.meshUnderPointer;
-				ab = document.getElementById("alertBox");
-				ab.className="alert alert-success";
-				ab.innerHTML = meshClicked.statement;
-		    	    }
-		    	)
-		    );
-		    lines.actionManager
+		lines.actionManager = new BABYLON.ActionManager(scene);
+		lines.actionManager.registerAction(
+		    new BABYLON.ExecuteCodeAction(
+		    	BABYLON.ActionManager.OnLeftPickTrigger,
+		    	function(evt){
+		    	    // Find the clicked mesh
+		    	    var meshClicked = evt.meshUnderPointer;
+			    ab = document.getElementById("alertBox");
+			    ab.className="alert alert-success";
+			    ab.innerHTML = meshClicked.statement;
+		    	}
+		    )
+		);
+		lines.actionManager
 		    .registerAction(
 		    	new BABYLON.InterpolateValueAction(
 		    	    BABYLON.ActionManager.OnRightPickTrigger,
@@ -565,18 +566,18 @@ function drawObjectProperties(){
 		    	    1000
 		    	)
 		    );
-				    
-		    // delete the old edge, if any
-		    // we temporarily use the mesh named as "subj_pred_obj_EDGE"
-		    k = subj + "_" + key  + "_" + obj
-		    
-		    // store the edge
-		    if (k in opEdgeMesh){
-		    	opEdgeMesh[k].dispose();
-		    }
-		    opEdgeMesh[k] = lines;
-		}
 		
+		// delete the old edge, if any
+		// we temporarily use the mesh named as "subj_pred_obj_EDGE"
+		k = subj + "_" + key  + "_" + obj
+		
+		// store the edge
+		if (k in opEdgeMesh){
+		    opEdgeMesh[k].dispose();
+		}
+		opEdgeMesh[k] = lines;
+	    }
+	    
 	    // }
 	}
     }   
@@ -752,7 +753,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	if (key2 in dpEdgeMesh){
 	    dpEdgeMesh[key2].dispose();
 	}
-	    
+	
 	// draw the edge
 	var lines = BABYLON.Mesh.CreateLines("lines", [
 	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
@@ -790,7 +791,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 		    1000
 		)
 	    );
-		
+	
 
 	
 	// store the edge (as a key we use subj+prop_EDGE)
@@ -1069,7 +1070,7 @@ function help(t){
 	alert("Input a SPARQL query. Results will be put on a new layer (if you click on Filter).\nThe multi-layer function will draw one layer for every new variable.");
 	break;
     }
-        
+    
 }
 
 ///////////////////////////////////////////////////////////////////////

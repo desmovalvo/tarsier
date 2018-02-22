@@ -15,6 +15,7 @@ import tornado.ioloop
 from sepy.JSAPObject import *
 from sepy.LowLevelKP import *
 from tornado.httpserver import *
+from rdflib import Graph, URIRef, BNode, Literal
 from tornado.options import define, options, parse_command_line
 
 # local reqs
@@ -41,10 +42,36 @@ class HTTPHandler(tornado.web.RequestHandler):
         # parse the request
         msg = json.loads(self.request.body)
         logging.info("Received request: %s" % msg["command"])
+
+        # generate a session UUID
+        sessionID = str(uuid.uuid4())
+
+        # create a graph
+        graphs[sessionID] = Graph()
         
         # do the stuff
-        if msg["command"] == "info":        
+        if msg["command"] == "info":
 
+            # 1 - do the construct                
+            if "sparql" in msg:                                
+                status, results = kp.query(msg["queryURI"], msg["sparql"])
+                logging.info(results)
+            else:
+                status, results = kp.query(msg["queryURI"], "SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
+                logging.info(results)
+                
+            # 2 - put data into a local graph
+            for r in results["results"]["bindings"]:
+                
+                # 2.1 - build the triple
+                s = URIRef(r["subject"]["value"])
+                p = URIRef(r["predicate"]["value"])                    
+                if r["object"]["type"] == "uri":
+                    o = URIRef(r["object"]["value"])
+                else:
+                    o = Literal(r["object"]["value"])
+                graphs[sessionID].add((s,p,o))
+                            
             # initialize results
             f_results = {}
             f_results["instances"] = {}
@@ -76,6 +103,14 @@ class HTTPHandler(tornado.web.RequestHandler):
             # get all the data properties and their values
             logging.info("Getting data properties values")
             status, results = kp.query(msg["queryURI"], jsap.getQuery("DATA_PROPERTIES_AND_VALUES", {}))
+            results2 = graphs[sessionID].query(jsap.getQuery("DATA_PROPERTIES_AND_VALUES", {}))
+
+            logging.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") 
+            logging.info(results2)
+            for row in results2:
+                logging.info(row)
+            logging.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") 
+            
             for r in results["results"]["bindings"]:
                 key = r["p"]["value"]
                 if not(key in f_results["pvalues"]["datatype"]):
@@ -177,6 +212,7 @@ if __name__ == '__main__':
     # init
     httpServerUri = None
     jsap = None
+    graphs = {}
     
     # logging configuration
     logger = logging.getLogger("Tarsier")

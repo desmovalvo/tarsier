@@ -6,13 +6,12 @@
 
     <link rel="stylesheet" href="static/fontawesome-free-5.0.6/web-fonts-with-css/css/fontawesome-all.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <script src="static/jquery-3.2.1.min.js"></script>
+    <script src="static/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="static/bootstrap-4.0.0-beta.2/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/babylon.custom.js"></script>
     <script type="text/javascript" src="static/tarsier.js"></script>
     <script type="text/javascript" src="static/math.min.js"></script>
-    <script type="text/javascript" src="static/SEPA_kpi.js"></script>
     <style>
       #renderCanvas {
       width   : 100%;
@@ -139,7 +138,8 @@
 
 	<!-- COLUMN 2-->
 	<div class="col-9 p-0 m-2">
-	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}');"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>		
+	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', true);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', false);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data from SPARQL</button>		
 	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();"><i class="fas fa-pencil-alt"></i>&nbsp;Plot</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);"><i class="fas fa-arrow-up"></i>&nbsp;Raise</button>
 	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
