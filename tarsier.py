@@ -57,19 +57,19 @@ class HTTPHandler(tornado.web.RequestHandler):
                 status, results = kp.query(msg["queryURI"], msg["sparql"])
                 logging.info(results)
             else:
-                status, results = kp.query(msg["queryURI"], "SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
+                status, results = kp.query(msg["queryURI"], "SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }")
                 logging.info(results)
                 
             # 2 - put data into a local graph
             for r in results["results"]["bindings"]:
                 
                 # 2.1 - build the triple
-                s = URIRef(r["s"]["value"])
-                p = URIRef(r["p"]["value"])                    
-                if r["o"]["type"] == "uri":
-                    o = URIRef(r["o"]["value"])
+                s = URIRef(r["subject"]["value"])
+                p = URIRef(r["predicate"]["value"])                    
+                if r["object"]["type"] == "uri":
+                    o = URIRef(r["object"]["value"])
                 else:
-                    o = Literal(r["o"]["value"])
+                    o = Literal(r["object"]["value"])
                 logging.info("Adding triple %s, %s, %s" % (s,p,o))
                 graphs[sessionID].add((s,p,o))
                             
@@ -167,17 +167,18 @@ class HTTPHandler(tornado.web.RequestHandler):
             for row in results:
                 d = {}
                 for v in res_dict["head"]["vars"]:
-                    logging.info("ROW")
-                    logging.info(v)
                     try:
-                        logging.info("V")
                         d[v] = {}
-                        d[v]["type"] = "uri"
-                        d[v]["value"] = row[v]
-                        logging.info(d)
+                        if isinstance(row[v], URIRef):
+                            d[v]["type"] = "uri"
+                        elif isinstance(row[v], BNode):
+                            d[v]["type"] = "bnode"
+                        else:
+                            d[v]["type"] = "literal"
+                        d[v]["value"] = str(row[v])
                     except KeyError:
                         pass
-                    res_dict["results"]["bindings"].append(d)  
+                    res_dict["results"]["bindings"].append(d)
             self.write(res_dict)
             
 
