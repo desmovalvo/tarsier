@@ -61,15 +61,31 @@ class HTTPHandler(tornado.web.RequestHandler):
                 logging.info(results)
                 
             # 2 - put data into a local graph
+            logging.info(results)
             for r in results["results"]["bindings"]:
                 
                 # 2.1 - build the triple
-                s = URIRef(r["subject"]["value"])
-                p = URIRef(r["predicate"]["value"])                    
-                if r["object"]["type"] == "uri":
-                    o = URIRef(r["object"]["value"])
-                else:
-                    o = Literal(r["object"]["value"])
+                try:
+                    s = URIRef(r["subject"]["value"])
+                except:
+                    s = URIRef(r["s"]["value"])
+
+                try:
+                    p = URIRef(r["predicate"]["value"])
+                except:
+                    p = URIRef(r["p"]["value"])
+
+                try:            
+                    if r["object"]["type"] == "uri":
+                        o = URIRef(r["object"]["value"])
+                    else:
+                        o = Literal(r["object"]["value"])
+                except:
+                    if r["o"]["type"] == "uri":
+                        o = URIRef(r["o"]["value"])
+                    else:
+                        o = Literal(r["o"]["value"])
+                        
                 logging.info("Adding triple %s, %s, %s" % (s,p,o))
                 graphs[sessionID].add((s,p,o))
                             
@@ -152,7 +168,7 @@ class HTTPHandler(tornado.web.RequestHandler):
 
             # debug
             logging.info(self.request)
-            
+            logging.info(msg["sparql"])
             # do the query            
             results = graphs[msg["sessionID"]].query(msg["sparql"])
 
