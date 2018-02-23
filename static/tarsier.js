@@ -33,6 +33,9 @@ dpMat = null;
 opMat = null;
 rdftypeMat = null;
 
+// session ID
+sessionID = null;
+
 function sendRequest(serverUri, getAll){
 
     // build the request
@@ -63,6 +66,7 @@ function sendRequest(serverUri, getAll){
 
 	    // store data
 	    lastData = data;
+	    sessionID = lastData["sessionID"];
 
 	    // get all the tables
 	    iis = document.getElementById("instancesTable");
@@ -933,7 +937,8 @@ function sparqlFilter(serverUri, multilayer){
     req = {};
     req["command"] = "sparql";
     req["sparql"] = document.getElementById("sparql").value;    
-    req["queryURI"] = document.getElementById("queryUriInput").value;    
+    req["queryURI"] = document.getElementById("queryUriInput").value;
+    req["sessionID"] = sessionID;
     
     // do the request to the tarsier server
     $.ajax({
