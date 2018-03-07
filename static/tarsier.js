@@ -1210,3 +1210,78 @@ function raiseOp(how){
     drawPlanes();
     
 }    
+
+
+function raiseClasses(classes, raise){
+
+    // parameters:
+    // - classes is a boolean used to determine whether we should move the classes or their instances
+    // - raise is a boolean to decide if we have to raise or lower the selected meshes
+
+    // initialize cache of raised objects    
+    raised = [];
+    
+    // determine the movement direction and amount
+    step = null;
+    if (raise)
+	step = planesGap;
+    else step = -1 * planesGap;
+    
+    // iterate over the selected classes
+    if (classes){
+    
+	for (var k in lastData["classes"]){
+	    
+	    // check if it's enabled
+	    if (document.getElementById(lastData["classes"][k] + "_C_enabled").checked){
+
+		// remember that we raised this
+		raised.push(lastData["classes"][k]);
+		
+		// retrieve the mesh
+		m = mesh[lastData["classes"][k]];
+		
+		// push it up
+		m.position.y += step;		
+		
+	    }
+	}
+    }
+    
+    // if !classes -> draw the instances
+    else {
+
+	// iterate over rdf:type statements
+	rdftype = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+	for (statement in lastData["pvalues"]["object"][rdftype]){
+
+	    // get subject and object
+	    subj = lastData["pvalues"]["object"][rdftype][statement]["s"]
+	    obj =  lastData["pvalues"]["object"][rdftype][statement]["o"]
+	    
+	    // check if the related class is selected
+	    if (document.getElementById(obj + "_C_enabled").checked){
+		if (!(raised.includes(subj))){
+		    mesh[subj].position.y += step;
+		    raised.push(subj);
+		}
+	    }
+	}
+
+	// re-draw data properties
+	for (r in raised){
+	    // cycle over data properties
+	    k = raised[r]
+	    drawDataProperties(k, lastData["instances"][k], mesh[k], dpMat);
+	    drawDataPropertiesEdges(k, lastData["instances"][k], mesh[k], dpMat);	    
+	}
+        		
+    }
+
+    // re-draw all the object properties
+    drawObjectProperties();
+    
+    // draw planes
+    drawPlanes();
+    
+}
