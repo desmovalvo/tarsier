@@ -234,8 +234,8 @@
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', true);">Select All</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseOps" aria-expanded="false" aria-controls="collapseOps">Show/Hide</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>		
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseOps" aria-expanded="false" aria-controls="collapseOps">Show/Hide List</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseOps">
@@ -246,6 +246,13 @@
 		</small>
     	      </div>
     	    </div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseOp('StoO');">Raise (s->o)</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseOp('OtoS');">Raise (o->s)</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseOp('SandO');">Raise (s and o)</button>
+	      </div>	      
+	    </div>
     	    <div class="card-footer">
     	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
     	    </div>

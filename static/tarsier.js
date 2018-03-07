@@ -470,7 +470,7 @@ function raise(up){
 		for (dp in lastData["instances"][k]) {
 
 		    // check if raising the dp it's requested
-		    if (document.getElementById(dp + "_D_enabled").checked){
+		    // if (document.getElementById(dp + "_D_enabled").checked){
 
 			// raise the sphere
 			key1 = k + "_" + dp
@@ -482,7 +482,7 @@ function raise(up){
 			    else dpsphere.position.y -= planesGap;
 
 			}					
-		    }
+		    //}
 		}
 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
 	    }
@@ -683,7 +683,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	    var sphere = BABYLON.Mesh.CreateSphere(dp, lod, 1, scene);
 	    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
-	    sphere.position.y = parseInt(meshPlaneGap);
+	    sphere.position.y = subj_mesh.position.y;
 	    sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["instances"][subj][dp];
 	    
 	    sphere.material = material;
@@ -1111,3 +1111,102 @@ function moveCamera(direction, step){
     camera.setPosition(p);
     
 }
+
+
+function raiseOp(how){
+
+    // read colors
+    getColors();
+
+    // memory of raised objects
+    raised = []
+       
+    // cycle over op
+    for (var k in lastData["properties"]["object"]){
+
+	console.log("Analysing property " + k);
+	
+	// for every *selected* op
+	if (document.getElementById(lastData["properties"]["object"][k] + "_O_enabled").checked){
+
+	    console.log("Property enabled!");
+	    
+	    // iterate over the statements with that property
+	    key = lastData["properties"]["object"][k];
+	    for (statement in lastData["pvalues"]["object"][key]){
+
+		console.log(statement);
+		
+		// get the subject and object
+		subj = lastData["pvalues"]["object"][key][statement]["s"]
+		obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
+		
+		// raise the object if sto, raise the subject if !sto
+
+		switch(how){
+		    
+		case "StoO":
+		    
+		    // if the mesh exists and has not been already raised
+		    // by this function call, then raise it
+		    console.log(obj in raised);
+		    if ((obj in mesh) && !(raised.includes(obj))){			
+			sphere = mesh[obj];		
+			sphere.position.y += planesGap;
+			raised.push(obj);
+		    }
+		    break;
+		    
+		case "OtoS":
+		    
+		    // if the mesh exists and has not been already raised
+		    // by this function call, then raise it
+		    console.log(subj in raised);
+		    if ((subj in mesh) && !(raised.includes(subj))){			
+			sphere = mesh[subj];		
+			sphere.position.y += planesGap;
+			raised.push(subj);
+		    }
+		    break;
+
+		case "SandO":
+
+		    // if the mesh exists and has not been already raised
+		    // by this function call, then raise it
+		    console.log(obj in raised);
+		    if ((obj in mesh) && !(raised.includes(obj))){			
+			sphere = mesh[obj];		
+			sphere.position.y += planesGap;
+			raised.push(obj);
+		    }
+
+		    // if the mesh exists and has not been already raised
+		    // by this function call, then raise it
+		    console.log(subj in raised);
+		    if ((subj in mesh) && !(raised.includes(subj))){			
+			sphere = mesh[subj];		
+			sphere.position.y += planesGap;
+			raised.push(subj);
+		    }
+		    break;
+		}
+	    }
+	}
+    }
+
+    // iterate over the raised mesh, and raise their data properties
+    for (r in raised){
+	// cycle over data properties
+	k = raised[r]
+	drawDataProperties(k, lastData["instances"][k], mesh[k], dpMat);
+	drawDataPropertiesEdges(k, lastData["instances"][k], mesh[k], dpMat);	    
+    }
+        
+    // re-draw all the object properties
+    console.log("[INFO] Re-drawing object properties");
+    drawObjectProperties();
+
+    // draw planes
+    drawPlanes();
+    
+}    

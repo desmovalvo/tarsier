@@ -195,6 +195,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                     except KeyError:
                         pass
                     res_dict["results"]["bindings"].append(d)
+            logging.info(res_dict)
             self.write(res_dict)
             
 
