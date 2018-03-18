@@ -98,7 +98,7 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results = {}
             f_results["instances"] = {}
             f_results["resources"] = {}
-            f_results["bnodes"] = []
+            f_results["bnodes"] = {}
             f_results["properties"] = {}
             f_results["properties"]["datatype"] = []
             f_results["properties"]["object"] = []
@@ -134,7 +134,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                     else:
                         s = BNode(l)
                         if not l in f_results["bnodes"]:
-                            f_results["bnodes"].append(l)
+                            f_results["bnodes"][l] = {}
                         #storeBnode(full, l)
                 except:
                     l = r["s"]["value"]
@@ -145,7 +145,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                         s = BNode(r["s"]["value"])
                         #storeBnode(full, l)                    
                         if not l in f_results["bnodes"]:
-                            f_results["bnodes"].append(l)
+                            f_results["bnodes"][l] = {}                
 
                 # predicate
                 p = None
@@ -171,7 +171,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                         o = BNode(l)
 #                       storeBnode(full, l)
                         if not l in f_results["bnodes"]:
-                            f_results["bnodes"].append(l)
+                            f_results["bnodes"][l] = {}
                     else:
                         o = Literal(l)
                         if not l in f_results["literals"]:
@@ -186,7 +186,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                         o = BNode(l)
                         #storeBnode(full, l)
                         if not l in f_results["bnodes"]:
-                            f_results["bnodes"].append(l)
+                            f_results["bnodes"][l] = {}
                     else:
                         o = Literal(l)
                         if not l in f_results["literals"]:

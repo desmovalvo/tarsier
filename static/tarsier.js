@@ -135,7 +135,7 @@ function sendRequest(serverUri, getAll){
 		bln.deleteRow(-1);
 	    };
 	    for (b in data["bnodes"]){
-		bName = data["bnodes"][b];		
+		bName = b
 		newRow = bln.insertRow(-1);
 		newCell = newRow.insertCell(0);
 		newCell.innerHTML = '<input type="checkbox" value="" id="' + bName + '_B_enabled" checked>'
@@ -386,11 +386,74 @@ function draw(){
 	    }	    
 	}
 
+
+	// draw bnodes
+	for (var k in lastData["bnodes"]){
+
+	    // check if it's enabled
+	    if (document.getElementById(k + "_B_enabled").checked){	
+
+		// TODO -- check if the individual has been already designed as a class
+		// ex.: wot:Thing can be a class, but also an individual of the class owl:Class
+
+		// TODO -- note: in this way we may experience problems if the number of
+		// classes is equal to the number of individuals!
+		var sphere = BABYLON.Mesh.CreateSphere(k, lod, 1, scene);
+		c += 1;
+		sphere.position.z = nsize * Math.sin(2 * c * node_angle / 180*Math.PI);
+		sphere.position.x = (nsize * Math.cos(2 * c * node_angle / 180*Math.PI));
+		sphere.position.y = parseInt(meshPlaneGap);
+		sphere.material = bnodeMat;
+		
+		// store the mesh in an Object using the URI as the key
+		mesh[k] = sphere;
+
+		// bind an action
+		sphere.statement = "<b>BNode:</b>&nbsp;" + k;
+		sphere.actionManager = new BABYLON.ActionManager(scene);
+		sphere.actionManager.registerAction(
+		    new BABYLON.ExecuteCodeAction(
+			BABYLON.ActionManager.OnLeftPickTrigger,
+			function(evt){
+			    // Find the clicked mesh
+			    var meshClicked = evt.meshUnderPointer;
+			    ab = document.getElementById("alertBox");
+			    ab.className="alert alert-success";
+			    ab.innerHTML = meshClicked.statement;			    
+			}
+		    )
+		);
+		sphere.actionManager
+		    .registerAction(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    sphere,
+			    'visibility',
+			    0.3,
+			    1000
+			)
+		    ).then(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    sphere,
+			    'visibility',
+			    1.0,
+			    1000
+			)
+		    );
+		
+		// drawDataProperties(k, lastData["bnodes"][k], sphere, dpMat);
+		// drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
+	    }	    
+	}
+
 	drawObjectProperties();
+
 	
 	// return the created scene
 	return scene;
     }
+
     
     // call the createScene function
     scene = createScene();
