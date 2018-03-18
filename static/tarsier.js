@@ -23,10 +23,12 @@ bump = 0;
 rgbGroundColor = null;
 rgbClassColor = null;
 rgbIndivColor = null;
+rgbBnodeColor = null;
 rgbDpColor = null;
 rgbOpColor = null;
 rgbRdftypeColor = null;
 indivMat = null;
+bnodeMat = null;
 classMat = null;
 groundMat = null;
 dpMat = null;
@@ -72,7 +74,8 @@ function sendRequest(serverUri, getAll){
 	    iis = document.getElementById("instancesTable");
 	    opt = document.getElementById("objectPropertiesTable");
 	    dpt = document.getElementById("dataPropertiesTable");
-	    clt = document.getElementById("classesTable");	    
+	    clt = document.getElementById("classesTable");
+	    bln = document.getElementById("bnodesTable");
 	    
 	    // process data
 	    while(clt.rows.length > 0) {
@@ -126,6 +129,19 @@ function sendRequest(serverUri, getAll){
 		newCell.innerHTML = iiName;
 	    }
 
+	    // blank nodes
+	    while(bln.rows.length > 0) {
+		bln.deleteRow(-1);
+	    };
+	    for (b in data["bnodes"]){
+		bName = data["bnodes"][b];		
+		newRow = bln.insertRow(-1);
+		newCell = newRow.insertCell(0);
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + bName + '_B_enabled" checked>'
+		newCell = newRow.insertCell(1);
+		newCell.innerHTML = bName;
+	    }
+
 	    ab = document.getElementById("alertBox");
 	    ab.className="alert alert-success";
 	    ab.innerHTML = "Ready to plot graph!";
@@ -170,6 +186,7 @@ function loadJSAP(){
 	    document.getElementById("datapropColor").value = myJson["extended"]["colors"]["dataProperties"];
 	    document.getElementById("objpropColor").value = myJson["extended"]["colors"]["objectProperties"];
 	    document.getElementById("rdftypeColor").value = myJson["extended"]["colors"]["rdftype"];
+	    document.getElementById("bnodesColor").value = myJson["extended"]["colors"]["bnodes"];
 	    document.getElementById("instancesColor").value = myJson["extended"]["colors"]["instances"];
 
 	    // other settings
@@ -823,6 +840,11 @@ function getColors(){
     rgbIndivColor = hexToRGB(document.getElementById("instancesColor").value);
     indivMat = new BABYLON.StandardMaterial("indivMat", scene);
     indivMat.diffuseColor = new BABYLON.Color3(rgbIndivColor[0], rgbIndivColor[1], rgbIndivColor[2]);	
+
+    // - bnode
+    rgbBnodeColor = hexToRGB(document.getElementById("bnodesColor").value);
+    bnodeMat = new BABYLON.StandardMaterial("bnodeMat", scene);
+    bnodeMat.diffuseColor = new BABYLON.Color3(rgbBnodeColor[0], rgbBnodeColor[1], rgbBnodeColor[2]);	
     
     // - data properties
     rgbDpColor = hexToRGB(document.getElementById("datapropColor").value);

@@ -104,6 +104,11 @@
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">BNodes</span>
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="bnodesColor">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Planes</span>
 		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="groundColor">
 		</div>
@@ -294,6 +299,32 @@
       <div class="row">
 
 	<!-- COLUMN 1 -->
+
+	<div class="col p-0 m-2">
+
+	  <!-- BNODES -->
+	  <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;BNodes</div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('bnodes', true);">Select All</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('bnodes', false);">Deselect All</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseBnodes" aria-expanded="false" aria-controls="collapseBnodes">Show/Hide</button>
+	      </div>	      
+	    </div>
+    	    <div class="card-body font-weight-light collapse" id="collapseBnodes">
+	      <small>
+		<table id="bnodesTable">
+		</table>
+	      </small>
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;List of the Blank Nodes</small>
+    	    </div>
+          </div>
+	</div>
+
+	
 	<div class="col p-0 m-2">
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;SPARQL Input</div>
@@ -316,7 +347,7 @@
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Help</div>
     	    <div class="card-body font-weight-light">
-	      <img src="static/tarsier_medium.png">
+	      <img src="statict/arsier_medium.png">
 	      <small>
     	      <b>Tarsier</b> is released under <b>GNU GPL v3
     	      License</b> and maintained by Fabio Viola (fabio.viola

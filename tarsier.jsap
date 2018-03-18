@@ -39,14 +39,18 @@
 	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
 	},	
 	"ALL_INSTANCES":{
-	    "sparql": "SELECT DISTINCT ?instance WHERE { ?instance rdf:type ?class . FILTER (isIRI(?instance) || isBlank(?instance)) } LIMIT 150"
-	}	
+	    "sparql": "SELECT DISTINCT ?instance WHERE { ?instance rdf:type ?class . FILTER (isIRI(?instance) || isBlank(?instance)) }"
+	},
+	"ALL_RESOURCES":{
+	    "sparql": "SELECT DISTINCT ?res WHERE { ?res ?p ?o . FILTER (isIRI(?res) || isBlank(?res)) } UNION { ?s ?p ?res . FILTER (isIRI(?res) || isBlank(?res)) }"
+	}
     },
     "extended":{
 	"colors":{
 	    "dataProperties":"#00CC00",
 	    "objectProperties":"#3399FF",
 	    "instances":"#7F00FF",
+	    "bnodes":"#FF00FF",
 	    "classes":"#FF8000",
 	    "ground":"#444444",
 	    "rdftype":"#FF0000"
