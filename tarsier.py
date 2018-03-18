@@ -106,6 +106,7 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results["pvalues"]["datatype"] = {}
             f_results["pvalues"]["object"] = {}
             f_results["classes"] = []
+            f_results["literals"] = []
             f_results["sessionID"] = sessionID
             
             # 1 - do the construct                
@@ -173,6 +174,8 @@ class HTTPHandler(tornado.web.RequestHandler):
                             f_results["bnodes"].append(l)
                     else:
                         o = Literal(l)
+                        if not l in f_results["literals"]:
+                            f_results["literals"].append(l)
 #                        storeLiteral(full, l)            
                 except:
                     l = r["o"]["value"]
@@ -186,6 +189,8 @@ class HTTPHandler(tornado.web.RequestHandler):
                             f_results["bnodes"].append(l)
                     else:
                         o = Literal(l)
+                        if not l in f_results["literals"]:
+                            f_results["literals"].append(l)
                         #storeLiteral(full, l)
                         
                 logging.info("Adding triple %s, %s, %s" % (s,p,o))

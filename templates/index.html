@@ -145,14 +145,14 @@
 	<div class="col-9 p-0 m-2">
 	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', true);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', false);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data from SPARQL</button>		
-	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();"><i class="fas fa-pencil-alt"></i>&nbsp;Plot</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);"><i class="fas fa-arrow-up"></i>&nbsp;Raise</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>
-	    <button type="button" class="btn btn-light btn-sm" onClick="jacascript:screenshot();"><i class="fas fa-image"></i>&nbsp;Save PNG</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();"><i class="fas fa-pencil-alt"></i>&nbsp;Plot</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);"><i class="fas fa-arrow-up"></i>&nbsp;Raise</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:screenshot();"><i class="fas fa-image"></i>&nbsp;Save PNG</button>
 
-	    <div class="card" id="renderCard">
+	  <div class="card" id="renderCard">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
 	  </div>
 
@@ -192,8 +192,8 @@
     	    <div class="card-body font-weight-light collapse" id="collapseClasses">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
-		<table id="classesTable">
-		</table>
+		  <table id="classesTable">
+		  </table>
 		</small>
     	      </div>
     	    </div>
@@ -227,8 +227,8 @@
     	    <div class="card-body font-weight-light collapse" id="collapseDps">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
-		<table id="dataPropertiesTable">
-		</table>
+		  <table id="dataPropertiesTable">
+		  </table>
 		</small>
     	      </div>
     	    </div>
@@ -254,8 +254,8 @@
     	    <div class="card-body font-weight-light collapse" id="collapseOps">
     	      <div class="card-text font-weight-light" id="logWindow">
 		<small>
-		<table id="objectPropertiesTable">
-		</table>
+		  <table id="objectPropertiesTable">
+		  </table>
 		</small>
     	      </div>
     	    </div>
@@ -301,7 +301,6 @@
 	<!-- COLUMN 1 -->
 
 	<div class="col p-0 m-2">
-
 	  <!-- BNODES -->
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;BNodes</div>
@@ -320,6 +319,31 @@
     	    </div>
     	    <div class="card-footer">
     	      <small><i class="fas fa-info-circle"></i>&nbsp;List of the Blank Nodes</small>
+    	    </div>
+          </div>
+	</div>
+
+
+	
+	<div class="col p-0 m-2">
+	  <!-- LITERALS -->
+	  <div class="card border-dark rounded-3 m-1 mt-2">
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Literals</div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('literals', true);">Select All</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('literals', false);">Deselect All</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseLiterals" aria-expanded="false" aria-controls="collapseLiterals">Show/Hide</button>
+	      </div>	      
+	    </div>
+    	    <div class="card-body font-weight-light collapse" id="collapseLiterals">
+	      <small>
+		<table id="literalsTable">
+		</table>
+	      </small>
+    	    </div>
+    	    <div class="card-footer">
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;List of the literal values</small>
     	    </div>
           </div>
 	</div>
@@ -349,9 +373,9 @@
     	    <div class="card-body font-weight-light">
 	      <img src="statict/arsier_medium.png">
 	      <small>
-    	      <b>Tarsier</b> is released under <b>GNU GPL v3
-    	      License</b> and maintained by Fabio Viola (fabio.viola
-    	      at unibo dot it).
+    		<b>Tarsier</b> is released under <b>GNU GPL v3
+    		  License</b> and maintained by Fabio Viola (fabio.viola
+    		at unibo dot it).
 	      </small>
     	    </div>
     	    <div class="card-footer">

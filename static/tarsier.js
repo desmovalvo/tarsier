@@ -76,6 +76,7 @@ function sendRequest(serverUri, getAll){
 	    dpt = document.getElementById("dataPropertiesTable");
 	    clt = document.getElementById("classesTable");
 	    bln = document.getElementById("bnodesTable");
+	    llt = document.getElementById("literalsTable");
 	    
 	    // process data
 	    while(clt.rows.length > 0) {
@@ -128,7 +129,7 @@ function sendRequest(serverUri, getAll){
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = iiName;
 	    }
-
+	    
 	    // blank nodes
 	    while(bln.rows.length > 0) {
 		bln.deleteRow(-1);
@@ -140,6 +141,19 @@ function sendRequest(serverUri, getAll){
 		newCell.innerHTML = '<input type="checkbox" value="" id="' + bName + '_B_enabled" checked>'
 		newCell = newRow.insertCell(1);
 		newCell.innerHTML = bName;
+	    }
+
+	    // blank nodes
+	    while(llt.rows.length > 0) {
+		llt.deleteRow(-1);
+	    };
+	    for (b in data["literals"]){
+		lName = data["literals"][b];		
+		newRow = llt.insertRow(-1);
+		newCell = newRow.insertCell(0);
+		newCell.innerHTML = '<input type="checkbox" value="" id="' + lName + '_L_enabled" checked>'
+		newCell = newRow.insertCell(1);
+		newCell.innerHTML = lName;
 	    }
 
 	    ab = document.getElementById("alertBox");
@@ -434,6 +448,17 @@ function selectAll(what, select){
 	    document.getElementById(k + "_I_enabled").checked = select
 	}
 	break;
+    case "bnodes":
+	for (var k in lastData["bnodes"]){		
+	    document.getElementById(lastData["bnodes"][k] + "_B_enabled").checked = select
+	}
+	break;
+    case "literals":
+	for (var k in lastData["literals"]){		
+	    document.getElementById(lastData["literals"][k] + "_L_enabled").checked = select
+	}
+	break;
+
     }
     
 }
