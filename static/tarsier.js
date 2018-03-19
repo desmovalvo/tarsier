@@ -398,7 +398,7 @@ function draw(){
 		    );
 		
 		drawDataProperties(k, lastData["resources"][k], sphere, dpMat, "individual");
-		drawDataPropertiesEdges(k, lastData["resources"][k], sphere, dpMat);
+		//drawDataPropertiesEdges(k, lastData["resources"][k], sphere, dpMat);
 	    }	    
 	}
 
@@ -467,7 +467,7 @@ function draw(){
 		    );
 		
 		drawDataProperties(k, lastData["bnodes"][k], sphere, dpMat, "bnode");
-		// drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
+		//drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
 	    }	    
 	}
 
@@ -613,7 +613,7 @@ function raise(up){
 		    }					
 		    //}
 		}
-		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
+		//drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
 	    }
 	}
     }
@@ -808,16 +808,25 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	if (document.getElementById(dp + "_D_enabled").checked){		
 	    
 	    // get s, p and o
-	    s = subj
-	    p = dp
+	    s = subj;
+	    p = dp;
+	    o = null;
+	    console.log(o);
 	    switch(s_type){
 	    case "individual":
-		o = lastData["resources"][subj][dp];
+		o = lastData["resources"][subj]["statements"][dp];
+		console.log(o);
 		break;
 	    case "bnode":
-		o = lastData["bnodes"][subj][dp];
+		o = lastData["bnodes"][subj]["statements"][dp];
+		console.log("START DEBUG BNODE");
+		console.log(subj)
+		console.log(dp)
+		console.log(o);
+		console.log("END DEBUG BNODE");
 		break;
 	    };
+	    console.log(o);
 	    
 	    // delete old sphere and edge, if any
 	    // key1 = subj + "_" + dp	    	   
@@ -922,10 +931,10 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	p = dp
 	switch(s_type){
 	case "individual":
-	    o = lastData["resources"][subj][dp];
+	    o = lastData["resources"][subj]["statements"][dp];
 	    break;
 	case "bnode":
-	    o = lastData["bnodes"][subj][dp];
+	    o = lastData["bnodes"][subj]["statements"][dp];
 	    break;
 	};
 	    
@@ -945,6 +954,9 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	// get the object sphere
 	// key1 = subj + "_" + dp
 	// sphere = dpMesh[key1]
+	console.log(p);
+	console.log(s);
+	console.log(o);
 	sphere = dpMesh[p][s][o];
 
 	// // delete old sphere and edge, if any
@@ -1511,28 +1523,36 @@ function raiseClasses(classes, raise){
 /////////////////////////////////////////////////////////////////////
 function showHideDP(show){
 
+    // debug
+    console.log("[DEBUG] showHideDP() invoked");
+    
     // get the list of all the selected data properties
     for (var k in lastData["properties"]["datatype"]){
+	console.log("Data property " + k);
 	
 	// check if it's enabled
 	if (document.getElementById(lastData["properties"]["datatype"][k] + "_D_enabled").checked){
+	    console.log(lastData["properties"]["datatype"][k]);
+	    console.log("Enabled!");
 
-	    // get the subject and object to retrieve
-	    // the key in the dpmesh dictionary
-	    lastData["properties"]["datatype"][k]
-	    
-	    // // check if it's present in the canvas
-	    // if (lastData["properties"]["datatype"][k] in dpmesh){
-	    // 	sphere = mesh[lastData["properties"]["datatype"][k]];
-	    // 	if (show){
-	    // 	    sphere.position.y += planesGap;
-	    // 	    drawPlane(sphere.position.y - meshPlaneGap)
-	    // 	}
-	    // 	else {
-	    // 	    sphere.position.y -= planesGap;
-	    // 	    drawPlane(sphere.position.y - meshPlaneGap)
-	    // 	}
-	    // } 			
+	    // iterate over the first level (i.e. subjects)
+	    p = lastData["properties"]["datatype"][k]
+	    for (ms in dpMesh[p]){
+		console.log("START DEBUG");
+		console.log(dpMesh[p]);
+		console.log(dpMesh[p][ms]);
+		console.log("END DEBUG");
+		// iterate over the second level (i.e. objects)
+		for (mo in dpMesh[p][ms]){ 
+		    console.log(dpMesh[p][ms][mo]);
+		    if (show){
+			dpMesh[p][ms][mo].visibility = 1;
+		    }
+		    else{
+			dpMesh[p][ms][mo].visibility = 0.1;
+		    }
+		}
+	    }
 	}
     }    
 }
