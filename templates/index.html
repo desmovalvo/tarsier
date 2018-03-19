@@ -186,7 +186,7 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('classes', false);">Deselect All</button>
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">Show/Hide</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">Collapse/Expande</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseClasses">
@@ -221,7 +221,13 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('dataProperties', false);">Deselect All</button>
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseDps" aria-expanded="false" aria-controls="collapseDps">Show/Hide</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseDps" aria-expanded="false" aria-controls="collapseDps">Collapse/Expande</button>
+	      </div>	      
+	    </div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideDP(true);">Show</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideDP(false);">Hide</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseDps">
@@ -248,7 +254,7 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('objectProperties', false);">Deselect All</button>		
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseOps" aria-expanded="false" aria-controls="collapseOps">Show/Hide List</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseOps" aria-expanded="false" aria-controls="collapseOps">Collapse/Expande List</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseOps">
@@ -279,7 +285,7 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('resources', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('resources', false);">Deselect All</button>
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseResources" aria-expanded="false" aria-controls="collapseResources">Show/Hide</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseResources" aria-expanded="false" aria-controls="collapseResources">Collapse/Expande</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseResources">
@@ -308,7 +314,7 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('bnodes', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('bnodes', false);">Deselect All</button>
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseBnodes" aria-expanded="false" aria-controls="collapseBnodes">Show/Hide</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseBnodes" aria-expanded="false" aria-controls="collapseBnodes">Collapse/Expande</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseBnodes">
@@ -339,7 +345,7 @@
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('literals', true);">Select All</button>
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('literals', false);">Deselect All</button>
-		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseLiterals" aria-expanded="false" aria-controls="collapseLiterals">Show/Hide</button>
+		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseLiterals" aria-expanded="false" aria-controls="collapseLiterals">Collapse/Expande</button>
 	      </div>	      
 	    </div>
     	    <div class="card-body font-weight-light collapse" id="collapseLiterals">

@@ -467,7 +467,7 @@ function draw(){
 		    );
 		
 		drawDataProperties(k, lastData["bnodes"][k], sphere, dpMat, "bnode");
-		drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
+		// drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
 	    }	    
 	}
 
@@ -597,20 +597,20 @@ function raise(up){
 
 		// cycle over data properties
 		for (dp in lastData["instances"][k]) {
-
+		    
 		    // check if raising the dp it's requested
 		    // if (document.getElementById(dp + "_D_enabled").checked){
-
-			// raise the sphere
-			key1 = k + "_" + dp
-			key2 = key1 + "_EDGE"
-			if (key1 in dpMesh){
+		    
+		    // raise the sphere
+		    key1 = k + "_" + dp
+		    key2 = key1 + "_EDGE"
+		    if (key1 in dpMesh){
 			    dpsphere = dpMesh[key1]
-			    if (up)
-				dpsphere.position.y += planesGap;
-			    else dpsphere.position.y -= planesGap;
-
-			}					
+			if (up)
+			    dpsphere.position.y += planesGap;
+			else dpsphere.position.y -= planesGap;
+			
+		    }					
 		    //}
 		}
 		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
@@ -806,11 +806,30 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	console.log(dp);
 	
 	if (document.getElementById(dp + "_D_enabled").checked){		
-
+	    
+	    // get s, p and o
+	    s = subj
+	    p = dp
+	    switch(s_type){
+	    case "individual":
+		o = lastData["resources"][subj][dp];
+		break;
+	    case "bnode":
+		o = lastData["bnodes"][subj][dp];
+		break;
+	    };
+	    
 	    // delete old sphere and edge, if any
-	    key1 = subj + "_" + dp
-	    if (key1 in dpMesh){
-		dpMesh[key1].dispose();
+	    // key1 = subj + "_" + dp	    	   
+	    // if (key1 in dpMesh){
+	    // 	dpMesh[key1].dispose();
+	    // }
+	    if (p in dpMesh){
+		if (s in dpMesh[p]){
+		    if (o in dpMesh[p][s]){
+			dpMesh[p][s][o].dispose();
+		    }
+		}
 	    }
 	    
 	    // build a green sphere
@@ -818,15 +837,11 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	    sphere.position.x = localOrigin[0] + 1 * Math.sin(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.z = localOrigin[2] + 1 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.y = subj_mesh.position.y;
-	    switch(s_type){
-	    case "individual":
-		sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["resources"][subj][dp];
-		break;
-	    case "bnode":
-		sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["bnodes"][subj][dp];
-		break;
-	    };
-	    
+
+	    // bind a statement to the sphere
+	    sphere.statement = "<b>Subject:</b>&nbsp;" + s +"<br><b>Property:</b>&nbsp;" + p + "<br><b>Value:</b>&nbsp;" + o;
+
+	    // bind a material to the sphere
 	    sphere.material = material;
 
 	    // attach an action to the sphere
@@ -863,7 +878,20 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 		);
 	    
 	    // store the sphere (as a key we use subj+prop)
-	    dpMesh[key1] = sphere;
+	    // dpMesh[key1] = sphere;
+
+	    
+	    // store the sphere in a dictionary
+	    // the main key of the dictionary is the data property,
+	    // then we have another key for the subject
+	    // and a third level for the value of that property
+	    if (!(p in dpMesh)){
+		dpMesh[p] = {}		
+	    }
+	    if (!(s in dpMesh[p])){
+		dpMesh[p][s] = {}
+	    }	    
+	    dpMesh[p][s][o] = sphere;
 
 	    // increment cc
 	    cc += 1;
@@ -889,15 +917,41 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
     // iterate over the data properties
     for (dp in subj_dict["statements"]) {
 
-	// get the object sphere
-	key1 = subj + "_" + dp
-	sphere = dpMesh[key1]
-
-	// delete old sphere and edge, if any
-	key2 = subj + "_" + dp + "_EDGE"
-	if (key2 in dpEdgeMesh){
-	    dpEdgeMesh[key2].dispose();
+	// get s, p and o
+	s = subj
+	p = dp
+	switch(s_type){
+	case "individual":
+	    o = lastData["resources"][subj][dp];
+	    break;
+	case "bnode":
+	    o = lastData["bnodes"][subj][dp];
+	    break;
+	};
+	    
+	// delete old edge, if any
+	// key1 = subj + "_" + dp	    	   
+	// if (key1 in dpMesh){
+	// 	dpMesh[key1].dispose();
+	// }
+	if (p in dpEdgeMesh){
+	    if (s in dpEdgeMesh[p]){
+		if (o in dpEdgeMesh[p][s]){
+		    dpEdgeMesh[p][s][o].dispose();
+		}
+	    }
 	}
+	    	
+	// get the object sphere
+	// key1 = subj + "_" + dp
+	// sphere = dpMesh[key1]
+	sphere = dpMesh[p][s][o];
+
+	// // delete old sphere and edge, if any
+	// key2 = subj + "_" + dp + "_EDGE"
+	// if (key2 in dpEdgeMesh){
+	//     dpEdgeMesh[key2].dispose();
+	// }
 	
 	// draw the edge
 	var lines = BABYLON.Mesh.CreateLines("lines", [
@@ -943,11 +997,21 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 		    1000
 		)
 	    );
-	
-
-	
+		
 	// store the edge (as a key we use subj+prop_EDGE)
-	dpEdgeMesh[key2] = lines;
+	// dpEdgeMesh[key2] = lines;
+
+	// store the sphere in a dictionary
+	// the main key of the dictionary is the data property,
+	// then we have another key for the subject
+	// and a third level for the value of that property
+	if (!(p in dpEdgeMesh)){
+	    dpEdgeMesh[p] = {}		
+	    }
+	if (!(s in dpEdgeMesh[p])){
+	    dpEdgeMesh[p][s] = {}
+	}	    
+	dpEdgeMesh[p][s][o] = sphere;
 	
     }
 }
@@ -1442,6 +1506,33 @@ function raiseClasses(classes, raise){
 
 /////////////////////////////////////////////////////////////////////
 //
-// 
+// Show / Hide Data Properties
 //
 /////////////////////////////////////////////////////////////////////
+function showHideDP(show){
+
+    // get the list of all the selected data properties
+    for (var k in lastData["properties"]["datatype"]){
+	
+	// check if it's enabled
+	if (document.getElementById(lastData["properties"]["datatype"][k] + "_D_enabled").checked){
+
+	    // get the subject and object to retrieve
+	    // the key in the dpmesh dictionary
+	    lastData["properties"]["datatype"][k]
+	    
+	    // // check if it's present in the canvas
+	    // if (lastData["properties"]["datatype"][k] in dpmesh){
+	    // 	sphere = mesh[lastData["properties"]["datatype"][k]];
+	    // 	if (show){
+	    // 	    sphere.position.y += planesGap;
+	    // 	    drawPlane(sphere.position.y - meshPlaneGap)
+	    // 	}
+	    // 	else {
+	    // 	    sphere.position.y -= planesGap;
+	    // 	    drawPlane(sphere.position.y - meshPlaneGap)
+	    // 	}
+	    // } 			
+	}
+    }    
+}
