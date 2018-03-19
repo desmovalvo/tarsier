@@ -39,10 +39,10 @@
 	    "sparql": "SELECT ?s ?p ?o WHERE { ?s ?p ?o FILTER (isIRI(?o) || isBlank(?o)) }"
 	},	
 	"ALL_INSTANCES":{
-	    "sparql": "SELECT DISTINCT ?instance WHERE { ?instance rdf:type ?class . FILTER (isIRI(?instance) || isBlank(?instance)) }"
+	    "sparql": "SELECT DISTINCT ?instance WHERE { ?instance rdf:type ?class . FILTER (isIRI(?instance)) }"
 	},
 	"ALL_RESOURCES":{
-	    "sparql": "SELECT DISTINCT ?res WHERE { ?res ?p ?o . FILTER (isIRI(?res) || isBlank(?res)) } UNION { ?s ?p ?res . FILTER (isIRI(?res) || isBlank(?res)) }"
+	    "sparql": "SELECT DISTINCT ?res WHERE {{ ?res ?p ?o . FILTER (isIRI(?res))} UNION { ?s ?p ?res . FILTER (isIRI(?res)) } UNION { ?s ?res ?o . FILTER (isIRI(?res)) }}"
 	}
     },
     "extended":{

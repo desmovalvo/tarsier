@@ -18,32 +18,6 @@ from tornado.httpserver import *
 from rdflib import Graph, URIRef, BNode, Literal
 from tornado.options import define, options, parse_command_line
 
-# local reqs
-
-# def storeUri(f, u, isClass, isProperty):
-#     if not(u in f):
-#         f["uris"][u] = {}
-#         if isClass:
-#             f["uris"][u]["isClass"] = True
-#         else:
-#             f["uris"][u]["isClass"] = False
-#         f["uris"][u]["isDP"] = False
-#         f["uris"][u]["isOP"] = False
-#         if isProperty:
-#             f["uris"][u]["isProperty"] = True
-#         else:
-#             f["uris"][u]["isProperty"] = False
-#         f["uris"][u]["statements"] = []
-
-# def storeBnode(f, b):
-#     if not(b in f):
-#         f["bnodes"][b] = {}
-
-# def storeLiteral(f, l):
-#     if not(l in f):
-#         f["literals"][l] = {}
-    
-
 ########################################################################
 #
 # HTTP Handler
@@ -75,24 +49,6 @@ class HTTPHandler(tornado.web.RequestHandler):
         
         # do the stuff
         if msg["command"] == "info":
-
-            ###########################################################
-            #
-            # REFACTORING
-            #
-            ###########################################################
-            
-            # R1 - init data structure
-            # full = {}
-            # full["uris"] = {}
-            # full["bnodes"] = {}
-            # full["literals"] = {}
-            # full["classes"] = []
-            # full["properties"] = {}
-            # full["properties"]["object"] = {}
-            # full["properties"]["datatype"] = {}
-            # full["stats"] = {}
-            # full["stats"]["classes"] = 0
 
             # initialize results
             f_results = {}
@@ -127,75 +83,76 @@ class HTTPHandler(tornado.web.RequestHandler):
                 s = None
                 l = None
                 try:
-                    l = r["subject"]["value"]
+                    l = str(r["subject"]["value"])
                     if r["subject"]["type"] == "uri":                
                         s = URIRef(l)
-                        #storeUri(full, l, False, False)
                     else:
                         s = BNode(l)
-                        if not l in f_results["bnodes"]:
-                            f_results["bnodes"][l] = {}
-                        #storeBnode(full, l)
+                        if not str(l) in f_results["bnodes"]:
+                            f_results["bnodes"][str(l)] = {}
+                            f_results["bnodes"][str(l)]["statements"] = {}
                 except:
-                    l = r["s"]["value"]
+                    l = str(r["s"]["value"])
                     if r["s"]["type"] == "uri":                        
                         s = URIRef(l)
-                        #storeUri(full, l, False, False);                        
                     else:
                         s = BNode(r["s"]["value"])
-                        #storeBnode(full, l)                    
-                        if not l in f_results["bnodes"]:
-                            f_results["bnodes"][l] = {}                
+                        if not str(l) in f_results["bnodes"]:
+                            f_results["bnodes"][str(l)] = {}
+                            f_results["bnodes"][str(l)]["statements"] = {}
 
                 # predicate
                 p = None
                 l = None
                 try:
-                    l = r["predicate"]["value"]
+                    l = str(r["predicate"]["value"])
                     p = URIRef(l)
-                    # storeUri(full, l, False, True)
                 except:
-                    l = r["p"]["value"]
+                    l = str(r["p"]["value"])
                     p = URIRef(l)
-                    #storeUri(full, l, False, True)
 
                 # object
                 o = None
                 l = None
                 try:
-                    l = r["object"]["value"]
+                    l = str(r["object"]["value"])
                     if r["object"]["type"] == "uri":                
                         o = URIRef(l)
-#                        storeUri(full, l, False, False)                        
                     elif r["object"]["type"] == "bnode":                
                         o = BNode(l)
-#                       storeBnode(full, l)
-                        if not l in f_results["bnodes"]:
-                            f_results["bnodes"][l] = {}
+                        if not str(l) in f_results["bnodes"]:
+                            f_results["bnodes"][str(l)] = {}
+                            f_results["bnodes"][str(l)]["statements"] = {}
                     else:
                         o = Literal(l)
                         if not l in f_results["literals"]:
                             f_results["literals"].append(l)
-#                        storeLiteral(full, l)            
                 except:
-                    l = r["o"]["value"]
+                    l = str(r["o"]["value"])
                     if r["o"]["type"] == "uri":                
                         o = URIRef(l)
-                        # storeUri(full, l, False, False)
                     elif r["o"]["type"] == "bnode":                
                         o = BNode(l)
-                        #storeBnode(full, l)
-                        if not l in f_results["bnodes"]:
-                            f_results["bnodes"][l] = {}
+                        if not str(l) in f_results["bnodes"]:
+                            f_results["bnodes"][str(l)]["statements"] = {}
                     else:
                         o = Literal(l)
                         if not l in f_results["literals"]:
                             f_results["literals"].append(l)
-                        #storeLiteral(full, l)
                         
                 logging.info("Adding triple %s, %s, %s" % (s,p,o))
                 graphs[sessionID].add((s,p,o))
-                            
+                
+            # get all the resources
+            logging.info("Getting resources")
+            results = graphs[sessionID].query(jsap.getQuery("ALL_RESOURCES", {}))
+            for row in results:
+                key = str(row["res"])
+                if not key in f_results["resources"]:
+                    f_results["resources"][key] = {}
+                    f_results["resources"][key]["drawAsRes"] = True
+                    f_results["resources"][key]["statements"] = {}
+                
             # get all the instances
             logging.info("Getting instances")
             results = graphs[sessionID].query(jsap.getQuery("ALL_INSTANCES", {}))
@@ -208,8 +165,9 @@ class HTTPHandler(tornado.web.RequestHandler):
             logging.info("Getting data properties")
             results = graphs[sessionID].query(jsap.getQuery("DATA_PROPERTIES", {}))
             for r in results:
-                key = r["p"]
+                key = str(r["p"])
                 f_results["properties"]["datatype"].append(key)
+                f_results["resources"][key]["drawAsRes"] = False
 
             # get all the data properties and their values
             logging.info("Getting data properties values")
@@ -224,17 +182,23 @@ class HTTPHandler(tornado.web.RequestHandler):
                 f_results["pvalues"]["datatype"][key].append({"s":row["s"], "o":row["o"]})
 
                 # also bind the property to the individual
-                newkey = row["s"]
-                if not(newkey in f_results["instances"]):
-                    f_results["instances"][newkey] = {}
-                f_results["instances"][newkey][key] = row["o"]
-            
+                newkey = str(row["s"])
+                print("ROW 186 -- " + newkey)
+                print(f_results["resources"])
+                if newkey in f_results["resources"]:
+                    print("ROW 189 OK")
+                    f_results["resources"][newkey]["statements"][key] = row["o"]
+                if newkey in f_results["bnodes"]:
+                    print ("ROW 190 OK")
+                    f_results["bnodes"][newkey]["statements"][key] = row["o"]
+             
             # get all the object properties
             logging.info("Getting object properties")
             results = graphs[sessionID].query(jsap.getQuery("OBJECT_PROPERTIES", {}))
             for row in results:
-                key = row["p"]
+                key = str(row["p"])
                 f_results["properties"]["object"].append(key)
+                f_results["resources"][key]["drawAsRes"] = False
 
             # get all the object properties and their values
             logging.info("Getting object properties values")
@@ -253,20 +217,18 @@ class HTTPHandler(tornado.web.RequestHandler):
             logging.info(jsap.getQuery("ALL_CLASSES", {}))
             results = graphs[sessionID].query(jsap.getQuery("ALL_CLASSES", {}))
             for row in results:
-                key = row["class"]
+                key = str(row["class"])
                 f_results["classes"].append(key)
-
-                # new data struct
-                #full["uris"][str(key)]["isClass"] = True
-                #full["classes"].append(str(key))
+                f_results["resources"][key]["drawAsRes"] = False
             
             # done
             logging.info("Done!")
 
-            # # update statistics
-            # for u in full["uris"]:
-            #     if full["uris"][u]["isClass"]:
-            #         full["stats"]["classes"] += 1
+            # update statistics
+            f_results["individuals_num"] = 0
+            for res in f_results["resources"]:
+                if f_results["resources"][res]["drawAsRes"]:
+                    f_results["individuals_num"] += 1
             
             # send the reply
             self.write(f_results)

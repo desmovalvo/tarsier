@@ -14,6 +14,11 @@ opEdgeMesh = {};
 planes = {};
 bez = []
 
+// diameters
+classes_radius = 0;
+resources_radius = 0;
+bnodes_radius = 0;
+
 // other settings
 meshPlaneGap = 1;
 planesGap = 10;
@@ -71,7 +76,7 @@ function sendRequest(serverUri, getAll){
 	    sessionID = lastData["sessionID"];
 
 	    // get all the tables
-	    iis = document.getElementById("instancesTable");
+	    iis = document.getElementById("resourcesTable");
 	    opt = document.getElementById("objectPropertiesTable");
 	    dpt = document.getElementById("dataPropertiesTable");
 	    clt = document.getElementById("classesTable");
@@ -121,7 +126,7 @@ function sendRequest(serverUri, getAll){
 	    while(iis.rows.length > 0) {
 		iis.deleteRow(-1);
 	    };
-	    for (ii in data["instances"]){
+	    for (ii in data["resources"]){
 		iiName = ii;
 		newRow = iis.insertRow(-1);
 		newCell = newRow.insertCell(0);		
@@ -273,6 +278,7 @@ function draw(){
 	
 	// draw classes
 	n5 = Object.keys(lastData["classes"]).length;
+	classes_radius = 2 * n5 / Math.PI;
 	console.log(n5);
 	console.log(typeof(n5));
 	node_angle = 360 / n5;
@@ -280,9 +286,9 @@ function draw(){
 	    // check if it's enabled
 	    if (document.getElementById(lastData["classes"][k] + "_C_enabled").checked){	
 		var sphere = BABYLON.Mesh.CreateSphere(lastData["classes"][k], lod, 1, scene);
-		sphere.position.z = n5 * Math.sin(k*node_angle / 180*Math.PI);
+		sphere.position.z = classes_radius * Math.sin(k*node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
-		sphere.position.x = n5 * Math.cos(k*node_angle / 180*Math.PI);
+		sphere.position.x = classes_radius * Math.cos(k*node_angle / 180*Math.PI);
 		sphere.material = classMat;
 
 		// store the mesh in an Object using the URI as the key
@@ -322,13 +328,23 @@ function draw(){
 	    }
 	}
 	
-	// draw instances
-	nsize = Object.keys(lastData["instances"]).length;
+	// draw individuals
+	// nsize = Object.keys(lastData["resources"]).length;
+	nsize = lastData["individuals_num"];
 	node_angle = 360 / nsize;
+	resources_radius = 2 * nsize / Math.PI;
 
+	// radius must be greater than classes_radius + 6
+	resources_radius = Math.max(resources_radius, classes_radius+6);
+	
 	c = 0;
-	for (var k in lastData["instances"]){
+	for (var k in lastData["resources"]){
 
+	    // check if it is an individual
+	    if (!(lastData["resources"][k]["drawAsRes"])){
+		continue;
+	    }
+	    
 	    // check if it's enabled
 	    if (document.getElementById(k + "_I_enabled").checked){	
 
@@ -339,11 +355,11 @@ function draw(){
 		// classes is equal to the number of individuals!
 		var sphere = BABYLON.Mesh.CreateSphere(k, lod, 1, scene);
 		c += 1;
-		sphere.position.z = nsize * Math.sin(c * node_angle / 180*Math.PI);
-		sphere.position.x = nsize * Math.cos(c * node_angle / 180*Math.PI);
+		sphere.position.z = resources_radius * Math.sin(c * node_angle / 180*Math.PI);
+		sphere.position.x = resources_radius * Math.cos(c * node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
 		sphere.material = indivMat;
-		
+
 		// store the mesh in an Object using the URI as the key
 		mesh[k] = sphere;
 
@@ -381,13 +397,20 @@ function draw(){
 			)
 		    );
 		
-		drawDataProperties(k, lastData["instances"][k], sphere, dpMat);
-		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
+		drawDataProperties(k, lastData["resources"][k], sphere, dpMat, "individual");
+		drawDataPropertiesEdges(k, lastData["resources"][k], sphere, dpMat);
 	    }	    
 	}
 
 
 	// draw bnodes
+	nsize = Object.keys(lastData["bnodes"]).length;
+	node_angle = 360 / nsize;
+	bnodes_radius = nsize / Math.PI;
+
+	// radius must be greater than resources_radius + 6
+	bnodes_radius = Math.max(resources_radius+6, bnodes_radius);
+	
 	for (var k in lastData["bnodes"]){
 
 	    // check if it's enabled
@@ -400,8 +423,9 @@ function draw(){
 		// classes is equal to the number of individuals!
 		var sphere = BABYLON.Mesh.CreateSphere(k, lod, 1, scene);
 		c += 1;
-		sphere.position.z = nsize * Math.sin(2 * c * node_angle / 180*Math.PI);
-		sphere.position.x = (nsize * Math.cos(2 * c * node_angle / 180*Math.PI));
+		nsize = Object.keys(lastData["bnodes"]).length;
+		sphere.position.z = bnodes_radius * Math.sin(c * node_angle / 180*Math.PI);
+		sphere.position.x = bnodes_radius * Math.cos(c * node_angle / 180*Math.PI);
 		sphere.position.y = parseInt(meshPlaneGap);
 		sphere.material = bnodeMat;
 		
@@ -442,8 +466,8 @@ function draw(){
 			)
 		    );
 		
-		// drawDataProperties(k, lastData["bnodes"][k], sphere, dpMat);
-		// drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
+		drawDataProperties(k, lastData["bnodes"][k], sphere, dpMat, "bnode");
+		drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
 	    }	    
 	}
 
@@ -637,7 +661,7 @@ function drawObjectProperties(){
 		// draw the curve
 		var quadraticBezierVectors = BABYLON.Curve3.CreateQuadraticBezier(sta_point, mid_point, end_point, 15);
 		lines = BABYLON.Mesh.CreateLines("qbezier", quadraticBezierVectors.getPoints(), scene);
-		lines.statement = sphere.statement = "<b>Subject:</b>&nbsp;" + subj + "<br><b>Property:</b>&nbsp;" + lastData["properties"]["object"][op] + "<br><b>Object:</b>&nbsp;" + obj;		    
+		lines.statement  = "<b>Subject:</b>&nbsp;" + subj + "<br><b>Property:</b>&nbsp;" + lastData["properties"]["object"][op] + "<br><b>Object:</b>&nbsp;" + obj;		    
 		if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
 		    lines.color = rdftypeMat.diffuseColor;
 		} else {
@@ -731,6 +755,8 @@ function resetPlanes(){
 
 function drawPlane(y){
 
+    console.log("[DEBUG] drawPlane() invoked");
+    
     // check if the plane already exists
     if (!(y in planes)){
 	
@@ -741,7 +767,8 @@ function drawPlane(y){
 	groundMat.alpha = 0.5;
 	
 	// create a plane
-	var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: 50, height: 50, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
+	console.log(bnodes_radius);
+	var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: bnodes_radius*2, height: bnodes_radius*2, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
 	myPlane.material = groundMat;	
 	var axis = new BABYLON.Vector3(1, 0, 0);
 	var angle = Math.PI / 2;
@@ -761,8 +788,10 @@ function drawPlane(y){
 //
 ///////////////////////////////////////////////////////////////////////
 
-function drawDataProperties(subj, subj_dict, subj_mesh, material){
+function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 
+    console.log("[DEBUG] drawDataProperties() invoked!");
+    
     // determine the local origin based on the subject of the triple
     localOrigin = [subj_mesh.position.x, subj_mesh.position.y, subj_mesh.position.z]
     
@@ -772,7 +801,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 
     // iterate over the data properties
     cc = 0;
-    for (dp in subj_dict) {
+    for (dp in subj_dict["statements"]) {
 
 	console.log(dp);
 	
@@ -785,11 +814,18 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 	    }
 	    
 	    // build a green sphere
-	    var sphere = BABYLON.Mesh.CreateSphere(dp, lod, 1, scene);
-	    sphere.position.x = localOrigin[0] + 2 * Math.sin(cc * dpnode_angle / 180*Math.PI);
-	    sphere.position.z = localOrigin[2] + 2 * Math.cos(cc * dpnode_angle / 180*Math.PI);
+	    var sphere = BABYLON.Mesh.CreateSphere(dp, lod, 0.5, scene);
+	    sphere.position.x = localOrigin[0] + 1 * Math.sin(cc * dpnode_angle / 180*Math.PI);
+	    sphere.position.z = localOrigin[2] + 1 * Math.cos(cc * dpnode_angle / 180*Math.PI);
 	    sphere.position.y = subj_mesh.position.y;
-	    sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["instances"][subj][dp];
+	    switch(s_type){
+	    case "individual":
+		sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["resources"][subj][dp];
+		break;
+	    case "bnode":
+		sphere.statement = "<b>Subject:</b>&nbsp;" + subj +"<br><b>Property:</b>&nbsp;" + dp + "<br><b>Value:</b>&nbsp;" + lastData["bnodes"][subj][dp];
+		break;
+	    };
 	    
 	    sphere.material = material;
 
@@ -842,7 +878,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material){
 //
 ///////////////////////////////////////////////////////////////////////
 
-function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
+function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 
     // log
     console.log("[INFO] drawDataPropertiesEdges invoked");
@@ -851,7 +887,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
     localOrigin = [subj_mesh.position.x, subj_mesh.position.y, subj_mesh.position.z]
     
     // iterate over the data properties
-    for (dp in subj_dict) {
+    for (dp in subj_dict["statements"]) {
 
 	// get the object sphere
 	key1 = subj + "_" + dp
@@ -868,7 +904,14 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material){
 	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
 	    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
 	lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
-	lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["instances"][subj][dp];
+	switch(s_type){
+	case "individual":
+	    lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["resources"][subj][dp];
+	    break;
+	case "bnode":
+	    lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["bnodes"][subj][dp];
+	    break;
+	};
 	lines.actionManager = new BABYLON.ActionManager(scene);
 	lines.actionManager.registerAction(
 	    new BABYLON.ExecuteCodeAction(
@@ -975,7 +1018,8 @@ function drawPlanes(){
     planes = {};
 
     // determine plane size
-    size = 3 * Math.max(Object.keys(lastData["instances"]).length, Object.keys(lastData["classes"]).length);
+    // size = 3 * Math.max(Object.keys(lastData["instances"]).length, Object.keys(lastData["classes"]).length);
+    size = 3 + (bnodes_radius * 2);
     
     // iterate over meshes
     for (m in mesh){
@@ -1395,3 +1439,9 @@ function raiseClasses(classes, raise){
     drawPlanes();
     
 }
+
+/////////////////////////////////////////////////////////////////////
+//
+// 
+//
+/////////////////////////////////////////////////////////////////////
