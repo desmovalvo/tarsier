@@ -398,7 +398,7 @@ function draw(){
 		    );
 		
 		drawDataProperties(k, lastData["resources"][k], sphere, dpMat, "individual");
-		//drawDataPropertiesEdges(k, lastData["resources"][k], sphere, dpMat);
+		drawDataPropertiesEdges(k, lastData["resources"][k], sphere, dpMat, "individual");
 	    }	    
 	}
 
@@ -467,7 +467,7 @@ function draw(){
 		    );
 		
 		drawDataProperties(k, lastData["bnodes"][k], sphere, dpMat, "bnode");
-		//drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat);
+		drawDataPropertiesEdges(k, lastData["bnodes"][k], sphere, dpMat, "bnode");
 	    }	    
 	}
 
@@ -613,7 +613,8 @@ function raise(up){
 		    }					
 		    //}
 		}
-		//drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat);
+		// TODO -- check here the last praameter!
+		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat, "individual");
 	    }
 	}
     }
@@ -790,6 +791,7 @@ function drawPlane(y){
 
 function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 
+    // log
     console.log("[DEBUG] drawDataProperties() invoked!");
     
     // determine the local origin based on the subject of the triple
@@ -811,7 +813,6 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	    s = subj;
 	    p = dp;
 	    o = null;
-	    console.log(o);
 	    switch(s_type){
 	    case "individual":
 		o = lastData["resources"][subj]["statements"][dp];
@@ -899,7 +900,9 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	    }
 	    if (!(s in dpMesh[p])){
 		dpMesh[p][s] = {}
-	    }	    
+	    }
+	    console.log("STORING THE SPHERE AS " + p + " - " + s + " - " + o);
+	    console.log(o);
 	    dpMesh[p][s][o] = sphere;
 
 	    // increment cc
@@ -926,37 +929,49 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
     // iterate over the data properties
     for (dp in subj_dict["statements"]) {
 
-	// get s, p and o
-	s = subj
-	p = dp
-	switch(s_type){
-	case "individual":
-	    o = lastData["resources"][subj]["statements"][dp];
-	    break;
-	case "bnode":
-	    o = lastData["bnodes"][subj]["statements"][dp];
-	    break;
-	};
+	console.log(dp);
+	
+	if (document.getElementById(dp + "_D_enabled").checked){
+	
+	    // get s, p and o
+	    s = subj;
+	    p = dp;
+	    o = null;
+	    switch(s_type){
+	    case "individual":
+		console.log(dp);
+		o = lastData["resources"][subj]["statements"][dp];
+		console.log(o);
+		break;
+	    case "bnode":
+		console.log(dp);
+		o = lastData["bnodes"][subj]["statements"][dp];
+		console.log(o);
+		break;
+	    };
 	    
-	// delete old edge, if any
-	// key1 = subj + "_" + dp	    	   
-	// if (key1 in dpMesh){
-	// 	dpMesh[key1].dispose();
-	// }
-	if (p in dpEdgeMesh){
-	    if (s in dpEdgeMesh[p]){
-		if (o in dpEdgeMesh[p][s]){
-		    dpEdgeMesh[p][s][o].dispose();
+	    // delete old edge, if any
+	    // key1 = subj + "_" + dp	    	   
+	    // if (key1 in dpMesh){
+	    // 	dpMesh[key1].dispose();
+	    // }
+	    if (p in dpEdgeMesh){
+		if (s in dpEdgeMesh[p]){
+		    if (o in dpEdgeMesh[p][s]){
+			dpEdgeMesh[p][s][o].dispose();
+		    }
 		}
 	    }
-	}
 	    	
 	// get the object sphere
 	// key1 = subj + "_" + dp
 	// sphere = dpMesh[key1]
+	console.log("START DEB")
 	console.log(p);
 	console.log(s);
 	console.log(o);
+	    console.log("END DEB");
+	    
 	sphere = dpMesh[p][s][o];
 
 	// // delete old sphere and edge, if any
@@ -965,7 +980,8 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	//     dpEdgeMesh[key2].dispose();
 	// }
 	
-	// draw the edge
+	    // draw the edge
+	    console.log("RETRIEVING THE SPHERE AS " + p + " - " + s + " - " + o);
 	var lines = BABYLON.Mesh.CreateLines("lines", [
 	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
 	    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
@@ -1025,6 +1041,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	}	    
 	dpEdgeMesh[p][s][o] = sphere;
 	
+	}
     }
 }
 
