@@ -1482,8 +1482,13 @@ function raiseClasses(classes, raise){
 	for (r in raised){
 	    // cycle over data properties
 	    k = raised[r]
-	    drawDataProperties(k, lastData["instances"][k], mesh[k], dpMat);
-	    drawDataPropertiesEdges(k, lastData["instances"][k], mesh[k], dpMat);	    
+	    try{
+		drawDataProperties(k, lastData["resources"][k], mesh[k], dpMat, "individual");
+		drawDataPropertiesEdges(k, lastData["resources"][k], mesh[k], dpMat, "individual");
+	    } catch(err){
+		drawDataProperties(k, lastData["bnodes"][k], mesh[k], dpMat, "bnode");
+		drawDataPropertiesEdges(k, lastData["bnodes"][k], mesh[k], dpMat, "bnode");
+	    }
 	}
         		
     }
