@@ -59,12 +59,12 @@
 	      <form>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Subscribe URL</span>
-		  <input type="text" class="form-control" placeholder="ws://wot.arces.unibo.it:9000/subscribe" aria-describedby="basic-addon1" id="subscribeUriInput">
+		  <input type="text" class="form-control" value="ws://localhost:9000/subscribe" aria-describedby="basic-addon1" id="subscribeUriInput">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Query URL</span>
-		  <input type="text" class="form-control" placeholder="http://wot.arces.unibo.it:8000/query" aria-describedby="basic-addon1" id="queryUriInput">
+		  <input type="text" class="form-control" value="http://localhost:8000/query" aria-describedby="basic-addon1" id="queryUriInput">
 		</div>
 	      </form>
 	    </div>
@@ -80,57 +80,57 @@
 	      <form>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Classes</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="classesColor">		  
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="classesColor" value="#ff8000">		  
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Data Prop.</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="datapropColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="datapropColor" value="#00cc00">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Object Prop.</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="objpropColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="objpropColor" value="#3399ff">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">RDF Type</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="rdftypeColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="rdftypeColor" value="#ff0000">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Instances</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="instancesColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="instancesColor" value="#7f00ff">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Blank Nodes</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="bnodesColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="bnodesColor" value="#ff00ff">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Planes</span>
-		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="groundColor">
+		  <input type="color" class="form-control" aria-describedby="basic-addon1" id="groundColor" value="#222222">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Level of detail</span>
-		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="lod">
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="lod" value="16">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Mesh - Plane gap</span>
-		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="meshPlaneGap">
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="meshPlaneGap" value="1">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Plane - Plane gap</span>
-		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="planePlaneGap">
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="planePlaneGap" value="20">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Bump</span>
-		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="bump">
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="bump" value="5">
 		</div>
 	      </form>
 	    </div>
@@ -239,6 +239,11 @@
     	      </div>
     	    </div>
 	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">
+		<button type="button" class="btn btn-danger btn-sm" onClick="javascript:alert('yet to implement');"><i class="far fa-hand-point-up"></i>&nbsp;Raise Data prop</button>
+		<button type="button" class="btn btn-danger btn-sm" onClick="javascript:alert('yet to implement!');"><i class="far fa-hand-point-down"></i>&nbsp;Lower Data prop</button>
+	      </div>
+	      <br>
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideDP(true);"><i class="fas fa-eye"></i>&nbsp;Show</button>
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideDP(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide</button>
@@ -304,8 +309,13 @@
 		<table id="resourcesTable">
 		</table>
 	      </small>
-    	    </div>
-	    <div class="card-body text-center">
+    	    </div>	   
+	    <div class="card-body text-center">	      
+	      <div class="btn-group btn-group-sm" align="center">
+		<button type="button" class="btn btn-danger btn-sm" onClick="javascript:alert('yet to implement');"><i class="far fa-hand-point-up"></i>&nbsp;Raise Resources</button>
+		<button type="button" class="btn btn-danger btn-sm" onClick="javascript:alert('yet to implement!');"><i class="far fa-hand-point-down"></i>&nbsp;Lower Resources</button>
+	      </div>
+	      <br>
 	      <div class="btn-group btn-group-sm" align="center">		  
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideRes(true);"><i class="fas fa-eye"></i>&nbsp;Show</button>
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideRes(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide</button>
@@ -345,6 +355,7 @@
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseBNodes(true);"><i class="far fa-hand-point-up"></i>&nbsp;Raise BNodes</button>
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseBNodes(false);"><i class="far fa-hand-point-down"></i>&nbsp;Lower BNodes</button>
 	      </div>
+	      <br>
 	      <div class="btn-group btn-group-sm" align="center">
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideBNodes(true);"><i class="fas fa-eye"></i>&nbsp;Show BNodes</button>
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideBNodes(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide BNodes</button>
@@ -377,9 +388,10 @@
     	    </div>
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseBNodes(true);">Raise Literals</button>
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseBNodes(false);">Lower Literals</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseBNodes(true);"><i class="far fa-hand-point-up"></i>&nbsp;Raise Literals</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseBNodes(false);"><i class="far fa-hand-point-down"></i>&nbsp;Lower Literals</button>
 	      </div>
+	      <br>
 	      <div class="btn-group btn-group-sm" align="center">
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideLiterals(true);"><i class="fas fa-eye"></i>&nbsp;Show Literals</button>
 		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideLiterals(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide Literals</button>
@@ -414,10 +426,11 @@
 	<div class="col p-0 m-2">	    
 	  <div class="card border-dark rounded-3 m-1 mt-2">
     	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-book" aria-hidden="true"></i>&nbsp;Help</div>
-    	    <div class="card-body font-weight-light">
+    	    <div class="card-body font-weight-light text-center">
 	      <img src="static/tarsier_medium.png">
 	      <small>
-    		<b>Tarsier</b> is released under <b>GNU GPL v3
+		<br>
+    		<b>Tarsier</b> is an RDF graph viewer released under <b>GNU GPL v3
     		  License</b> and maintained by Fabio Viola (fabio.viola
     		at unibo dot it).
 	      </small>
