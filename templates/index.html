@@ -293,13 +293,19 @@
 		<button type="button" class="btn btn-light btn-sm" onClick="javascript:selectAll('resources', false);">Deselect All</button>
 		<button type="button" class="btn btn-light btn-sm" data-toggle="collapse" data-target="#collapseResources" aria-expanded="false" aria-controls="collapseResources">Collapse/Expande</button>
 	      </div>	      
-	    </div>
+	    </div>	    
     	    <div class="card-body font-weight-light collapse" id="collapseResources">
 	      <small>
 		<table id="resourcesTable">
 		</table>
 	      </small>
     	    </div>
+	    <div class="card-body text-center">
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideRes(true);">Show</button>
+		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideRes(false);">Hide</button>
+	      </div>
+	    </div>
     	    <div class="card-footer">
     	      <small><i class="fas fa-info-circle"></i>&nbsp;Resources</small>
     	    </div>

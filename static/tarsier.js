@@ -530,8 +530,8 @@ function selectAll(what, select){
 	    document.getElementById(lastData["properties"]["datatype"][k] + "_D_enabled").checked = select
 	}
 	break;
-    case "instances":
-	for (var k in lastData["instances"]){
+    case "resources":
+	for (var k in lastData["resources"]){
 	    document.getElementById(k + "_I_enabled").checked = select
 	}
 	break;
@@ -824,24 +824,13 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	    switch(s_type){
 	    case "individual":
 		o = lastData["resources"][subj]["statements"][dp];
-		console.log(o);
 		break;
 	    case "bnode":
 		o = lastData["bnodes"][subj]["statements"][dp];
-		console.log("START DEBUG BNODE");
-		console.log(subj)
-		console.log(dp)
-		console.log(o);
-		console.log("END DEBUG BNODE");
 		break;
 	    };
-	    console.log(o);
 	    
 	    // delete old sphere and edge, if any
-	    // key1 = subj + "_" + dp	    	   
-	    // if (key1 in dpMesh){
-	    // 	dpMesh[key1].dispose();
-	    // }
 	    if (p in dpMesh){
 		if (s in dpMesh[p]){
 		    if (o in dpMesh[p][s]){
@@ -894,11 +883,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 			1000
 		    )
 		);
-	    
-	    // store the sphere (as a key we use subj+prop)
-	    // dpMesh[key1] = sphere;
 
-	    
 	    // store the sphere in a dictionary
 	    // the main key of the dictionary is the data property,
 	    // then we have another key for the subject
@@ -909,8 +894,6 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
 	    if (!(s in dpMesh[p])){
 		dpMesh[p][s] = {}
 	    }
-	    console.log("STORING THE SPHERE AS " + p + " - " + s + " - " + o);
-	    console.log(o);
 	    dpMesh[p][s][o] = sphere;
 
 	    // increment cc
@@ -937,10 +920,9 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
     // iterate over the data properties
     for (dp in subj_dict["statements"]) {
 
-	console.log(dp);
-	
+	// check if it is enabled
 	if (document.getElementById(dp + "_D_enabled").checked){
-	
+	    
 	    // get s, p and o
 	    s = subj;
 	    p = dp;
@@ -959,10 +941,6 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	    };
 	    
 	    // delete old edge, if any
-	    // key1 = subj + "_" + dp	    	   
-	    // if (key1 in dpMesh){
-	    // 	dpMesh[key1].dispose();
-	    // }
 	    if (p in dpEdgeMesh){
 		if (s in dpEdgeMesh[p]){
 		    if (o in dpEdgeMesh[p][s]){
@@ -970,85 +948,67 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 		    }
 		}
 	    }
-	    	
-	// get the object sphere
-	// key1 = subj + "_" + dp
-	// sphere = dpMesh[key1]
-	console.log("START DEB")
-	console.log(p);
-	console.log(s);
-	console.log(o);
-	    console.log("END DEB");
 	    
-	sphere = dpMesh[p][s][o];
-
-	// // delete old sphere and edge, if any
-	// key2 = subj + "_" + dp + "_EDGE"
-	// if (key2 in dpEdgeMesh){
-	//     dpEdgeMesh[key2].dispose();
-	// }
-	
+	    // get the object sphere
+	    sphere = dpMesh[p][s][o];
+	    
 	    // draw the edge
-	    console.log("RETRIEVING THE SPHERE AS " + p + " - " + s + " - " + o);
-	var lines = BABYLON.Mesh.CreateLines("lines", [
-	    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
-	    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
-	lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
-	switch(s_type){
-	case "individual":
-	    lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["resources"][subj][dp];
-	    break;
-	case "bnode":
-	    lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["bnodes"][subj][dp];
-	    break;
-	};
-	lines.actionManager = new BABYLON.ActionManager(scene);
-	lines.actionManager.registerAction(
-	    new BABYLON.ExecuteCodeAction(
-		BABYLON.ActionManager.OnLeftPickTrigger,
-		function(evt){
-		    // Find the clicked mesh
-		    var meshClicked = evt.meshUnderPointer;
-		    ab = document.getElementById("alertBox");
-		    ab.className="alert alert-success";
-		    ab.innerHTML = meshClicked.statement;
-		}
-	    )
-	);
-	lines.actionManager
-	    .registerAction(
-		new BABYLON.InterpolateValueAction(
-		    BABYLON.ActionManager.OnRightPickTrigger,
-		    lines,
-		    'alpha',
-		    0.3,
-		    1000
-		)
-	    ).then(
-		new BABYLON.InterpolateValueAction(
-		    BABYLON.ActionManager.OnRightPickTrigger,
-		    lines,
-		    'alpha',
-		    1.0,
-		    1000
+	    var lines = BABYLON.Mesh.CreateLines("lines", [
+		new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
+		new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
+	    lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
+	    switch(s_type){
+	    case "individual":
+		lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["resources"][subj][dp];
+		break;
+	    case "bnode":
+		lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["bnodes"][subj][dp];
+		break;
+	    };
+	    lines.actionManager = new BABYLON.ActionManager(scene);
+	    lines.actionManager.registerAction(
+		new BABYLON.ExecuteCodeAction(
+		    BABYLON.ActionManager.OnLeftPickTrigger,
+		    function(evt){
+			// Find the clicked mesh
+			var meshClicked = evt.meshUnderPointer;
+			ab = document.getElementById("alertBox");
+			ab.className="alert alert-success";
+			ab.innerHTML = meshClicked.statement;
+		    }
 		)
 	    );
-		
-	// store the edge (as a key we use subj+prop_EDGE)
-	// dpEdgeMesh[key2] = lines;
+	    lines.actionManager
+		.registerAction(
+		    new BABYLON.InterpolateValueAction(
+			BABYLON.ActionManager.OnRightPickTrigger,
+			lines,
+			'alpha',
+			0.3,
+			1000
+		    )
+		).then(
+		    new BABYLON.InterpolateValueAction(
+			BABYLON.ActionManager.OnRightPickTrigger,
+			lines,
+			'alpha',
+			1.0,
+			1000
+		    )
+		);
 
-	// store the sphere in a dictionary
-	// the main key of the dictionary is the data property,
-	// then we have another key for the subject
-	// and a third level for the value of that property
-	if (!(p in dpEdgeMesh)){
-	    dpEdgeMesh[p] = {}		
+	    // store the sphere in a dictionary
+	    // the main key of the dictionary is the data property,
+	    // then we have another key for the subject
+	    // and a third level for the value of that property
+	    if (!(p in dpEdgeMesh)){
+		dpEdgeMesh[p] = {}		
 	    }
-	if (!(s in dpEdgeMesh[p])){
-	    dpEdgeMesh[p][s] = {}
-	}	    
-	dpEdgeMesh[p][s][o] = lines;
-	
+	    if (!(s in dpEdgeMesh[p])){
+		dpEdgeMesh[p][s] = {}
+	    }	    
+	    dpEdgeMesh[p][s][o] = lines;
+	    
 	}
     }
 }
@@ -1615,4 +1575,59 @@ function showHideOP(show){
 			opEdgeMesh[p][ks][ko].visibility = newVisib;
 	}
     }   
+}
+
+
+/////////////////////////////////////////////////////////////////////
+//
+// Show / Hide Object Properties
+//
+/////////////////////////////////////////////////////////////////////
+
+function showHideRes(show){
+
+    // debug
+    console.log("[DEBUG] showHideRes() invoked");
+
+    // set the new visib (for show=false: 0, for show=true: 1)
+    newVisib = 0;
+    if (show){
+	newVisib = 1;
+    }
+    
+    // get the list of all the selected object properties
+    for (var k in lastData["resources"]){
+
+	// check if it's enabled
+	if (document.getElementById(k+ "_I_enabled").checked){
+
+	    // get the mesh
+	    if (k in mesh){
+		mesh[k].visibility = newVisib;
+	    }
+
+	    // show/hide all the data properties
+	    for (p in dpMesh){
+		if (k in dpMesh[p]){
+		    for (o in dpMesh[p][k]){
+			dpMesh[p][k][o].visibility = newVisib;
+			dpEdgeMesh[p][k][o].visibility = newVisib;
+		    }
+		}
+	    }
+	    
+	    // show/hide all the object properties having k as...
+	    for (p in opEdgeMesh)
+		
+		// subject
+		if (k in opEdgeMesh[p]){
+		    for (o in opEdgeMesh[p][k])
+			opEdgeMesh[p][k][o].visibility = newVisib;		    
+		} else {  // or object
+		    for (kelse in opEdgeMesh[p])
+			if (k in opEdgeMesh[p][kelse])
+			    opEdgeMesh[p][kelse][k].visibility = newVisib;
+		}		
+	}
+    }
 }
