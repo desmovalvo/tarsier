@@ -135,7 +135,7 @@
 	      </form>
 	    </div>
 	    <div class="card-footer">
-	      <small><i class="fas fa-info-circle"></i>&nbsp;Colors</small>
+	      <small><i class="fas fa-info-circle"></i>&nbsp;Colors and other settings</small>
 	    </div>
 	  </div>
 	  
@@ -212,7 +212,7 @@
 	      </div>	      
 	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter classes</small>
     	    </div>
           </div>
 	</div>
@@ -245,7 +245,7 @@
 	      </div>	      
 	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter Datatype properties</small>
     	    </div>
           </div>
 
@@ -273,9 +273,9 @@
     	    </div>
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('StoO');">Raise (s->o)</button>
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('OtoS');">Raise (o->s)</button>
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('SandO');">Raise (s and o)</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('StoO');"><i class="far fa-hand-point-up"></i>&nbsp;Raise (s->o)</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('OtoS');"><i class="far fa-hand-point-up"></i>&nbsp;Raise (o->s)</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('SandO');"><i class="far fa-hand-point-up"></i>&nbsp;Raise (s and o)</button>
 	      </div>
 	      <br>
 	      <div class="btn-group btn-group-sm" align="center">		  
@@ -284,7 +284,7 @@
 	      </div>	      
 	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;Debug messages</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter Object properties</small>
     	    </div>
           </div>
 	</div>
@@ -312,7 +312,7 @@
 	      </div>
 	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;Resources</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter Resources</small>
     	    </div>
           </div>
 
@@ -351,7 +351,7 @@
 	      </div>
 	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;List of the Blank Nodes</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter Blank Nodes</small>
     	    </div>
           </div>
 	</div>
@@ -386,7 +386,7 @@
 	      </div>
 	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;List of the literal values</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter literal values</small>
     	    </div>
           </div>
 	</div>
@@ -394,13 +394,14 @@
 	
 	<div class="col p-0 m-2">
 	  <div class="card border-dark rounded-3 m-1 mt-2">
-    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;SPARQL Input</div>
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Filter using SPARQL</div>
     	    <div class="card-body font-weight-light">
 	      <textarea class="form-control" id="sparql" rows="10"></textarea>
-	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"></i><i class="fas fa-window-minimize"></i>&nbsp;Filter</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"></i><i class="fas fa-bars"></i>&nbsp;Filter (multi-layer)</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:help('filter');"><i class="fas fa-life-ring"></i>&nbsp;Help</button>
+	    </div>
+	    <div class="card-body text-center">	    
+	      <div class="btn-group btn-group-sm text-center" align="center">		  
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"></i><i class="fas fa-window-minimize"></i>&nbsp;Filter</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"></i><i class="fas fa-bars"></i>&nbsp;Filter (multi-layer)</button>
 	      </div>	      	      
     	    </div>
     	    <div class="card-footer">
