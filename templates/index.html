@@ -146,8 +146,8 @@
 	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', true);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', false);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data from SPARQL</button>		
 	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:draw();"><i class="fas fa-pencil-alt"></i>&nbsp;Plot</button>
-	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:raise(true);"><i class="fas fa-arrow-up"></i>&nbsp;Raise</button>
-	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
+	  <button type="button" class="btn btn-danger btn-sm" onClick="javascript:raise(true);"><i class="fas fa-arrow-up"></i>&nbsp;Raise</button>
+	  <button type="button" class="btn btn-danger btn-sm" onClick="jacascript:raise(false);"><i class="fas fa-arrow-down"></i>&nbsp;Lower</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:screenshot();"><i class="fas fa-image"></i>&nbsp;Save PNG</button>
@@ -400,12 +400,12 @@
 	    </div>
 	    <div class="card-body text-center">	    
 	      <div class="btn-group btn-group-sm text-center" align="center">		  
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"></i><i class="fas fa-window-minimize"></i>&nbsp;Filter</button>
-		<button type="button" class="btn btn-link btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"></i><i class="fas fa-bars"></i>&nbsp;Filter (multi-layer)</button>
+		<button type="button" class="btn btn-danger btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', false);"><i class="fas fa-filter"></i><i class="fas fa-window-minimize"></i>&nbsp;Filter</button>
+		<button type="button" class="btn btn-danger btn-sm" onClick="javascript:sparqlFilter('{{ requestUri }}', true);"><i class="fas fa-filter"></i><i class="fas fa-bars"></i>&nbsp;Filter (multi-layer)</button>
 	      </div>	      	      
     	    </div>
     	    <div class="card-footer">
-    	      <small><i class="fas fa-info-circle"></i>&nbsp;Info about SEPA LoadSimulator</small>
+    	      <small><i class="fas fa-info-circle"></i>&nbsp;Filter through SPARQL queries</small>
     	    </div>
           </div>
 	</div>
