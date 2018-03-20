@@ -647,22 +647,23 @@ function drawObjectProperties(){
 	for (statement in lastData["pvalues"]["object"][key]){
 	    
 	    // get the subject and object
-	    subj = lastData["pvalues"]["object"][key][statement]["s"]
-	    obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
+	    s = lastData["pvalues"]["object"][key][statement]["s"]
+	    o =  lastData["pvalues"]["object"][key][statement]["o"]
+	    p = lastData["properties"]["object"][op]
 
 	    // determine if both subject and object are both drawn
-	    if (subj in mesh && obj in mesh){
+	    if (s in mesh && o in mesh){
 
 		// get the points
-		sta_point = mesh[subj].position.clone();
-		end_point = mesh[obj].position.clone();
+		sta_point = mesh[s].position.clone();
+		end_point = mesh[o].position.clone();
 		mid_point = sta_point.clone(); //  mesh[subj].position.clone().add(mesh[obj].position).divide(new BABYLON.Vector3(2,2,2));
 		mid_point.y += bump;
 
 		// draw the curve
 		var quadraticBezierVectors = BABYLON.Curve3.CreateQuadraticBezier(sta_point, mid_point, end_point, 15);
 		lines = BABYLON.Mesh.CreateLines("qbezier", quadraticBezierVectors.getPoints(), scene);
-		lines.statement  = "<b>Subject:</b>&nbsp;" + subj + "<br><b>Property:</b>&nbsp;" + lastData["properties"]["object"][op] + "<br><b>Object:</b>&nbsp;" + obj;		    
+		lines.statement  = "<b>Subject:</b>&nbsp;" + s + "<br><b>Property:</b>&nbsp;" + p + "<br><b>Object:</b>&nbsp;" + o;		    
 		if (key === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"){
 		    lines.color = rdftypeMat.diffuseColor;
 		} else {
@@ -700,19 +701,26 @@ function drawObjectProperties(){
 		    	    1000
 		    	)
 		    );
-		
-		// delete the old edge, if any
-		// we temporarily use the mesh named as "subj_pred_obj_EDGE"
-		k = subj + "_" + key  + "_" + obj
-		
-		// store the edge
-		if (k in opEdgeMesh){
-		    opEdgeMesh[k].dispose();
+
+		// delete the old edge if any, and add the new one
+		if (p in opEdgeMesh){
+		    if (s in opEdgeMesh[p]){
+			if (o in opEdgeMesh[p][s])
+			    opEdgeMesh[p][s][o].dispose();			
+		    }
+		    else{
+			opEdgeMesh[p][s] = {};
+		    }
 		}
-		opEdgeMesh[k] = lines;
-	    }
-	    
-	    // }
+		else{
+		    opEdgeMesh[p] = {};
+		    opEdgeMesh[p][s] = {};		    
+		}
+		opEdgeMesh[p][s][o] = lines;
+
+
+		
+	    }	    
 	}
     }   
 }
@@ -1039,7 +1047,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	if (!(s in dpEdgeMesh[p])){
 	    dpEdgeMesh[p][s] = {}
 	}	    
-	dpEdgeMesh[p][s][o] = sphere;
+	dpEdgeMesh[p][s][o] = lines;
 	
 	}
     }
@@ -1542,6 +1550,12 @@ function showHideDP(show){
 
     // debug
     console.log("[DEBUG] showHideDP() invoked");
+
+    // set thew new visib (for show=false: 0, for show=true: 1)
+    newVisib = 0;
+    if (show){
+	newVisib = 1;
+    }
     
     // get the list of all the selected data properties
     for (var k in lastData["properties"]["datatype"]){
@@ -1554,22 +1568,51 @@ function showHideDP(show){
 
 	    // iterate over the first level (i.e. subjects)
 	    p = lastData["properties"]["datatype"][k]
-	    for (ms in dpMesh[p]){
-		console.log("START DEBUG");
-		console.log(dpMesh[p]);
-		console.log(dpMesh[p][ms]);
-		console.log("END DEBUG");
-		// iterate over the second level (i.e. objects)
-		for (mo in dpMesh[p][ms]){ 
-		    console.log(dpMesh[p][ms][mo]);
-		    if (show){
-			dpMesh[p][ms][mo].visibility = 1;
-		    }
-		    else{
-			dpMesh[p][ms][mo].visibility = 0.1;
-		    }
-		}
-	    }
+
+	    // hide spheres
+	    for (ms in dpMesh[p])
+		for (mo in dpMesh[p][ms])
+		    dpMesh[p][ms][mo].visibility = newVisib;
+
+	    // hide edges
+	    for (ms in dpEdgeMesh[p])
+		for (mo in dpEdgeMesh[p][ms])
+		    dpEdgeMesh[p][ms][mo].visibility = newVisib;
 	}
     }    
+}
+
+/////////////////////////////////////////////////////////////////////
+//
+// Show / Hide Object Properties
+//
+/////////////////////////////////////////////////////////////////////
+
+function showHideOP(show){
+
+    // debug
+    console.log("[DEBUG] showHideOP() invoked");
+
+    // set the new visib (for show=false: 0, for show=true: 1)
+    newVisib = 0;
+    if (show){
+	newVisib = 1;
+    }
+    
+    // get the list of all the selected object properties
+    for (var k in lastData["properties"]["object"]){
+	
+	// check if it's enabled
+	if (document.getElementById(lastData["properties"]["object"][k] + "_O_enabled").checked){
+
+	    // get the property
+	    p = lastData["properties"]["object"][k];
+	    
+	    // get the mesh, if present and change visibility
+	    if (p in opEdgeMesh)
+		for (ks in opEdgeMesh[p])
+		    for (ko in opEdgeMesh[p][ks])
+			opEdgeMesh[p][ks][ko].visibility = newVisib;
+	}
+    }   
 }
