@@ -614,7 +614,7 @@ function raise(up){
 		    //}
 		}
 		// TODO -- check here the last praameter!
-		drawDataPropertiesEdges(k, lastData["instances"][k], sphere, dpMat, "individual");
+		drawDataPropertiesEdges(k, lastData["resources"][k], sphere, dpMat, "individual");
 	    }
 	}
     }
@@ -733,19 +733,20 @@ function resetPlanes(){
     }
 
     // redraw all the data properties
-    for (m in dpMesh){
-	dpMesh[m].position.y = meshPlaneGap;
+    for (p in dpMesh){
+	for (s in dpMesh[p]){
+	    for (o in dpMesh[p][s]){
+
+		// move the data property sphere
+		dpMesh[p][s][o].position.y = meshPlaneGap;
+
+		// remove the data property edges
+		//dpEdgeMesh[p][s][o].dispose();
+		
+	    }
+	}
     }
-
-    // redraw all the data properties edges
-    for (m in dpEdgeMesh){
-
-	// delete the old one
-	dpEdgeMesh[m].dispose();
-
-	// get subject and object and redraw
-	
-    }
+    drawAllDataPropertiesEdges();
     
     // redraw object properties
     drawObjectProperties();
@@ -797,8 +798,8 @@ function drawPlane(y){
 //
 ///////////////////////////////////////////////////////////////////////
 
-function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
-
+function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type)
+{
     // log
     console.log("[DEBUG] drawDataProperties() invoked!");
     
@@ -1004,6 +1005,32 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	    }	    
 	    dpEdgeMesh[p][s][o] = lines;
 	    
+	}
+    }
+}
+
+
+
+function drawAllDataPropertiesEdges(){
+
+    // log
+    console.log("[INFO] drawDataPropertiesEdges invoked");
+
+    // iterate over data properties
+    for (p in dpMesh){
+	for (s in dpMesh[p]){
+	    for (o in dpMesh[p][s]){
+
+		// erase the old one
+		dpEdgeMesh[p][s][o].dispose();
+
+		// draw a new one
+		try {
+		    drawDataPropertiesEdges(s, lastData["resources"][s], mesh[s], dpMat, "individual")
+		} catch(err) {
+		    drawDataPropertiesEdges(s, lastData["bnodes"][s], mesh[s], dpMat, "bnode")
+		}
+	    }
 	}
     }
 }
@@ -1334,36 +1361,31 @@ function raiseOp(how){
     // cycle over op
     for (var k in lastData["properties"]["object"]){
 
-	console.log("Analysing property " + k);
-	
 	// for every *selected* op
 	if (document.getElementById(lastData["properties"]["object"][k] + "_O_enabled").checked){
-
-	    console.log("Property enabled!");
 	    
 	    // iterate over the statements with that property
 	    key = lastData["properties"]["object"][k];
-	    for (statement in lastData["pvalues"]["object"][key]){
+	    p = lastData["pvalues"]["object"][key];
+	    console.log(p)
+	    for (statement in p){
 
-		console.log(statement);
-		
 		// get the subject and object
-		subj = lastData["pvalues"]["object"][key][statement]["s"]
-		obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
+		s = p[statement]["s"]
+		o = p[statement]["o"]		    
 		
 		// raise the object if sto, raise the subject if !sto
-
 		switch(how){
 		    
 		case "StoO":
 		    
 		    // if the mesh exists and has not been already raised
 		    // by this function call, then raise it
-		    console.log(obj in raised);
-		    if ((obj in mesh) && !(raised.includes(obj))){			
-			sphere = mesh[obj];		
+		    if ((o in mesh) && !(raised.includes(o))){
+			console.log(mesh[o]);
+			sphere = mesh[o];		
 			sphere.position.y += planesGap;
-			raised.push(obj);
+			raised.push(o);
 		    }
 		    break;
 		    
@@ -1371,11 +1393,10 @@ function raiseOp(how){
 		    
 		    // if the mesh exists and has not been already raised
 		    // by this function call, then raise it
-		    console.log(subj in raised);
-		    if ((subj in mesh) && !(raised.includes(subj))){			
-			sphere = mesh[subj];		
+		    if ((s in mesh) && !(raised.includes(s))){			
+			sphere = mesh[s];		
 			sphere.position.y += planesGap;
-			raised.push(subj);
+			raised.push(s);
 		    }
 		    break;
 
@@ -1383,20 +1404,18 @@ function raiseOp(how){
 
 		    // if the mesh exists and has not been already raised
 		    // by this function call, then raise it
-		    console.log(obj in raised);
-		    if ((obj in mesh) && !(raised.includes(obj))){			
-			sphere = mesh[obj];		
+		    if ((o in mesh) && !(raised.includes(o))){			
+			sphere = mesh[o];		
 			sphere.position.y += planesGap;
-			raised.push(obj);
+			raised.push(o);
 		    }
 
 		    // if the mesh exists and has not been already raised
 		    // by this function call, then raise it
-		    console.log(subj in raised);
-		    if ((subj in mesh) && !(raised.includes(subj))){			
-			sphere = mesh[subj];		
+		    if ((s in mesh) && !(raised.includes(s))){			
+			sphere = mesh[s];		
 			sphere.position.y += planesGap;
-			raised.push(subj);
+			raised.push(s);
 		    }
 		    break;
 		}
@@ -1408,8 +1427,13 @@ function raiseOp(how){
     for (r in raised){
 	// cycle over data properties
 	k = raised[r]
-	drawDataProperties(k, lastData["instances"][k], mesh[k], dpMat);
-	drawDataPropertiesEdges(k, lastData["instances"][k], mesh[k], dpMat);	    
+	try {
+	    drawDataProperties(k, lastData["resources"][k], mesh[k], dpMat, "individual");
+	    drawDataPropertiesEdges(k, lastData["resources"][k], mesh[k], dpMat, "individual");
+	} catch(err){
+	    drawDataProperties(k, lastData["bnodes"][k], mesh[k], dpMat, "bnode");
+	    drawDataPropertiesEdges(k, lastData["bnodes"][k], mesh[k], dpMat, "bnode");
+	}
     }
         
     // re-draw all the object properties
@@ -1419,7 +1443,103 @@ function raiseOp(how){
     // draw planes
     drawPlanes();
     
-}    
+}
+
+// function raiseOp(how){
+
+//     // read colors
+//     getColors();
+
+//     // memory of raised objects
+//     raised = []
+       
+//     // cycle over op
+//     for (var k in lastData["properties"]["object"]){
+
+// 	console.log("Analysing property " + k);
+	
+// 	// for every *selected* op
+// 	if (document.getElementById(lastData["properties"]["object"][k] + "_O_enabled").checked){
+	    
+// 	    // iterate over the statements with that property
+// 	    key = lastData["properties"]["object"][k];
+// 	    for (statement in lastData["pvalues"]["object"][key]){
+
+// 		console.log(statement);
+		
+// 		// get the subject and object
+// 		subj = lastData["pvalues"]["object"][key][statement]["s"]
+// 		obj =  lastData["pvalues"]["object"][key][statement]["o"]		    
+		
+// 		// raise the object if sto, raise the subject if !sto
+
+// 		switch(how){
+		    
+// 		case "StoO":
+		    
+// 		    // if the mesh exists and has not been already raised
+// 		    // by this function call, then raise it
+// 		    console.log(obj in raised);
+// 		    if ((obj in mesh) && !(raised.includes(obj))){			
+// 			sphere = mesh[obj];		
+// 			sphere.position.y += planesGap;
+// 			raised.push(obj);
+// 		    }
+// 		    break;
+		    
+// 		case "OtoS":
+		    
+// 		    // if the mesh exists and has not been already raised
+// 		    // by this function call, then raise it
+// 		    console.log(subj in raised);
+// 		    if ((subj in mesh) && !(raised.includes(subj))){			
+// 			sphere = mesh[subj];		
+// 			sphere.position.y += planesGap;
+// 			raised.push(subj);
+// 		    }
+// 		    break;
+
+// 		case "SandO":
+
+// 		    // if the mesh exists and has not been already raised
+// 		    // by this function call, then raise it
+// 		    console.log(obj in raised);
+// 		    if ((obj in mesh) && !(raised.includes(obj))){			
+// 			sphere = mesh[obj];		
+// 			sphere.position.y += planesGap;
+// 			raised.push(obj);
+// 		    }
+
+// 		    // if the mesh exists and has not been already raised
+// 		    // by this function call, then raise it
+// 		    console.log(subj in raised);
+// 		    if ((subj in mesh) && !(raised.includes(subj))){			
+// 			sphere = mesh[subj];		
+// 			sphere.position.y += planesGap;
+// 			raised.push(subj);
+// 		    }
+// 		    break;
+// 		}
+// 	    }
+// 	}
+//     }
+
+//     // iterate over the raised mesh, and raise their data properties
+//     for (r in raised){
+// 	// cycle over data properties
+// 	k = raised[r]
+// 	drawDataProperties(k, lastData["instances"][k], mesh[k], dpMat);
+// 	drawDataPropertiesEdges(k, lastData["instances"][k], mesh[k], dpMat);	    
+//     }
+        
+//     // re-draw all the object properties
+//     console.log("[INFO] Re-drawing object properties");
+//     drawObjectProperties();
+
+//     // draw planes
+//     drawPlanes();
+    
+// }    
 
 
 function raiseClasses(classes, raise){
