@@ -1575,7 +1575,7 @@ function showHideOP(show){
 
 /////////////////////////////////////////////////////////////////////
 //
-// Show / Hide Object Properties
+// Show / Hide Resources
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -1590,7 +1590,7 @@ function showHideRes(show){
 	newVisib = 1;
     }
     
-    // get the list of all the selected object properties
+    // get the list of all the selected resources
     for (var k in lastData["resources"]){
 
 	// check if it's enabled
@@ -1633,7 +1633,7 @@ function showHideRes(show){
 
 /////////////////////////////////////////////////////////////////////
 //
-// Show / Hide Object Classes
+// Show / Hide Classes
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -1648,7 +1648,7 @@ function showHideClasses(show){
 	newVisib = 1;
     }
     
-    // get the list of all the selected object properties
+    // get the list of all the selected classes
     for (var cls in lastData["classes"]){
 
 	// get the class
@@ -1690,7 +1690,7 @@ function showHideClasses(show){
 
 /////////////////////////////////////////////////////////////////////
 //
-// Show / Hide Object Blank Nodes
+// Show / Hide Blank Nodes
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -1705,7 +1705,7 @@ function showHideBNodes(show){
 	newVisib = 1;
     }
     
-    // get the list of all the selected object properties
+    // get the list of all the selected blank nodes
     for (var k in lastData["bnodes"]){
 
 	// check if it's enabled
@@ -1738,6 +1738,45 @@ function showHideBNodes(show){
 			if (k in opEdgeMesh[p][kelse])
 			    opEdgeMesh[p][kelse][k].visibility = newVisib;
 		}		
+	}
+    }    
+}
+
+/////////////////////////////////////////////////////////////////////
+//
+// Show / Hide Literals
+//
+/////////////////////////////////////////////////////////////////////
+
+function showHideLiterals(show){
+
+    // debug
+    console.log("[DEBUG] showHideLiterals() invoked");
+
+    // set the new visib (for show=false: 0, for show=true: 1)
+    newVisib = 0;
+    if (show){
+	newVisib = 1;
+    }
+    
+    // get the list of all the selected data properties
+    for (var k in lastData["literals"]){
+
+	// get the value
+	value = lastData["literals"][k]
+	
+	// check if it's enabled
+	if (document.getElementById(value + "_L_enabled").checked){
+
+	    // cycle over dpMesh / dpEdgeMesh to find those related to literal with value "value"
+	    for (p in dpMesh){
+		for (s in dpMesh[p]){
+		    if (value in dpMesh[p][s]){
+			dpMesh[p][s][value].visibility = newVisib;
+			dpEdgeMesh[p][s][value].visibility = newVisib;
+		    }
+		}
+	    }
 	}
     }    
 }
