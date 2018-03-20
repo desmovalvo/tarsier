@@ -813,8 +813,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type){
     cc = 0;
     for (dp in subj_dict["statements"]) {
 
-	console.log(dp);
-	
+	// check if enabled
 	if (document.getElementById(dp + "_D_enabled").checked){		
 	    
 	    // get s, p and o
@@ -929,14 +928,10 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	    o = null;
 	    switch(s_type){
 	    case "individual":
-		console.log(dp);
 		o = lastData["resources"][subj]["statements"][dp];
-		console.log(o);
 		break;
 	    case "bnode":
-		console.log(dp);
 		o = lastData["bnodes"][subj]["statements"][dp];
-		console.log(o);
 		break;
 	    };
 	    
@@ -1691,4 +1686,58 @@ function showHideClasses(show){
 		}		
 	}
     }
+}
+
+/////////////////////////////////////////////////////////////////////
+//
+// Show / Hide Object Blank Nodes
+//
+/////////////////////////////////////////////////////////////////////
+
+function showHideBNodes(show){
+
+    // debug
+    console.log("[DEBUG] showHideBNodes() invoked");
+
+    // set the new visib (for show=false: 0, for show=true: 1)
+    newVisib = 0;
+    if (show){
+	newVisib = 1;
+    }
+    
+    // get the list of all the selected object properties
+    for (var k in lastData["bnodes"]){
+
+	// check if it's enabled
+	if (document.getElementById(k+ "_B_enabled").checked){
+
+	    // get the mesh
+	    if (k in mesh){
+		mesh[k].visibility = newVisib;
+	    }
+
+	    // show/hide all the data properties
+	    for (p in dpMesh){
+		if (k in dpMesh[p]){
+		    for (o in dpMesh[p][k]){
+			dpMesh[p][k][o].visibility = newVisib;
+			dpEdgeMesh[p][k][o].visibility = newVisib;
+		    }
+		}
+	    }
+	    
+	    // show/hide all the object properties having k as...
+	    for (p in opEdgeMesh)
+		
+		// subject
+		if (k in opEdgeMesh[p]){
+		    for (o in opEdgeMesh[p][k])
+			opEdgeMesh[p][k][o].visibility = newVisib;		    
+		} else {  // or object
+		    for (kelse in opEdgeMesh[p])
+			if (k in opEdgeMesh[p][kelse])
+			    opEdgeMesh[p][kelse][k].visibility = newVisib;
+		}		
+	}
+    }    
 }
