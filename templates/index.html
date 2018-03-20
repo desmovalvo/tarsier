@@ -199,10 +199,16 @@
     	    </div>
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseClasses(true,true);">Raise classes</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseClasses(true,false);">Lower classes</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseClasses(false,true);">Raise instances</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseClasses(false,false);">Lower instances</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseClasses(true,true);">Raise classes</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseClasses(true,false);">Lower classes</button>
+	      </div><br>
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseClasses(false,true);">Raise instances</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseClasses(false,false);">Lower instances</button>
+	      </div><br>
+	      <div class="btn-group btn-group-sm" align="center">		  
+		<button type="button" class="btn btn-sm btn-link" onClick="javascript:showHideClasses(true);"><i class="fas fa-eye"></i>&nbsp;Show</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideClasses(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide</button>
 	      </div>	      
 	    </div>
     	    <div class="card-footer">
@@ -234,8 +240,8 @@
     	    </div>
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideDP(true);">Show</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideDP(false);">Hide</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideDP(true);"><i class="fas fa-eye"></i>&nbsp;Show</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideDP(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide</button>
 	      </div>	      
 	    </div>
     	    <div class="card-footer">
@@ -267,15 +273,14 @@
     	    </div>
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseOp('StoO');">Raise (s->o)</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseOp('OtoS');">Raise (o->s)</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:raiseOp('SandO');">Raise (s and o)</button>
-	      </div>	      
-	    </div>
-	    <div class="card-body text-center">
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('StoO');">Raise (s->o)</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('OtoS');">Raise (o->s)</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:raiseOp('SandO');">Raise (s and o)</button>
+	      </div>
+	      <br>
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideOP(true);">Show</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideOP(false);">Hide</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideOP(true);"><i class="fas fa-eye"></i>&nbsp;Show</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideOP(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide</button>
 	      </div>	      
 	    </div>
     	    <div class="card-footer">
@@ -302,8 +307,8 @@
     	    </div>
 	    <div class="card-body text-center">
 	      <div class="btn-group btn-group-sm" align="center">		  
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideRes(true);">Show</button>
-		<button type="button" class="btn btn-light btn-sm" onClick="javascript:showHideRes(false);">Hide</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideRes(true);"><i class="fas fa-eye"></i>&nbsp;Show</button>
+		<button type="button" class="btn btn-link btn-sm" onClick="javascript:showHideRes(false);"><i class="far fa-eye-slash"></i>&nbsp;Hide</button>
 	      </div>
 	    </div>
     	    <div class="card-footer">

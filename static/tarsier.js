@@ -1630,4 +1630,65 @@ function showHideRes(show){
 		}		
 	}
     }
+
+    // even classes, data properties and object properties are resources!
+    // TODO: show/hide them!
+    
+}
+
+/////////////////////////////////////////////////////////////////////
+//
+// Show / Hide Object Classes
+//
+/////////////////////////////////////////////////////////////////////
+
+function showHideClasses(show){
+
+    // debug
+    console.log("[DEBUG] showHideClasses() invoked");
+
+    // set the new visib (for show=false: 0, for show=true: 1)
+    newVisib = 0;
+    if (show){
+	newVisib = 1;
+    }
+    
+    // get the list of all the selected object properties
+    for (var cls in lastData["classes"]){
+
+	// get the class
+	k = lastData["classes"][cls];
+
+	// check if it's enabled
+	if (document.getElementById(k + "_C_enabled").checked){
+
+	    // get the mesh
+	    if (k in mesh){
+		mesh[k].visibility = newVisib;
+	    }
+
+	    // show/hide all the data properties
+	    for (p in dpMesh){
+		if (k in dpMesh[p]){
+		    for (o in dpMesh[p][k]){
+			dpMesh[p][k][o].visibility = newVisib;
+			dpEdgeMesh[p][k][o].visibility = newVisib;
+		    }
+		}
+	    }
+	    
+	    // show/hide all the object properties having k as...
+	    for (p in opEdgeMesh)
+		
+		// subject
+		if (k in opEdgeMesh[p]){
+		    for (o in opEdgeMesh[p][k])
+			opEdgeMesh[p][k][o].visibility = newVisib;		    
+		} else {  // or object
+		    for (kelse in opEdgeMesh[p])
+			if (k in opEdgeMesh[p][kelse])
+			    opEdgeMesh[p][kelse][k].visibility = newVisib;
+		}		
+	}
+    }
 }
