@@ -1,4 +1,4 @@
-// global variables
+// Global variables
 lastData = null;
 
 // babylon objects
@@ -1241,52 +1241,38 @@ function raiseQueryResults(results, multilayer){
 	for (v in variables){
 	    if (variables[v] in currentBinding){
 
-		// check if it is an URI
-		if (currentBinding[variables[v]]["type"] === "uri"){
-
-		    // retrieve the mesh -- check between both classes and instances
-		    k = currentBinding[variables[v]]["value"]
-		    if (k in mesh){		    
+		// retrieve the mesh -- check between both classes and instances
+		k = currentBinding[variables[v]]["value"]
+		if (k in mesh){		    
+		    
+		    if (! (raised.includes(k))){
 			
-			if (! (raised.includes(k))){
-			    
-			    console.log("Raising " + k + " to layer " + v);
-			    console.log(raised);
-			    m = mesh[k]
-			    
-			    // raise the mesh (check if multilayer)
-			    new_y = null;
-			    console.log(multilayer);
-			    if (multilayer){
-				m.position.y += planesGap * (parseInt(v)+1);
-				new_y = m.position.y
-			    } else {
-				m.position.y += planesGap;
-				new_y = m.position.y
-			    }
-
-			    // iterate over data properties
-			    for (dp in lastData["instances"][k]) {
-
-				// raise the sphere
-				key1 = k + "_" + dp
-				console.log(key1)
-				// key2 = key1 + "_EDGE"
-				if (key1 in dpMesh){
-				    dpsphere = dpMesh[key1];
-				    dpsphere.position.y = new_y;
-				}					
-
-			    }
-			    drawDataPropertiesEdges(k, lastData["instances"][k], m, dpMat);
-
-			    // save this!
-			    raised.push(currentBinding[variables[v]]["value"]);
-			}			
-		    }		    		    
-		}
+			m = mesh[k]
+			
+			// raise the mesh (check if multilayer)
+			new_y = null;
+			console.log(multilayer);
+			if (multilayer){
+			    m.position.y += planesGap * (parseInt(v)+1);
+			    new_y = m.position.y
+			} else {
+			    m.position.y += planesGap;
+			    new_y = m.position.y
+			}
+			
+			// check if it is an URI or BNODE and re-draw data properties edges
+			if (currentBinding[variables[v]]["type"] === "uri"){				
+			    drawDataPropertiesEdges(k, lastData["resources"][k], m, dpMat, "individual");
+			} else if (currentBinding[variables[v]]["type"] === "bnode"){
+			    drawDataPropertiesEdges(k, lastData["bnodes"][k], m, dpMat, "bnode");
+			}
+			
+			// save this!
+			raised.push(currentBinding[variables[v]]["value"]);
+		    }			
+		}		   
 	    }
-	}	
+	}
     }
 
     // redraw object properties
