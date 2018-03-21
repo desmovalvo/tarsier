@@ -1101,13 +1101,12 @@ function drawPlanes(){
     planes = {};
 
     // determine plane size
-    // size = 3 * Math.max(Object.keys(lastData["instances"]).length, Object.keys(lastData["classes"]).length);
     size = 3 + (bnodes_radius * 2);
     
     // iterate over meshes
     for (m in mesh){
 	
-	// get the y coordinate of the mesh
+	// get the y coordinate of the plane below the mesh
 	y = mesh[m].position.y - meshPlaneGap;
 
 	// check if a plane already exists
@@ -1126,6 +1125,33 @@ function drawPlanes(){
 	    planes[y] = myPlane;	    
 	}
     }
+
+    // do the same with data properties
+    for (p in dpMesh){
+	for (s in dpMesh[p]){
+	    for (o in dpMesh[p][s]){
+
+		// get the coordinates
+		y = dpMesh[p][s][o].position.y - meshPlaneGap
+
+		// check if a plane already exists
+		if (!(y in planes)){
+
+		    // draw a plane
+		    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: size, height: size, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
+		    myPlane.material = groundMat;	
+		    var axis = new BABYLON.Vector3(1, 0, 0);
+		    var angle = Math.PI / 2;
+		    var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
+		    myPlane.rotationQuaternion = quaternion;
+		    myPlane.translate(BABYLON.Axis.Y, y, BABYLON.Space.WORLD);
+		    
+		    // store the plane using the y coordinate of the mesh (not the plane)
+		    planes[y] = myPlane;
+		}	
+	    }
+	}	   
+    }    
 }
 
 ///////////////////////////////////////////////////////////////////////
