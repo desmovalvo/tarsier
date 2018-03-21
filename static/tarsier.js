@@ -1361,6 +1361,11 @@ function moveCamera(direction, step){
     
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// raise Object Properties
+// 
+///////////////////////////////////////////////////////////////////////
 
 function raiseOp(how){
 
@@ -1819,4 +1824,103 @@ function showHideLiterals(show){
 	    }
 	}
     }    
+}
+
+
+/////////////////////////////////////////////////////////////////////
+//
+// Raise resources
+//
+/////////////////////////////////////////////////////////////////////
+
+function raiseResources(raise){
+
+    // parameters:
+    // - raise is a boolean to decide if we have to raise or lower the selected meshes
+
+    // initialize cache of raised objects    
+    raised = [];
+    
+    // determine the movement direction and amount
+    step = planesGap;
+    if (!(raise))
+	step = -1 * planesGap;
+
+    // iterate over resources
+    for (var k in lastData["resources"]){
+
+	// check if it's enabled
+	if (document.getElementById(k + "_I_enabled").checked){
+
+	    // check if a mesh exists
+	    if (k in mesh){
+	    
+		// remember that we raised this
+		raised.push(k);
+		
+		// retrieve the mesh	    
+		m = mesh[k];
+	    
+		// push it up
+		m.position.y += step;
+
+		// re-draw data properties
+		drawDataProperties(k, lastData["resources"][k], m, dpMat, "individual");
+		drawDataPropertiesEdges(k, lastData["resources"][k], m, dpMat, "individual");		
+	    }
+	}
+    }
+   
+    // re-draw all the object properties
+    drawObjectProperties();
+    
+    // draw planes
+    drawPlanes();
+    
+}
+
+/////////////////////////////////////////////////////////////////////
+//
+// Raise / Lower Data Properties
+//
+/////////////////////////////////////////////////////////////////////
+function raiseDP(raise){
+
+    // debug
+    console.log("[DEBUG] raiseDP() invoked");
+
+    // determine the movement direction and amount
+    step = planesGap;
+    if (!(raise))
+	step = -1 * planesGap;
+    
+    // get the list of all the data properties
+    for (var k in lastData["properties"]["datatype"]){
+	
+	// check if it's enabled
+	if (document.getElementById(lastData["properties"]["datatype"][k] + "_D_enabled").checked){
+
+	    // iterate over the first level (i.e. subjects)
+	    p = lastData["properties"]["datatype"][k]
+
+	    // raise/lower object spheres
+	    for (ms in dpMesh[p])
+		for (mo in dpMesh[p][ms]){
+
+		    // raise the mesh
+		    dpMesh[p][ms][mo].position.y += step;
+	    
+		    // re-draw edges
+		    try {
+			drawDataPropertiesEdges(ms, lastData["resources"][ms], mesh[ms], dpMat, "individual");
+		    } catch(err) {
+			drawDataPropertiesEdges(ms, lastData["bnodes"][ms], mesh[ms], dpMat, "bnode");
+		    }
+		}
+	}
+    }
+
+    // Draw planes
+    drawPlanes();
+    
 }
