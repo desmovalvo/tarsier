@@ -235,6 +235,7 @@ function draw(){
     dpMesh = {};
     dpEdgeMesh = {};
     opEdgeMesh = {};
+    planes = {};
 
     // get the canvas
     var canvas = document.getElementById('renderCanvas');
@@ -491,7 +492,6 @@ function draw(){
     ab = document.getElementById("alertBox");
     ab.className="alert alert-success";
     ab.innerHTML = "Graph drawn!";
-
 
 }
 
