@@ -273,9 +273,6 @@ function draw(){
 	// create a basic light, aiming 0,1,0 - meaning, to the sky
 	var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
 	
-	// create a plane
-	// drawPlane(0);
-	
 	// draw classes
 	n5 = Object.keys(lastData["classes"]).length;
 	classes_radius = 2 * n5 / Math.PI;
@@ -681,41 +678,6 @@ function resetPlanes(){
 
 ///////////////////////////////////////////////////////////////////////
 //
-// draw plane
-//
-///////////////////////////////////////////////////////////////////////
-
-function drawPlane(y){
-
-    console.log("[DEBUG] drawPlane() invoked");
-    
-    // check if the plane already exists
-    if (!(y in planes)){
-	
-	// define the material
-	rgbGroundColor = hexToRGB(document.getElementById("groundColor").value);
-	var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
-	groundMat.diffuseColor = new BABYLON.Color3(rgbGroundColor[0], rgbGroundColor[1], rgbGroundColor[2]);
-	groundMat.alpha = 0.5;
-	
-	// create a plane
-	console.log(bnodes_radius);
-	var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: bnodes_radius*2, height: bnodes_radius*2, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
-	myPlane.material = groundMat;	
-	var axis = new BABYLON.Vector3(1, 0, 0);
-	var angle = Math.PI / 2;
-	var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
-	myPlane.rotationQuaternion = quaternion;
-	myPlane.translate(BABYLON.Axis.Y, y, BABYLON.Space.WORLD);
-	
-	// store the plane
-	planes[y] = myPlane;
-    }
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//
 // draw data properties 
 //
 ///////////////////////////////////////////////////////////////////////
@@ -1015,15 +977,18 @@ function drawPlanes(){
     // log
     console.log("[INFO] drawPlanes() invoked");
     
-    // delete the existing planes
-    for (p in planes){
-	planes[p].dispose();
-	delete p;
-    };
-    planes = {};
+    // // delete the existing planes
+    // for (p in planes){
+    // 	planes[p].dispose();
+    // 	delete p;
+    // };
+    // planes = {};
 
     // determine plane size
     size = 3 + (bnodes_radius * 2);
+
+    // initialize needed planes
+    var neededPlanes = []
     
     // iterate over meshes
     for (m in mesh){
@@ -1032,19 +997,11 @@ function drawPlanes(){
 	y = mesh[m].position.y - meshPlaneGap;
 
 	// check if a plane already exists
-	if (!(y in planes)){
+	if (!(neededPlanes.includes(y))){
 
-	    // 3 - if needed, draw a plane
-	    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: size, height: size, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
-	    myPlane.material = groundMat;	
-	    var axis = new BABYLON.Vector3(1, 0, 0);
-	    var angle = Math.PI / 2;
-	    var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
-	    myPlane.rotationQuaternion = quaternion;
-	    myPlane.translate(BABYLON.Axis.Y, y, BABYLON.Space.WORLD);
-	    
 	    // store the plane using the y coordinate of the mesh (not the plane)
-	    planes[y] = myPlane;	    
+	    neededPlanes.push(y);
+
 	}
     }
 
@@ -1057,23 +1014,65 @@ function drawPlanes(){
 		y = dpMesh[p][s][o].position.y - meshPlaneGap
 
 		// check if a plane already exists
-		if (!(y in planes)){
-
-		    // draw a plane
-		    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: size, height: size, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
-		    myPlane.material = groundMat;	
-		    var axis = new BABYLON.Vector3(1, 0, 0);
-		    var angle = Math.PI / 2;
-		    var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
-		    myPlane.rotationQuaternion = quaternion;
-		    myPlane.translate(BABYLON.Axis.Y, y, BABYLON.Space.WORLD);
+		if (!(neededPlanes.includes(y))){
 		    
 		    // store the plane using the y coordinate of the mesh (not the plane)
-		    planes[y] = myPlane;
+		    neededPlanes.push(y);
 		}	
 	    }
 	}	   
-    }    
+    }
+    
+    // delete unneeded planes
+    // iterate over the existing planes and, if they're not in needed planes we delete them
+
+    console.log("==================================================");
+    for (p in planes)
+	console.log("WE HAVE PLANE: " + p);
+    for (p in neededPlanes)
+	console.log("WE NEED PLANE: " + neededPlanes[p]);
+    console.log("==================================================");
+    
+    for (p in planes){
+
+    	if (!(neededPlanes.includes(parseInt(p)))){
+	    
+    	    // delete the plane
+    	    planes[p].dispose()
+    	    delete planes[p];
+
+    	    // delete the form field for the name
+    	    ind = "nameOfPlane" + p;
+    	    oldField = document.getElementById(ind);
+    	    oldField.remove();
+	    
+    	}
+    }
+
+    // create missing planes
+    for (p in neededPlanes){
+    	if (!(neededPlanes[p] in planes)){
+
+    	    // draw a plane
+    	    var myPlane = BABYLON.MeshBuilder.CreatePlane("myPlane", {width: size, height: size, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);	
+    	    myPlane.material = groundMat;	
+    	    var axis = new BABYLON.Vector3(1, 0, 0);
+    	    var angle = Math.PI / 2;
+    	    var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
+    	    myPlane.rotationQuaternion = quaternion;
+    	    myPlane.translate(BABYLON.Axis.Y, neededPlanes[p], BABYLON.Space.WORLD);
+    	    planes[neededPlanes[p]] = myPlane;
+
+    	    // add a form field for the name
+    	    pn = document.getElementById("planeNames");
+    	    pf = document.createElement("INPUT");
+    	    pf.setAttribute("type", "text");
+    	    pf.setAttribute("value", "plane " + neededPlanes[p]);
+    	    pf.id = "nameOfPlane" + neededPlanes[p]
+    	    pn.appendChild(pf);
+
+    	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
