@@ -47,6 +47,10 @@ sessionID = null;
 
 function sendRequest(serverUri, getAll){
 
+
+    // Disable plot field
+    document.getElementById("plotButton").classList.add("disabled");
+    
     // build the request
     req = {};
     req["command"] = "info";
@@ -168,7 +172,12 @@ function sendRequest(serverUri, getAll){
 	    ab.innerHTML = "Ready to plot graph!";
 
 	}
-    });    
+    });
+
+    // Enable plot field
+    document.getElementById("plotButton").classList.remove("disabled");
+
+    
 }
 
 function loadJSAP(){
