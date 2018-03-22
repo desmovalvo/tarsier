@@ -75,7 +75,6 @@ function sendRequest(serverUri, getAll){
 	success: function(data){
 
 	    console.log("[DEBUG] Connection ok");
-	    console.log(data);
 
 	    // store data
 	    lastData = data;
@@ -154,7 +153,7 @@ function sendRequest(serverUri, getAll){
 		newCell.innerHTML = bName;
 	    }
 
-	    // blank nodes
+	    // literals
 	    while(llt.rows.length > 0) {
 		llt.deleteRow(-1);
 	    };
@@ -292,8 +291,6 @@ function draw(){
 	// draw classes
 	n5 = Object.keys(lastData["classes"]).length;
 	classes_radius = 2 * n5 / Math.PI;
-	console.log(n5);
-	console.log(typeof(n5));
 	node_angle = 360 / n5;
 	for (var k in lastData["classes"]){
 	    // check if it's enabled
@@ -1032,14 +1029,6 @@ function drawPlanes(){
     
     // delete unneeded planes
     // iterate over the existing planes and, if they're not in needed planes we delete them
-
-    console.log("==================================================");
-    for (p in planes)
-	console.log("WE HAVE PLANE: " + p);
-    for (p in neededPlanes)
-	console.log("WE NEED PLANE: " + neededPlanes[p]);
-    console.log("==================================================");
-    
     for (p in planes){
 
     	if (!(neededPlanes.includes(parseInt(p)))){
@@ -1121,9 +1110,6 @@ function drawPlanes(){
 	pn.appendChild(pf);
 	
 	// create a text field
-	console.log(k)
-	console.log(planes)
-	console.log(planes[k])
     	pf = document.createElement("INPUT");
     	pf.setAttribute("type", "text");
     	pf.setAttribute("value", planes[k]["name"]);
@@ -1204,7 +1190,6 @@ function sparqlFilter(serverUri, multilayer){
 	    console.log(data);
 
 	    // analyze results of the query
-	    console.log(data);
 	    raiseQueryResults(data, multilayer);
 	    
 	}
@@ -1262,7 +1247,6 @@ function raiseQueryResults(results, multilayer){
 			
 			// raise the mesh (check if multilayer)
 			new_y = null;
-			console.log(multilayer);
 			if (multilayer){
 			    m.position.y += planesGap * (parseInt(v)+1);
 			    new_y = m.position.y
@@ -1369,7 +1353,6 @@ function raiseOp(how){
 	    // iterate over the statements with that property
 	    key = lastData["properties"]["object"][k];
 	    p = lastData["pvalues"]["object"][key];
-	    console.log(p)
 	    for (statement in p){
 
 		// get the subject and object
@@ -1384,7 +1367,6 @@ function raiseOp(how){
 		    // if the mesh exists and has not been already raised
 		    // by this function call, then raise it
 		    if ((o in mesh) && !(raised.includes(o))){
-			console.log(mesh[o]);
 			sphere = mesh[o];		
 			sphere.position.y += planesGap;
 			raised.push(o);
@@ -1548,8 +1530,6 @@ function showHideDP(show){
 	
 	// check if it's enabled
 	if (document.getElementById(lastData["properties"]["datatype"][k] + "_D_enabled").checked){
-	    console.log(lastData["properties"]["datatype"][k]);
-	    console.log("Enabled!");
 
 	    // iterate over the first level (i.e. subjects)
 	    p = lastData["properties"]["datatype"][k]
@@ -1931,6 +1911,9 @@ function raiseDP(raise){
     step = planesGap;
     if (!(raise))
 	step = -1 * planesGap;
+
+    // cache for raised objects
+    raised = []
     
     // get the list of all the data properties
     for (var k in lastData["properties"]["datatype"]){
@@ -1945,19 +1928,23 @@ function raiseDP(raise){
 	    for (ms in dpMesh[p])
 		for (mo in dpMesh[p][ms]){
 
-		    // raise the mesh
-		    dpMesh[p][ms][mo].position.y += step;
-	    
-		    // re-draw edges
-		    try {
-			drawDataPropertiesEdges(ms, lastData["resources"][ms], mesh[ms], dpMat, "individual");
-		    } catch(err) {
-			drawDataPropertiesEdges(ms, lastData["bnodes"][ms], mesh[ms], dpMat, "bnode");
+		    if (!(raised.includes(mo))){ 
+			
+			// raise the mesh
+			dpMesh[p][ms][mo].position.y += step;
+			raised.push(mo);
+			
+			// re-draw edges
+			try {
+			    drawDataPropertiesEdges(ms, lastData["resources"][ms], mesh[ms], dpMat, "individual");
+			} catch(err) {
+			    drawDataPropertiesEdges(ms, lastData["bnodes"][ms], mesh[ms], dpMat, "bnode");
+			}
 		    }
 		}
 	}
     }
-
+    
     // Draw planes
     drawPlanes();
     
@@ -1966,7 +1953,62 @@ function raiseDP(raise){
 
 /////////////////////////////////////////////////////////////////////
 //
-// Raise / Lower Data Properties
+// Raise / Lower Literals
+//
+/////////////////////////////////////////////////////////////////////
+function raiseLiterals(raise){
+
+    // debug
+    console.log("[DEBUG] raiseLiterals() invoked");
+
+    // determine the movement direction and amount
+    step = planesGap;
+    if (!(raise))
+	step = -1 * planesGap;
+
+    // initialize a cache for already raised elements
+    raised = []
+    
+    // get the list of all the data properties
+    for (var k in lastData["properties"]["datatype"]){	
+	console.log("STEP 1")
+	// iterate over the first level (i.e. subjects)
+	p = lastData["properties"]["datatype"][k]	    
+	for (ms in dpMesh[p]){
+	    console.log("STEP 2")
+	    for (mo in dpMesh[p][ms]){
+		console.log("STEP 3")
+ 		// check if it's enabled
+		console.log(mo)
+		if (document.getElementById(mo + "_L_enabled").checked){
+		    console.log("STEP 4")
+		    console.log(raised)
+		    
+		    if (!(raised.includes(dpMesh[p][ms][mo]))){
+			// raise the mesh
+			dpMesh[p][ms][mo].position.y += step;
+			raised.push(dpMesh[p][ms][mo]);
+			
+			// re-draw edges
+			try {
+			    drawDataPropertiesEdges(ms, lastData["resources"][ms], mesh[ms], dpMat, "individual");
+			} catch(err) {
+			    drawDataPropertiesEdges(ms, lastData["bnodes"][ms], mesh[ms], dpMat, "bnode");
+			}
+		    }
+		    
+		}
+	    }
+	}
+    }
+    // Draw planes
+    drawPlanes();
+    
+}
+
+/////////////////////////////////////////////////////////////////////
+//
+// Edit plane names
 //
 /////////////////////////////////////////////////////////////////////
 function editPlaneNames(raise){
