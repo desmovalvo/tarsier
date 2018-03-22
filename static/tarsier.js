@@ -5,6 +5,7 @@ lastData = null;
 engine = null;
 camera = null;
 scene = null;
+advancedTexture = null;
 
 // mesh
 mesh = {};
@@ -253,6 +254,10 @@ function draw(){
 	scene = new BABYLON.Scene(engine);
 	scene.ambientColor = new BABYLON.Color3(1, 1, 1);
 
+	// advanced texture
+	advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("myUI");
+
+	
 	// get colors
 	getColors();
 	
@@ -1001,7 +1006,6 @@ function drawPlanes(){
 
 	    // store the plane using the y coordinate of the mesh (not the plane)
 	    neededPlanes.push(y);
-
 	}
     }
 
@@ -1061,9 +1065,30 @@ function drawPlanes(){
     	    var quaternion = new BABYLON.Quaternion.RotationAxis(axis, angle);
     	    myPlane.rotationQuaternion = quaternion;
     	    myPlane.translate(BABYLON.Axis.Y, neededPlanes[p], BABYLON.Space.WORLD);
-    	    planes[neededPlanes[p]] = myPlane;
+    	    planes[neededPlanes[p]] = {}
+	    planes[neededPlanes[p]]["mesh"] = myPlane;
 
+	    // create a text mesh
+	    var label = new BABYLON.GUI.Rectangle("label for " + myPlane.name);
+	    label.background = "black"
+	    label.height = "20px";
+	    label.alpha = 0.5;
+	    label.width = "100px";
+	    label.cornerRadius = 20;
+	    label.thickness = 1;
+	    label.linkOffsetY = 10;
+	    advancedTexture.addControl(label); 
+	    label.linkWithMesh(myPlane);
+	    planes[neededPlanes[p]]["labelmesh"] = label;
+	    
+	    var text1 = new BABYLON.GUI.TextBlock();
+	    text1.text = "plane " + neededPlanes[p];
+	    text1.color = "white";
+	    label.addControl(text1);
+	    planes[neededPlanes[p]]["textmesh"] = text1;
+		    
     	    // add a form field for the name
+	    planes[neededPlanes[p]]["name"] = "nameOfPlane" + neededPlanes[p];
     	    pn = document.getElementById("planeNames");
     	    pf = document.createElement("INPUT");
     	    pf.setAttribute("type", "text");
