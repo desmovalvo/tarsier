@@ -25,6 +25,7 @@ meshPlaneGap = 1;
 planesGap = 10;
 bump = 0;
 
+
 // colors and materials
 rgbGroundColor = null;
 rgbClassColor = null;
@@ -1095,6 +1096,7 @@ function drawPlanes(){
     	    pf.setAttribute("value", "plane " + neededPlanes[p]);
     	    pf.id = "nameOfPlane" + neededPlanes[p]
     	    pn.appendChild(pf);
+	    planes[neededPlanes[p]]["field"] = pf
 
     	}
     }
@@ -1869,4 +1871,38 @@ function raiseDP(raise){
     // Draw planes
     drawPlanes();
     
+}
+
+
+/////////////////////////////////////////////////////////////////////
+//
+// Raise / Lower Data Properties
+//
+/////////////////////////////////////////////////////////////////////
+function editPlaneNames(raise){
+
+    // debug
+    console.log("[DEBUG] editPlaneNames() invoked");
+
+    // iterate over all the fields (that are stored in our memory)
+    for (p in planes){
+
+	// read the field and compare it to the current name
+	console.log(planes[p]["name"])
+	if (planes[p]["field"].value !== planes[p]["name"]){
+
+
+	    // delete the text mesh and create a new one
+	    planes[p]["textmesh"].dispose()
+	    var text1 = new BABYLON.GUI.TextBlock();
+	    text1.text = planes[p]["field"].value	    
+	    text1.color = "white";
+	    planes[p]["labelmesh"].addControl(text1);
+	    planes[p]["textmesh"] = text1
+	    
+	}
+	
+    }
+    
+
 }
