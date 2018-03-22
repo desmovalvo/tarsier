@@ -983,13 +983,6 @@ function drawPlanes(){
     // log
     console.log("[INFO] drawPlanes() invoked");
     
-    // // delete the existing planes
-    // for (p in planes){
-    // 	planes[p].dispose();
-    // 	delete p;
-    // };
-    // planes = {};
-
     // determine plane size
     size = 3 + (bnodes_radius * 2);
 
@@ -1042,8 +1035,10 @@ function drawPlanes(){
 
     	if (!(neededPlanes.includes(parseInt(p)))){
 	    
-    	    // delete the plane
-    	    planes[p].dispose()
+    	    // delete the plane, its label and the text of the label
+    	    planes[p]["mesh"].dispose()
+	    planes[p]["labelmesh"].dispose()
+	    planes[p]["textmesh"].dispose()
     	    delete planes[p];
 
     	    // delete the form field for the name
@@ -1068,6 +1063,7 @@ function drawPlanes(){
     	    myPlane.translate(BABYLON.Axis.Y, neededPlanes[p], BABYLON.Space.WORLD);
     	    planes[neededPlanes[p]] = {}
 	    planes[neededPlanes[p]]["mesh"] = myPlane;
+	    planes[neededPlanes[p]]["name"] = "plane y=" + neededPlanes[p];
 
 	    // create a text mesh
 	    var label = new BABYLON.GUI.Rectangle("label for " + myPlane.name);
@@ -1083,23 +1079,55 @@ function drawPlanes(){
 	    planes[neededPlanes[p]]["labelmesh"] = label;
 	    
 	    var text1 = new BABYLON.GUI.TextBlock();
-	    text1.text = "plane " + neededPlanes[p];
+	    text1.text = planes[neededPlanes[p]]["name"];
 	    text1.color = "white";
 	    label.addControl(text1);
 	    planes[neededPlanes[p]]["textmesh"] = text1;
-		    
-    	    // add a form field for the name
-	    planes[neededPlanes[p]]["name"] = "nameOfPlane" + neededPlanes[p];
-    	    pn = document.getElementById("planeNames");
-    	    pf = document.createElement("INPUT");
-    	    pf.setAttribute("type", "text");
-    	    pf.setAttribute("value", "plane " + neededPlanes[p]);
-    	    pf.id = "nameOfPlane" + neededPlanes[p]
-    	    pn.appendChild(pf);
-	    planes[neededPlanes[p]]["field"] = pf
-
+		        	   
     	}
     }
+
+    // delete all the form fields and build them
+    for (k in Object.keys(planes)){
+	try{
+	    planes[k]["field"].remove()
+	} catch(err){}
+    }
+    pn = document.getElementById("planeNames");
+    pn.innerHTML = "";
+
+    for (k in planes){
+	
+	// add a form field for the name
+    	pn = document.getElementById("planeNames");
+
+ 	// create a label
+    	pf = document.createElement("LABEL");
+	pff = document.createTextNode("Plane at y: " + k);
+	pf.appendChild(pff);
+	pn.appendChild(pf);
+
+	// add a new line
+    	pf = document.createElement("BR");
+	pn.appendChild(pf);
+	
+	// create a text field
+	console.log(k)
+	console.log(planes)
+	console.log(planes[k])
+    	pf = document.createElement("INPUT");
+    	pf.setAttribute("type", "text");
+    	pf.setAttribute("value", planes[k]["name"]);
+    	pf.id = "nameOfPlane" + k
+    	pn.appendChild(pf);	
+	planes[k]["field"] = pf
+
+	// add a new line
+    	pf = document.createElement("BR");
+	pn.appendChild(pf);
+	
+    }
+    
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1827,6 +1855,59 @@ function raiseResources(raise){
     
 }
 
+
+/////////////////////////////////////////////////////////////////////
+//
+// Raise bnodes
+//
+/////////////////////////////////////////////////////////////////////
+
+function raiseBNodes(raise){
+
+    // parameters:
+    // - raise is a boolean to decide if we have to raise or lower the selected meshes
+
+    // initialize cache of raised objects    
+    raised = [];
+    
+    // determine the movement direction and amount
+    step = planesGap;
+    if (!(raise))
+	step = -1 * planesGap;
+
+    // iterate over blank nodes
+    for (var k in lastData["bnodes"]){
+
+	// check if it's enabled
+	if (document.getElementById(k + "_B_enabled").checked){
+
+	    // check if a mesh exists
+	    if (k in mesh){
+	    
+		// remember that we raised this
+		raised.push(k);
+		
+		// retrieve the mesh	    
+		m = mesh[k];
+	    
+		// push it up
+		m.position.y += step;
+
+		// re-draw data properties
+		drawDataProperties(k, lastData["bnodes"][k], m, dpMat, "bnode");
+		drawDataPropertiesEdges(k, lastData["bnodes"][k], m, dpMat, "bnode");		
+	    }
+	}
+    }
+   
+    // re-draw all the object properties
+    drawObjectProperties();
+    
+    // draw planes
+    drawPlanes();
+    
+}
+
 /////////////////////////////////////////////////////////////////////
 //
 // Raise / Lower Data Properties
@@ -1891,7 +1972,6 @@ function editPlaneNames(raise){
 	console.log(planes[p]["name"])
 	if (planes[p]["field"].value !== planes[p]["name"]){
 
-
 	    // delete the text mesh and create a new one
 	    planes[p]["textmesh"].dispose()
 	    var text1 = new BABYLON.GUI.TextBlock();
@@ -1899,7 +1979,7 @@ function editPlaneNames(raise){
 	    text1.color = "white";
 	    planes[p]["labelmesh"].addControl(text1);
 	    planes[p]["textmesh"] = text1
-	    
+	    planes[p]["name"] = planes[p]["field"].value	    
 	}
 	
     }
