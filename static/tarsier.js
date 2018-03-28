@@ -703,7 +703,19 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type)
     localOrigin = [subj_mesh.position.x, subj_mesh.position.y, subj_mesh.position.z]
     
     // determine positions
-    dpnsize = Object.keys(subj_dict).length;
+    dpnsize = 0
+    for (dp in subj_dict["statements"]) {
+	switch(s_type){
+	case "individual":
+	    o = lastData["resources"][subj]["statements"][dp];
+	    dpnsize += lastData["resources"][subj]["statements"][dp].length;
+	    break;
+	case "bnode":
+	    o = lastData["bnodes"][subj]["statements"][dp];
+	    dpnsize += lastData["bnodes"][subj]["statements"][dp].length;
+	    break;
+	};
+    }
     dpnode_angle = 360 / dpnsize;
 
     // iterate over the data properties
@@ -717,84 +729,91 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type)
 	    s = subj;
 	    p = dp;
 	    o = null;
+	    k = null;
+	    
 	    switch(s_type){
 	    case "individual":
-		o = lastData["resources"][subj]["statements"][dp];
+		// o = lastData["resources"][subj]["statements"][dp];
+		k = "resources"
 		break;
 	    case "bnode":
-		o = lastData["bnodes"][subj]["statements"][dp];
+		// o = lastData["bnodes"][subj]["statements"][dp];
+		k = "bnodes"
 		break;
 	    };
-	    
-	    // delete old sphere and edge, if any
-	    if (p in dpMesh){
-		if (s in dpMesh[p]){
-		    if (o in dpMesh[p][s]){
-			dpMesh[p][s][o].dispose();
-		    }
-		}
-	    }
-	    
-	    // build a green sphere
-	    var sphere = BABYLON.Mesh.CreateSphere(dp, lod, 0.5, scene);
-	    sphere.position.x = localOrigin[0] + 1 * Math.sin(cc * dpnode_angle / 180*Math.PI);
-	    sphere.position.z = localOrigin[2] + 1 * Math.cos(cc * dpnode_angle / 180*Math.PI);
-	    sphere.position.y = subj_mesh.position.y;
 
-	    // bind a statement to the sphere
-	    sphere.statement = "<b>Subject:</b>&nbsp;" + s +"<br><b>Property:</b>&nbsp;" + p + "<br><b>Value:</b>&nbsp;" + o;
-
-	    // bind a material to the sphere
-	    sphere.material = material;
-
-	    // attach an action to the sphere
-	    sphere.actionManager = new BABYLON.ActionManager(scene);
-	    sphere.actionManager.registerAction(
-		new BABYLON.ExecuteCodeAction(
-		    BABYLON.ActionManager.OnLeftPickTrigger,
-		    function(evt){
-			// Find the clicked mesh
-			var meshClicked = evt.meshUnderPointer;
-			ab = document.getElementById("alertBox");
-			ab.className="alert alert-success";
-			ab.innerHTML = meshClicked.statement;			
-		    }
-		)
-	    );
-	    sphere.actionManager
-		.registerAction(
-		    new BABYLON.InterpolateValueAction(
-			BABYLON.ActionManager.OnRightPickTrigger,
-			sphere,
-			'visibility',
-			0.3,
-			1000
-		    )
-		).then(
-		    new BABYLON.InterpolateValueAction(
-			BABYLON.ActionManager.OnRightPickTrigger,
-			sphere,
-			'visibility',
-			1.0,
-			1000
-		    )
-		);
-
-	    // store the sphere in a dictionary
-	    // the main key of the dictionary is the data property,
-	    // then we have another key for the subject
-	    // and a third level for the value of that property
-	    if (!(p in dpMesh)){
-		dpMesh[p] = {}		
-	    }
-	    if (!(s in dpMesh[p])){
-		dpMesh[p][s] = {}
-	    }
-	    dpMesh[p][s][o] = sphere;
-
-	    // increment cc
-	    cc += 1;
-	    
+	    for (ovalue in lastData[k][subj]["statements"][dp]){
+		o = lastData[k][subj]["statements"][dp][ovalue];
+		console.log(o);
+    		// delete old sphere and edge, if any
+    		if (p in dpMesh){
+    		    if (s in dpMesh[p]){
+    			if (o in dpMesh[p][s]){
+    			    dpMesh[p][s][o].dispose();
+    			}
+    		    }
+    		}
+    		
+    		// build a green sphere
+    		var sphere = BABYLON.Mesh.CreateSphere(dp, lod, 0.5, scene);
+    		sphere.position.x = localOrigin[0] + 1 * Math.sin(cc * dpnode_angle / 180*Math.PI);
+    		sphere.position.z = localOrigin[2] + 1 * Math.cos(cc * dpnode_angle / 180*Math.PI);
+    		sphere.position.y = subj_mesh.position.y;
+		
+    		// bind a statement to the sphere
+    		sphere.statement = "<b>Subject:</b>&nbsp;" + s +"<br><b>Property:</b>&nbsp;" + p + "<br><b>Value:</b>&nbsp;" + o;
+		
+    		// bind a material to the sphere
+    		sphere.material = material;
+		
+    		// attach an action to the sphere
+    		sphere.actionManager = new BABYLON.ActionManager(scene);
+    		sphere.actionManager.registerAction(
+    		    new BABYLON.ExecuteCodeAction(
+    			BABYLON.ActionManager.OnLeftPickTrigger,
+    			function(evt){
+    			    // Find the clicked mesh
+    			    var meshClicked = evt.meshUnderPointer;
+    			    ab = document.getElementById("alertBox");
+    			    ab.className="alert alert-success";
+    			    ab.innerHTML = meshClicked.statement;			
+    			}
+    		    )
+    		);
+    		sphere.actionManager
+    		    .registerAction(
+    			new BABYLON.InterpolateValueAction(
+    			    BABYLON.ActionManager.OnRightPickTrigger,
+    			    sphere,
+    			    'visibility',
+    			    0.3,
+    			    1000
+    			)
+    		    ).then(
+    			new BABYLON.InterpolateValueAction(
+    			    BABYLON.ActionManager.OnRightPickTrigger,
+    			    sphere,
+    			    'visibility',
+    			    1.0,
+    			    1000
+    			)
+    		    );
+		
+    		// store the sphere in a dictionary
+    		// the main key of the dictionary is the data property,
+    		// then we have another key for the subject
+    		// and a third level for the value of that property
+    		if (!(p in dpMesh)){
+    		    dpMesh[p] = {}		
+    		}
+    		if (!(s in dpMesh[p])){
+    		    dpMesh[p][s] = {}
+    		}
+    		dpMesh[p][s][o] = sphere;
+		
+    		// increment cc
+    		cc += 1;
+	    }	    
 	}
     }
 }
@@ -822,85 +841,93 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	    // get s, p and o
 	    s = subj;
 	    p = dp;
+	    k = null;
 	    o = null;
 	    switch(s_type){
 	    case "individual":
+		k = "resources";
 		o = lastData["resources"][subj]["statements"][dp];
 		break;
 	    case "bnode":
+		k = "bnodes";
 		o = lastData["bnodes"][subj]["statements"][dp];
 		break;
 	    };
 	    
-	    // delete old edge, if any
-	    if (p in dpEdgeMesh){
-		if (s in dpEdgeMesh[p]){
-		    if (o in dpEdgeMesh[p][s]){
-			dpEdgeMesh[p][s][o].dispose();
+	    for (ovalue in lastData[k][subj]["statements"][dp]){
+
+		o = lastData[k][subj]["statements"][dp][ovalue];
+		console.log(o);
+		
+		// delete old edge, if any
+		if (p in dpEdgeMesh){
+		    if (s in dpEdgeMesh[p]){
+			if (o in dpEdgeMesh[p][s]){
+			    dpEdgeMesh[p][s][o].dispose();
+			}
 		    }
 		}
-	    }
-	    
-	    // get the object sphere
-	    sphere = dpMesh[p][s][o];
-	    
-	    // draw the edge
-	    var lines = BABYLON.Mesh.CreateLines("lines", [
-		new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
-		new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
-	    lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
-	    switch(s_type){
-	    case "individual":
-		lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["resources"][subj][dp];
-		break;
-	    case "bnode":
-		lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["bnodes"][subj][dp];
-		break;
-	    };
-	    lines.actionManager = new BABYLON.ActionManager(scene);
-	    lines.actionManager.registerAction(
-		new BABYLON.ExecuteCodeAction(
-		    BABYLON.ActionManager.OnLeftPickTrigger,
-		    function(evt){
-			// Find the clicked mesh
-			var meshClicked = evt.meshUnderPointer;
-			ab = document.getElementById("alertBox");
-			ab.className="alert alert-success";
-			ab.innerHTML = meshClicked.statement;
-		    }
-		)
-	    );
-	    lines.actionManager
-		.registerAction(
-		    new BABYLON.InterpolateValueAction(
-			BABYLON.ActionManager.OnRightPickTrigger,
-			lines,
-			'alpha',
-			0.3,
-			1000
-		    )
-		).then(
-		    new BABYLON.InterpolateValueAction(
-			BABYLON.ActionManager.OnRightPickTrigger,
-			lines,
-			'alpha',
-			1.0,
-			1000
+		
+		// get the object sphere
+		sphere = dpMesh[p][s][o];
+		
+		// draw the edge
+		var lines = BABYLON.Mesh.CreateLines("lines", [
+		    new BABYLON.Vector3(localOrigin[0], localOrigin[1], localOrigin[2]),
+		    new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z)], scene)
+		lines.color = new BABYLON.Color3(rgbDpColor[0], rgbDpColor[1], rgbDpColor[2]);
+		switch(s_type){
+		case "individual":
+		    lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["resources"][subj][dp];
+		    break;
+		case "bnode":
+		    lines.statement = "<b>Subject:</b> " + subj + "<br><b>Predicate</b>: " + dp + "<br><b>Object:</b> " + lastData["bnodes"][subj][dp];
+		    break;
+		};
+		lines.actionManager = new BABYLON.ActionManager(scene);
+		lines.actionManager.registerAction(
+		    new BABYLON.ExecuteCodeAction(
+			BABYLON.ActionManager.OnLeftPickTrigger,
+			function(evt){
+			    // Find the clicked mesh
+			    var meshClicked = evt.meshUnderPointer;
+			    ab = document.getElementById("alertBox");
+			    ab.className="alert alert-success";
+			    ab.innerHTML = meshClicked.statement;
+			}
 		    )
 		);
+		lines.actionManager
+		    .registerAction(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    lines,
+			    'alpha',
+			    0.3,
+			    1000
+			)
+		    ).then(
+			new BABYLON.InterpolateValueAction(
+			    BABYLON.ActionManager.OnRightPickTrigger,
+			    lines,
+			    'alpha',
+			    1.0,
+			    1000
+			)
+		    );
 
-	    // store the sphere in a dictionary
-	    // the main key of the dictionary is the data property,
-	    // then we have another key for the subject
-	    // and a third level for the value of that property
-	    if (!(p in dpEdgeMesh)){
-		dpEdgeMesh[p] = {}		
+		// store the sphere in a dictionary
+		// the main key of the dictionary is the data property,
+		// then we have another key for the subject
+		// and a third level for the value of that property
+		if (!(p in dpEdgeMesh)){
+		    dpEdgeMesh[p] = {}		
+		}
+		if (!(s in dpEdgeMesh[p])){
+		    dpEdgeMesh[p][s] = {}
+		}	    
+		dpEdgeMesh[p][s][o] = lines;
 	    }
-	    if (!(s in dpEdgeMesh[p])){
-		dpEdgeMesh[p][s] = {}
-	    }	    
-	    dpEdgeMesh[p][s][o] = lines;
-	    
 	}
     }
 }

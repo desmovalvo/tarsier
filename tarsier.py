@@ -174,7 +174,7 @@ class HTTPHandler(tornado.web.RequestHandler):
             results = graphs[sessionID].query(jsap.getQuery("DATA_PROPERTIES_AND_VALUES", {}))
             for row in results:
 
-                key = row["p"]
+                key = str(row["p"])
                 if not(key in f_results["pvalues"]["datatype"]):
                     f_results["pvalues"]["datatype"][key] = []
 
@@ -185,12 +185,14 @@ class HTTPHandler(tornado.web.RequestHandler):
                 newkey = str(row["s"])
                 print("ROW 186 -- " + newkey)
                 print(f_results["resources"])
-                if newkey in f_results["resources"]:
-                    print("ROW 189 OK")
-                    f_results["resources"][newkey]["statements"][key] = row["o"]
+                if newkey in f_results["resources"]:                
+                    if not key in f_results["resources"][newkey]["statements"]:
+                        f_results["resources"][newkey]["statements"][key] = []                        
+                    f_results["resources"][newkey]["statements"][key].append(row["o"])
                 if newkey in f_results["bnodes"]:
-                    print ("ROW 190 OK")
-                    f_results["bnodes"][newkey]["statements"][key] = row["o"]
+                    if not key in f_results["bnodes"][newkey]["statements"]:
+                        f_results["bnodes"][newkey]["statements"][key] = []
+                    f_results["bnodes"][newkey]["statements"][key].append(row["o"])
              
             # get all the object properties
             logging.info("Getting object properties")
