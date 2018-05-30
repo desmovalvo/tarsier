@@ -240,6 +240,9 @@ function loadJSAP(){
 
 function draw(){
 
+    // start time
+    var t0 = performance.now();
+    
     // reset meshes
     mesh = {};
     dpMesh = {};
@@ -482,7 +485,6 @@ function draw(){
 	}
 
 	drawObjectProperties();
-
 	
 	// return the created scene
 	return scene;
@@ -500,10 +502,13 @@ function draw(){
     // draw planes
     drawPlanes();
 
+    // end time
+    var t1 = performance.now();
+    
     // confirm
     ab = document.getElementById("alertBox");
     ab.className="alert alert-success";
-    ab.innerHTML = "Graph drawn!";
+    ab.innerHTML = "Graph drawn in " + (t1-t0) + " ms !";
 
 }
 
@@ -729,7 +734,7 @@ function drawDataProperties(subj, subj_dict, subj_mesh, material, s_type)
 	    s = subj;
 	    p = dp;
 	    o = null;
-	    k = null;
+	    var k = null;
 	    
 	    switch(s_type){
 	    case "individual":
@@ -841,7 +846,7 @@ function drawDataPropertiesEdges(subj, subj_dict, subj_mesh, material, s_type){
 	    // get s, p and o
 	    s = subj;
 	    p = dp;
-	    k = null;
+	    var k = null;
 	    o = null;
 	    switch(s_type){
 	    case "individual":
@@ -1259,14 +1264,26 @@ function raiseQueryResults(results, multilayer){
     // iterate over the results
     for (r in results["results"]["bindings"]){
 
+	console.log(r);
+	
 	// iterate over the variables
 	currentBinding = results["results"]["bindings"][r]
 	for (v in variables){
+	    console.log("VARIABLE")
+	    console.log(v)
+	    console.log(variables[v])
+	    console.log("CURRENT BINDING")
+	    console.log(currentBinding)
+
 	    if (variables[v] in currentBinding){
+
+		console.log("CI SONO")
 
 		// retrieve the mesh -- check between both classes and instances
 		k = currentBinding[variables[v]]["value"]
-		if (k in mesh){		    
+		console.log(k)
+		if (k in mesh){
+		    console.log("LA MESH CE")
 		    
 		    if (! (raised.includes(k))){
 			
@@ -1281,13 +1298,30 @@ function raiseQueryResults(results, multilayer){
 			    m.position.y += planesGap;
 			    new_y = m.position.y
 			}
-			
+			console.log(m)
+
 			// check if it is an URI or BNODE and re-draw data properties edges
-			if (currentBinding[variables[v]]["type"] === "uri"){				
+			if (currentBinding[variables[v]]["type"] === "uri"){
+			    console.log("URI")
+			    console.log(lastData["resources"][k])
+			    drawDataProperties(k, lastData["resources"][k], m, dpMat, "individual");
 			    drawDataPropertiesEdges(k, lastData["resources"][k], m, dpMat, "individual");
 			} else if (currentBinding[variables[v]]["type"] === "bnode"){
+			    console.log("BNODE")
+			    drawDataProperties(k, lastData["bnodes"][k], m, dpMat, "bnode");
 			    drawDataPropertiesEdges(k, lastData["bnodes"][k], m, dpMat, "bnode");
 			}
+			console.log("END")
+			
+			// // check if it is an URI or BNODE and re-draw data properties edges
+			// if (currentBinding[variables[v]]["type"] === "uri"){
+			//     console.log("URI")
+			//     drawDataPropertiesEdges(k, lastData["resources"][k], m, dpMat, "individual");
+			// } else if (currentBinding[variables[v]]["type"] === "bnode"){
+			//     console.log("BNODE")
+			//     drawDataPropertiesEdges(k, lastData["bnodes"][k], m, dpMat, "bnode");
+			// }
+			// console.log("END")
 			
 			// save this!
 			raised.push(currentBinding[variables[v]]["value"]);
