@@ -44,6 +44,7 @@ rdftypeMat = null;
 
 // session ID
 sessionID = null;
+myYAML = null;
 
 function sendRequest(serverUri, getAll){
 
@@ -179,7 +180,18 @@ function sendRequest(serverUri, getAll){
     
 }
 
-function loadJSAP(){
+function loadEndpointConf(name){
+
+    console.log(myYAML["endpoints"][name]);
+
+    document.getElementById("queryUriInput").value = myYAML["endpoints"][name]["host"]
+    document.getElementById("queryVerbInput").value = myYAML["endpoints"][name]["verb"]
+    document.getElementById("queryHeadersInput").value = myYAML["endpoints"][name]["headers"]
+    document.getElementById("queryPrefixInput").value = myYAML["endpoints"][name]["queryPrefix"]
+    
+}
+
+function loadYAML(){
 
     // check if file APIs are supported
     if ( ! window.FileReader ) {
@@ -202,27 +214,33 @@ function loadJSAP(){
 	    var decodedData = fr.result;
 	    
 	    // parse the JSON file
-	    myJson = JSON.parse(decodedData);
+	    //myJson = JSON.parse(decodedData);
+	    console.log("Reading YAML file");
+	    myYAML = jsyaml.load(decodedData);
 	    
-	    // retrieve the URLs
-	    sURI = "ws://" + myJson["parameters"]["host"] + ":" + myJson["parameters"]["ports"]["ws"] + myJson["parameters"]["paths"]["subscribe"];
-	    document.getElementById("subscribeUriInput").value = sURI;    
-	    qURI = "http://" + myJson["parameters"]["host"] + ":" + myJson["parameters"]["ports"]["http"] + myJson["parameters"]["paths"]["query"];
-	    document.getElementById("queryUriInput").value = qURI;
+	    ul = document.getElementById("confDropdown");
+	    for (q in myYAML["endpoints"]){
+		li = document.createElement("li");			
+		li.setAttribute("id", q);
+		li.innerHTML = q;
+		li.setAttribute("onclick", "javascript:loadEndpointConf('" + q + "');");
+		ul.appendChild(li);
+	    };
 
+	    
 	    // retrieve colors
-	    document.getElementById("classesColor").value = myJson["extended"]["colors"]["classes"];	   
-	    document.getElementById("datapropColor").value = myJson["extended"]["colors"]["dataProperties"];
-	    document.getElementById("objpropColor").value = myJson["extended"]["colors"]["objectProperties"];
-	    document.getElementById("rdftypeColor").value = myJson["extended"]["colors"]["rdftype"];
-	    document.getElementById("bnodesColor").value = myJson["extended"]["colors"]["bnodes"];
-	    document.getElementById("instancesColor").value = myJson["extended"]["colors"]["instances"];
+	    document.getElementById("classesColor").value = myYAML["colors"]["classes"];	   
+	    document.getElementById("datapropColor").value = myYAML["colors"]["dataProperties"];
+	    document.getElementById("objpropColor").value = myYAML["colors"]["objectProperties"];
+	    document.getElementById("rdftypeColor").value = myYAML["colors"]["rdftype"];
+	    document.getElementById("bnodesColor").value = myYAML["colors"]["bnodes"];
+	    document.getElementById("instancesColor").value = myYAML["colors"]["instances"];
 
 	    // other settings
-	    document.getElementById("planePlaneGap").value = myJson["extended"]["values"]["planesGap"];	   
-	    document.getElementById("meshPlaneGap").value = myJson["extended"]["values"]["meshPlaneGap"];
-	    document.getElementById("lod").value = myJson["extended"]["values"]["LOD"];
-	    document.getElementById("bump").value = myJson["extended"]["values"]["bump"];
+	    document.getElementById("planePlaneGap").value = myYAML["values"]["planesGap"];	   
+	    document.getElementById("meshPlaneGap").value = myYAML["values"]["meshPlaneGap"];
+	    document.getElementById("lod").value = myYAML["values"]["LOD"];
+	    document.getElementById("bump").value = myYAML["values"]["bump"];
 	    
 	    // open the file
 
@@ -234,7 +252,7 @@ function loadJSAP(){
 
     ab = document.getElementById("alertBox");
     ab.className="alert alert-success";
-    ab.innerHTML = "JSAP Loaded!";
+    ab.innerHTML = "YAML Loaded!";
     
 };
 

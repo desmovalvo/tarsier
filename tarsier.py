@@ -13,7 +13,7 @@ import tornado.web
 import configparser
 import tornado.ioloop
 from sepy.JSAPObject import *
-from sepy.LowLevelKP import *
+from sepy.SEPAClient import *
 from tornado.httpserver import *
 from rdflib import Graph, URIRef, BNode, Literal
 from tornado.options import define, options, parse_command_line
@@ -345,7 +345,7 @@ if __name__ == '__main__':
 
     # create a JSAPObject and a KP
     jsap = JSAPObject(myConf["jsap"])
-    kp = LowLevelKP()
+    kp = SEPAClient()
         
     # http interface
     threadHTTP = HTTPThread(myConf["httpPort"], "HTTP Interface")

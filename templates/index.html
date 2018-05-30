@@ -12,6 +12,7 @@
     <script type="text/javascript" src="static/babylon.custom.js"></script>
     <script type="text/javascript" src="static/tarsier.js"></script>
     <script type="text/javascript" src="static/math.min.js"></script>
+    <script src="static/js-yaml.min.js"></script>
     <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js" crossorigin="anonymous"></script>
     <style>
       #renderCanvas {
@@ -37,36 +38,56 @@
 	<!-- COLUMN 1 -->
 	<div class="col p-0 m-2">
 	  
-	  <!-- LOAD JSAP -->
+	  <!-- LOAD YAML -->
 	  <div class="card border border-dark rounded-3 m-1 mt-0">
-	    <div class="card-header text-white bg-dark rounded-0"><i class="fab fa-js-square"></i>&nbsp;Load JSAP</div>
+	    <div class="card-header text-white bg-dark rounded-0"><i class="fab fa-js-square"></i>&nbsp;Load YAML</div>
 	    <div class="card-body font-weight-light">
 	      <form>
 		<div class="form-group">
 		  <input type="file" class="form-control-file" id="formFile1">
 		</div>
-		<button type="button" class="btn btn-dark btn-sm" onClick="javascript:loadJSAP();">Load</button>
+		<button type="button" class="btn btn-dark btn-sm" onClick="javascript:loadYAML();">Load</button>
 	      </form>
 	    </div>
 	    <div class="card-footer">
-	      <small><i class="fas fa-info-circle"></i>&nbsp;Load JSAP file</small>
+	      <small><i class="fas fa-info-circle"></i>&nbsp;Load YAML file</small>
 	    </div>
 	  </div>
 
 	  <!-- SEPA PARAMS -->
 	  <div class="card border border-dark rounded-3 m-1 mt-2">
 	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;SEPA Parameters</div>
-	    <div class="card-body font-weight-light">
+	    <div class="card-body font-weight-light">	     
+	      
 	      <form>
-		<div class="input-group input-group-sm">
-		  <span class="input-group-addon" id="basic-addon1">Subscribe URL</span>
-		  <input type="text" class="form-control" value="ws://localhost:9000/subscribe" aria-describedby="basic-addon1" id="subscribeUriInput">
+		<div class="dropdown">
+		  <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	  	    Saved Configurations<span class="caret"></span>
+		  </button>
+		  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="confDropdown">
+		  </ul>
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Query URL</span>
 		  <input type="text" class="form-control" value="http://localhost:8000/query" aria-describedby="basic-addon1" id="queryUriInput">
 		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">Query prefix</span>
+		  <input type="text" class="form-control" value="query=" aria-describedby="basic-addon1" id="queryPrefixInput">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">HTTP Verb</span>
+		  <input type="text" class="form-control" value="POST" aria-describedby="basic-addon1" id="queryVerbInput">
+		</div>
+		<br>
+		<div class="input-group input-group-sm">
+		  <span class="input-group-addon" id="basic-addon1">HTTP Headers</span>
+		  <input type="text" class="form-control" value='{"Content-Type": "application/sparql-query"}' aria-describedby="basic-addon1" id="queryHeadersInput">
+		</div>		
+		
 	      </form>
 	    </div>
 	    <div class="card-footer">

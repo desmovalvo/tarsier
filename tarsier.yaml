@@ -9,17 +9,13 @@ endpoints:
   wikidata:
     host: "https://query.wikidata.org/sparql"
     verb: "POST"
-    headers:
-      Content-Type: "application/sparql-query"
-      Accept: "application/json"
+    headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
     queryPrefix: "query="
 
   sepa:
     host: "http://localhost:8000/query"
     verb: "POST"
-    headers:
-      Content-Type: "application/sparql-query"
-      Accept: "application/json"
+    headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
     queryPrefix: null
 
 

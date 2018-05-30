@@ -45,6 +45,7 @@
 	    "sparql": "SELECT DISTINCT ?res WHERE {{ ?res ?p ?o . FILTER (isIRI(?res))} UNION { ?s ?p ?res . FILTER (isIRI(?res)) } UNION { ?s ?res ?o . FILTER (isIRI(?res)) }}"
 	}
     },
+    "updates": {},
     "extended":{
 	"colors":{
 	    "dataProperties":"#00CC00",
