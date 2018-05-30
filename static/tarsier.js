@@ -55,6 +55,12 @@ function sendRequest(serverUri, getAll){
     // build the request
     req = {};
     req["command"] = "info";
+    req["endpoint"] = {
+	"url": document.getElementById("queryUriInput").value,
+	"httpVerb": document.getElementById("queryVerbInput").value,
+	"httpHeaders": document.getElementById("queryHeadersInput").value,
+	"queryPrefix": document.getElementById("queryPrefixInput").value
+    }
     req["queryURI"] = document.getElementById("queryUriInput").value;
     if (!(getAll)){
 	req["sparql"] = document.getElementById("sparql").value;
@@ -184,10 +190,23 @@ function loadEndpointConf(name){
 
     console.log(myYAML["endpoints"][name]);
 
+    // load the uri
     document.getElementById("queryUriInput").value = myYAML["endpoints"][name]["host"]
+
+    // load headers
+    if (myYAML["endpoints"][name]["headers"] === null)
+	document.getElementById("queryHeadersInput").value = ""
+    else
+	document.getElementById("queryHeadersInput").value = myYAML["endpoints"][name]["headers"]
+
+    // load the verb    
     document.getElementById("queryVerbInput").value = myYAML["endpoints"][name]["verb"]
-    document.getElementById("queryHeadersInput").value = myYAML["endpoints"][name]["headers"]
-    document.getElementById("queryPrefixInput").value = myYAML["endpoints"][name]["queryPrefix"]
+
+    // load the prefix
+    if (myYAML["endpoints"][name]["queryPrefix"] === null)
+	document.getElementById("queryPrefixInput").value = ""
+    else
+    	document.getElementById("queryPrefixInput").value = myYAML["endpoints"][name]["queryPrefix"]
     
 }
 

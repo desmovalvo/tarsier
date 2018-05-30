@@ -3,21 +3,20 @@ endpoints:
   dbpedia:
     host: "http://dbpedia.org/sparql"
     verb: "POST"
-    headers: null
-    queryPrefix: null
+    headers: ""
+    queryPrefix: '{"query":"%s", "format":"json"}'
     
   wikidata:
     host: "https://query.wikidata.org/sparql"
     verb: "POST"
     headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
-    queryPrefix: "query="
+    queryPrefix: '%s'
 
   sepa:
     host: "http://localhost:8000/query"
     verb: "POST"
     headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
-    queryPrefix: null
-
+    queryPrefix: '%s'
 
 colors:
 
@@ -36,3 +35,62 @@ values:
   LOD: 16
   bump: 5
 
+queries:
+
+  ALL_CLASSES:
+    sparql: "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+             PREFIX owl: <http://www.w3.org/2002/07/owl#>
+             SELECT DISTINCT ?class 
+             WHERE {
+               { ?s rdf:type ?class } 
+               UNION 
+               { ?class rdf:type owl:Class } 
+               UNION 
+               { ?class rdf:type rdfs:Class }
+             }"
+
+  DATA_PROPERTIES:
+    sparql: "SELECT DISTINCT ?p 
+             WHERE { 
+               ?s ?p ?o 
+               FILTER isLiteral(?o) 
+             }"
+
+  DATA_PROPERTIES_AND_VALUES:
+    sparql: "SELECT ?s ?p ?o
+             WHERE { 
+               ?s ?p ?o 
+               FILTER isLiteral(?o) 
+             }"
+                    
+  OBJECT_PROPERTIES:
+    sparql: "SELECT DISTINCT ?p 
+             WHERE { 
+               ?s ?p ?o 
+               FILTER (isIRI(?o) || isBlank(?o)) 
+             }"
+
+  OBJECT_PROPERTIES_AND_VALUES:
+    sparql: "SELECT  ?s ?p ?o
+             WHERE { 
+               ?s ?p ?o 
+               FILTER (isIRI(?o) || isBlank(?o)) 
+             }"
+
+  ALL_INSTANCES:
+    sparql: "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             SELECT DISTINCT ?instance 
+             WHERE { 
+               ?instance rdf:type ?class . 
+               FILTER (isIRI(?instance)) 
+             }"
+
+  ALL_RESOURCES:
+    sparql: "SELECT DISTINCT ?res 
+             WHERE {
+               { ?res ?p ?o . FILTER (isIRI(?res))} 
+               UNION 
+               { ?s ?p ?res . FILTER (isIRI(?res))} 
+               UNION { ?s ?res ?o . FILTER (isIRI(?res))}
+             }"

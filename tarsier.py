@@ -2,21 +2,22 @@
 
 # global reqs
 import os
-import pdb
 import sys
-import time
+import json
 import uuid
+import yaml
 import queue
 import logging
 import threading
 import tornado.web
 import configparser
 import tornado.ioloop
-from sepy.JSAPObject import *
-from sepy.SEPAClient import *
 from tornado.httpserver import *
 from rdflib import Graph, URIRef, BNode, Literal
 from tornado.options import define, options, parse_command_line
+
+# local reqs
+from lib.sparqllib import *
 
 ########################################################################
 #
@@ -40,7 +41,8 @@ class HTTPHandler(tornado.web.RequestHandler):
         # parse the request
         msg = json.loads(self.request.body)
         logging.info("Received request: %s" % msg["command"])
-
+        logging.info(msg)
+        
         # generate a session UUID
         sessionID = str(uuid.uuid4())
 
@@ -65,13 +67,12 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results["literals"] = []
             f_results["sessionID"] = sessionID
             
-            # 1 - do the construct                
-            if "sparql" in msg:                                
-                status, results = kp.query(msg["queryURI"], msg["sparql"])
-                logging.info(results)
+            # 1 - do the construct
+            results = {}
+            if "sparql" in msg:
+                results = doQuery(msg["endpoint"], "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 15")
             else:
-                status, results = kp.query(msg["queryURI"], "SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }")
-                logging.info(results)
+                results = doQuery(msg["endpoint"], "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 15")
                 
             # 2 - put data into a local graph
             logging.info(results)
@@ -145,7 +146,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                 
             # get all the resources
             logging.info("Getting resources")
-            results = graphs[sessionID].query(jsap.getQuery("ALL_RESOURCES", {}))
+            results = graphs[sessionID].query(yamlConf["queries"]["ALL_RESOURCES"]["sparql"])
             for row in results:
                 key = str(row["res"])
                 if not key in f_results["resources"]:
@@ -155,7 +156,7 @@ class HTTPHandler(tornado.web.RequestHandler):
                 
             # get all the instances
             logging.info("Getting instances")
-            results = graphs[sessionID].query(jsap.getQuery("ALL_INSTANCES", {}))
+            results = graphs[sessionID].query(yamlConf["queries"]["ALL_INSTANCES"]["sparql"])
             for row in results:
                 key = row["instance"]
                 if not key in f_results["instances"]:
@@ -163,7 +164,7 @@ class HTTPHandler(tornado.web.RequestHandler):
 
             # get all the data properties
             logging.info("Getting data properties")
-            results = graphs[sessionID].query(jsap.getQuery("DATA_PROPERTIES", {}))
+            results = graphs[sessionID].query(yamlConf["queries"]["DATA_PROPERTIES"]["sparql"])
             for r in results:
                 key = str(r["p"])
                 f_results["properties"]["datatype"].append(key)
@@ -171,9 +172,11 @@ class HTTPHandler(tornado.web.RequestHandler):
 
             # get all the data properties and their values
             logging.info("Getting data properties values")
-            results = graphs[sessionID].query(jsap.getQuery("DATA_PROPERTIES_AND_VALUES", {}))
+            results = graphs[sessionID].query(yamlConf["queries"]["DATA_PROPERTIES_AND_VALUES"]["sparql"])
             for row in results:
 
+                print(row)
+                
                 key = str(row["p"])
                 if not(key in f_results["pvalues"]["datatype"]):
                     f_results["pvalues"]["datatype"][key] = []
@@ -196,7 +199,7 @@ class HTTPHandler(tornado.web.RequestHandler):
              
             # get all the object properties
             logging.info("Getting object properties")
-            results = graphs[sessionID].query(jsap.getQuery("OBJECT_PROPERTIES", {}))
+            results = graphs[sessionID].query(yamlConf["queries"]["OBJECT_PROPERTIES"]["sparql"])
             for row in results:
                 key = str(row["p"])
                 f_results["properties"]["object"].append(key)
@@ -204,7 +207,7 @@ class HTTPHandler(tornado.web.RequestHandler):
 
             # get all the object properties and their values
             logging.info("Getting object properties values")
-            results = graphs[sessionID].query(jsap.getQuery("OBJECT_PROPERTIES_AND_VALUES", {}))
+            results = graphs[sessionID].query(yamlConf["queries"]["OBJECT_PROPERTIES_AND_VALUES"]["sparql"])
             for row in results:
                 key = row["p"]
                 if not(key in f_results["pvalues"]["object"]):
@@ -216,8 +219,8 @@ class HTTPHandler(tornado.web.RequestHandler):
                                 
             # get the list of classes
             logging.info("Getting classes")
-            logging.info(jsap.getQuery("ALL_CLASSES", {}))
-            results = graphs[sessionID].query(jsap.getQuery("ALL_CLASSES", {}))
+            logging.info(yamlConf["queries"]["ALL_CLASSES"]["sparql"])
+            results = graphs[sessionID].query(yamlConf["queries"]["ALL_CLASSES"]["sparql"])
             for row in results:
                 key = str(row["class"])
                 f_results["classes"].append(key)
@@ -316,7 +319,7 @@ if __name__ == '__main__':
 
     # init
     httpServerUri = None
-    jsap = None
+    yamlConf = None
     graphs = {}
     
     # logging configuration
@@ -335,7 +338,7 @@ if __name__ == '__main__':
         myConf["httpPort"] = config.getint('server', 'httpPort')
         myConf["host"] = config.get('server', 'host')
         myConf["requestURI"] = "http://%s:%s/commands" % (myConf["host"], myConf["httpPort"])
-        myConf["jsap"] = config.get('server', 'localJSAP')
+        myConf["yaml"] = config.get('server', 'localYAML')
     except configparser.NoSectionError:
         logging.critical("Missing section 'server' in config file")
         sys.exit(255)
@@ -343,10 +346,9 @@ if __name__ == '__main__':
         logging.critical("Section 'server' must include keys 'httpPort' and 'host'")
         sys.exit(255)
 
-    # create a JSAPObject and a KP
-    jsap = JSAPObject(myConf["jsap"])
-    kp = SEPAClient()
-        
+    # create a YAMLCONF object
+    yamlConf = yaml.load(open(myConf["yaml"]))
+
     # http interface
     threadHTTP = HTTPThread(myConf["httpPort"], "HTTP Interface")
 
