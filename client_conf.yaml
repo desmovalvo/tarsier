@@ -38,9 +38,6 @@ values:
 queries:
 
   ALL_TRIPLES:
-    sparql: "CONSTRUCT {
-               ?s ?p ?o
-             }
-             WHERE {
-               ?s ?p ?o
-             }"
+    sparql: "CONSTRUCT { ?s ?p ?o }
+            WHERE { ?s ?p ?o }
+	    LIMIT 10"
