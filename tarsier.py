@@ -10,7 +10,6 @@ import queue
 import logging
 import threading
 import tornado.web
-import configparser
 import tornado.ioloop
 from tornado.httpserver import *
 from rdflib import Graph, URIRef, BNode, Literal
@@ -33,7 +32,7 @@ class HTTPHandler(tornado.web.RequestHandler):
         logging.debug("HTTPHandler::get")
 
         # store 
-        self.render("index.html", requestUri=myConf["requestURI"])
+        self.render("index.html", requestUri="")
 
         
     def post(self):
@@ -317,33 +316,27 @@ if __name__ == '__main__':
     httpServerUri = None
     yamlConf = None
     graphs = {}
+    myConf = {}
     
     # logging configuration
     logger = logging.getLogger("Tarsier")
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
     logging.debug("Logging subsystem initialized")
 
-    # read config file
-    myConf = {}
-    config = configparser.ConfigParser()
-    logging.debug("Parsing Configuration file")
-    config.read('tarsier.conf')
-
-    # read config file -- section 'server'
-    try:
-        myConf["httpPort"] = config.getint('server', 'httpPort')
-        myConf["host"] = config.get('server', 'host')
-        myConf["requestURI"] = "http://%s:%s/commands" % (myConf["host"], myConf["httpPort"])
-        myConf["yaml"] = config.get('server', 'localYAML')
-    except configparser.NoSectionError:
-        logging.critical("Missing section 'server' in config file")
-        sys.exit(255)
-    except configparser.NoOptionError:
-        logging.critical("Section 'server' must include keys 'httpPort' and 'host'")
-        sys.exit(255)
-
     # create a YAMLCONF object
-    yamlConf = yaml.load(open(myConf["yaml"]))
+    logging.debug("Parsing Configuration file")
+    try:
+        yamlConf = yaml.load(open("server_conf.yaml", "r"))
+    except FileNotFoundError:
+        logging.critical("Configuration file 'server_conf.yaml' not found")
+        sys.exit(255)
+        
+    try:
+        myConf["httpPort"] = yamlConf["server"]["httpPort"]
+        myConf["host"] = yamlConf["server"]["host"]
+    except KeyError:
+        logging.critical("Keys 'server/httpPort' and 'server/host' not found in yaml file")
+        sys.exit(255)
 
     # http interface
     threadHTTP = HTTPThread(myConf["httpPort"], "HTTP Interface")

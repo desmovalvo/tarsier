@@ -1,0 +1,46 @@
+endpoints:
+  
+  dbpedia:
+    host: "http://dbpedia.org/sparql"
+    verb: "POST"
+    headers: ""
+    queryPrefix: '{"query":"%s", "format":"json"}'
+    
+  wikidata:
+    host: "https://query.wikidata.org/sparql"
+    verb: "POST"
+    headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
+    queryPrefix: '%s'
+
+  sepa:
+    host: "http://localhost:8000/query"
+    verb: "POST"
+    headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
+    queryPrefix: '%s'
+
+colors:
+
+  dataProperties: "#00CC00"  
+  objectProperties: "#3399FF"
+  instances: "#7F00FF"
+  bnodes: "#FF00FF"
+  classes: "#FF8000"
+  ground: "#444444"
+  rdftype: "#FF0000"
+
+values:
+
+  planesGap: 20
+  meshPlaneGap: 1
+  LOD: 16
+  bump: 5
+
+queries:
+
+  ALL_TRIPLES:
+    sparql: "CONSTRUCT {
+               ?s ?p ?o
+             }
+             WHERE {
+               ?s ?p ?o
+             }"
