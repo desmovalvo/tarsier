@@ -68,11 +68,7 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results["sessionID"] = sessionID
             
             # 1 - do the construct
-            results = {}
-            if "sparql" in msg:
-                results = doQuery(msg["endpoint"], "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 15")
-            else:
-                results = doQuery(msg["endpoint"], "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 15")
+            results = doQuery(msg["endpoint"], msg["sparql"])
                 
             # 2 - put data into a local graph
             logging.info(results)

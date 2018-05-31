@@ -10,10 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="static/bootstrap-4.0.0-beta.2/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/babylon.custom.js"></script>
+    <script type="text/javascript" src="static/babylon.gui.min.js"></script>
     <script type="text/javascript" src="static/tarsier.js"></script>
     <script type="text/javascript" src="static/math.min.js"></script>
     <script src="static/js-yaml.min.js"></script>
-    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js" crossorigin="anonymous"></script> -->
     <style>
       #renderCanvas {
       width   : 100%;
@@ -56,7 +57,7 @@
 
 	  <!-- SEPA PARAMS -->
 	  <div class="card border border-dark rounded-3 m-1 mt-2">
-	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;SEPA Parameters</div>
+	    <div class="card-header text-white bg-dark rounded-0"><i class="fas fa-sliders-h"></i>&nbsp;Endpoint Parameters</div>
 	    <div class="card-body font-weight-light">	     
 	      
 	      <form>
@@ -74,8 +75,8 @@
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
-		  <span class="input-group-addon" id="basic-addon1">Query prefix</span>
-		  <input type="text" class="form-control" value="query=" aria-describedby="basic-addon1" id="queryPrefixInput">
+		  <span class="input-group-addon" id="basic-addon1">Query format</span>
+		  <input type="text" class="form-control" value="%s" aria-describedby="basic-addon1" id="queryPrefixInput">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
@@ -165,8 +166,7 @@
 
 	<!-- COLUMN 2-->
 	<div class="col-9 p-0 m-2">
-	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', true);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>
-	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', false);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data from SPARQL</button>		
+	  <button type="button" class="btn btn-light btn-sm" onClick="javascript:sendRequest('{{ requestUri }}', false);"><i class="fas fa-arrow-alt-circle-down"></i>&nbsp;Get Data</button>		
 	  <button type="button" class="btn btn-light btn-sm disabled" onClick="javascript:draw();" id="plotButton"><i class="fas fa-pencil-alt"></i>&nbsp;Plot</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>
@@ -426,9 +426,9 @@
 	
 	<div class="col p-0 m-2">
 	  <div class="card border-dark rounded-3 m-1 mt-2">
-    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;Filter using SPARQL</div>
+    	    <div class="card-header text-white bg-dark rounded-0"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;SPARQL</div>
     	    <div class="card-body font-weight-light">
-	      <textarea class="form-control" id="sparql" rows="10"></textarea>
+	      <textarea class="form-control" id="sparql" rows="10">SELECT ?s ?p ?o&#13;&#10;WHERE { ?s ?p ?o }&#13;&#10;LIMIT 10</textarea>
 	    </div>
 	    <div class="card-body text-center">	    
 	      <div class="btn-group btn-group-sm text-center" align="center">		  
