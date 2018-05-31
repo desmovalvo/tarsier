@@ -25,7 +25,6 @@ meshPlaneGap = 1;
 planesGap = 10;
 bump = 0;
 
-
 // colors and materials
 rgbGroundColor = null;
 rgbClassColor = null;
@@ -210,6 +209,10 @@ function loadEndpointConf(name){
     
 }
 
+function loadQuery(q){
+    document.getElementById("sparql").value = myYAML["queries"][q]["sparql"]
+}
+
 function loadYAML(){
 
     // check if file APIs are supported
@@ -246,6 +249,14 @@ function loadYAML(){
 		ul.appendChild(li);
 	    };
 
+	    ul = document.getElementById("queryDropdown");
+	    for (q in myYAML["queries"]){
+		li = document.createElement("li");			
+		li.setAttribute("id", q);
+		li.innerHTML = q;
+		li.setAttribute("onclick", "javascript:loadQuery('" + q + "');");
+		ul.appendChild(li);
+	    };
 	    
 	    // retrieve colors
 	    document.getElementById("classesColor").value = myYAML["colors"]["classes"];	   
