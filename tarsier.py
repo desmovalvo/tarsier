@@ -68,6 +68,8 @@ class HTTPHandler(tornado.web.RequestHandler):
             
             # 1 - do the construct
             results = doQuery(msg["endpoint"], msg["sparql"])
+            if not results:
+                self.write({})
                 
             # 2 - put data into a local graph
             logging.info(results)

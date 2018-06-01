@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 # reqs
+import pdb
 import json
 import requests
 
@@ -12,11 +13,15 @@ def doQuery(endpoint, q):
     headers = endpoint["httpHeaders"]
     verb = endpoint["httpVerb"]
 
+    # sanitize query
+    query = query.replace("\n", " ")
+    
     # manipulate input query
     try:
         finalQuery = json.loads(query)
     except:
         finalQuery = query
+    print(query)
         
     # manipulate input headers
     try:
@@ -28,12 +33,15 @@ def doQuery(endpoint, q):
     if verb == "POST":
         r = requests.post(uri, data = finalQuery, headers = finalHeaders)
         print(r.status_code)
-        print(r.text)
+        # print(r.text)
 
     # HTTP GET
     else:
         r = requests.get(uri, data = query, headers = headers)
 
     # return
-    res = json.loads(r.text)
+    try:
+        res = json.loads(r.text)
+    except:
+        return None
     return res

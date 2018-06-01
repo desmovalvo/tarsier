@@ -43,7 +43,45 @@ values:
 
 queries:
 
-  ALL_TRIPLES:
+  TEN_TRIPLES:
     sparql: "CONSTRUCT { ?s ?p ?o }
             WHERE { ?s ?p ?o }
-	    LIMIT 10"
+            LIMIT 10"
+
+  DBPEDIA_LONDON_AIRPORTS:
+    sparql: "PREFIX owl: <http://www.w3.org/2002/07/owl#>
+             PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+             PREFIX dc: <http://purl.org/dc/elements/1.1/>
+             PREFIX : <http://dbpedia.org/resource/>
+             PREFIX dbpedia2: <http://dbpedia.org/property/>
+             PREFIX dbpedia: <http://dbpedia.org/>
+             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+             CONSTRUCT {
+               ?airport rdf:type dbo:Airport .
+               ?airport dbo:city dbr:London .
+               dbr:London rdf:type dbo:Place .
+               ?airport dbo:elevation ?elevation .
+               ?airport foaf:homepage ?homepage .
+               ?airport <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat .
+               ?airport <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon .
+               ?airport dbo:iataLocationIdentifier ?iata .
+               ?airport dbpedia2:hub ?hub .
+               ?hub rdf:type dbo:Airline .
+               ?hub dbpedia2:companySlogan ?slogan
+            }
+            WHERE {
+              ?airport rdf:type dbo:Airport .
+              ?airport dbo:city dbr:London .
+              dbr:London rdf:type dbo:Place .
+              ?airport dbo:elevation ?elevation .
+              ?airport foaf:homepage ?homepage .
+              ?airport <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat .
+              ?airport <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?lon .
+              ?airport dbo:iataLocationIdentifier ?iata .
+              ?airport dbpedia2:hub ?hub .
+              ?hub rdf:type dbo:Airline .
+              ?hub dbpedia2:companySlogan ?slogan
+            }"
