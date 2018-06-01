@@ -48,6 +48,27 @@ queries:
             WHERE { ?s ?p ?o }
             LIMIT 10"
 
+  FOAF_PROJECTS_AND_ORGANIZATIONS:
+    sparql: "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+             PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+             CONSTRUCT {
+               ?project rdf:type foaf:Project .
+               ?project foaf:name ?name .
+               ?organization rdf:type foaf:Organization .
+               ?organization foaf:name ?name .
+               ?organization foaf:homepage ?homepage .
+               ?organization foaf:topic ?topic .
+             }
+             WHERE {
+               ?project rdf:type foaf:Project .
+               ?project foaf:name ?name .
+               ?organization rdf:type foaf:Organization .
+               ?organization foaf:name ?name .
+               ?organization foaf:homepage ?homepage .
+               ?organization foaf:topic ?topic .
+             }
+
+            
   DBPEDIA_LONDON_AIRPORTS:
     sparql: "PREFIX owl: <http://www.w3.org/2002/07/owl#>
              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
