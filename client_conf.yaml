@@ -66,8 +66,7 @@ queries:
                ?organization foaf:name ?name .
                ?organization foaf:homepage ?homepage .
                ?organization foaf:topic ?topic .
-             }
-
+             }"
             
   DBPEDIA_LONDON_AIRPORTS:
     sparql: "PREFIX owl: <http://www.w3.org/2002/07/owl#>
