@@ -10,7 +10,7 @@ endpoints:
     host: "http://localhost:9999/blazegraph/namespace/kb/sparql"
     verb: "POST"
     headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
-    queryPrefix: '{"query":"%s", "format":"json"}'
+    queryPrefix: "%s"
     
   wikidata:
     host: "https://query.wikidata.org/sparql"

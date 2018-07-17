@@ -18,7 +18,7 @@ def doQuery(endpoint, q):
     
     # manipulate input query
     try:
-        finalQuery = json.loads(query)["query"]
+        finalQuery = json.loads(query)
     except:
         finalQuery = query
     print(query)
