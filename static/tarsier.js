@@ -557,7 +557,6 @@ function draw(){
     ab = document.getElementById("alertBox");
     ab.className="alert alert-success";
     ab.innerHTML = "Graph drawn in " + (t1-t0) + " ms !";
-
 }
 
 function cutHex(nStr) {
@@ -1211,7 +1210,7 @@ function drawPlanes(){
 //
 ///////////////////////////////////////////////////////////////////////
 function resetView(){
-
+    
     // clear the canvas
     // TODO -- the standard way to clear the canvas does not work
     // so we are using a more brutal way
@@ -1220,20 +1219,19 @@ function resetView(){
 
     // clear the scene and all the mesh
     for (m in mesh){
-	mesh[m].dispose();
+    	mesh[m].dispose();
     }
     for (dp in dpMesh){
-	dpMesh[dp].dispose();
+    	dpMesh[dp].dispose();
     }
     for (dp in dpEdgeMesh){
-	dpEdgeMesh[dp].dispose();
+    	dpEdgeMesh[dp].dispose();
     }
     for (op in opEdgeMesh){
-	opEdgeMesh[op].dispose();
+    	opEdgeMesh[op].dispose();
     }
     scene.dispose();
-    
-    
+        
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1286,7 +1284,9 @@ function screenshot(){
 
     console.log("[INFO] screenshot() invoked;");
     canvas = document.getElementById('renderCanvas');    
-    BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera,  {width: canvas.width, height: canvas.height});
+    //    BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera,  {width: canvas.width, height: canvas.height});
+    console.log("Precision?")
+    BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera, {precision: 2});
     
 }
 

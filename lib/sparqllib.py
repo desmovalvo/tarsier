@@ -9,7 +9,7 @@ def doQuery(endpoint, q):
 
     # read input
     uri = endpoint["url"]
-    query = endpoint["queryPrefix"] % q
+    query = endpoint["queryPrefix"] % q    
     headers = endpoint["httpHeaders"]
     verb = endpoint["httpVerb"]
 
@@ -18,7 +18,7 @@ def doQuery(endpoint, q):
     
     # manipulate input query
     try:
-        finalQuery = json.loads(query)
+        finalQuery = json.loads(query)["query"]
     except:
         finalQuery = query
     print(query)
@@ -31,12 +31,16 @@ def doQuery(endpoint, q):
         
     # HTTP POST
     if verb == "POST":
+        print("POST")
+        print(finalQuery)
+        print(finalHeaders)
         r = requests.post(uri, data = finalQuery, headers = finalHeaders)
         print(r.status_code)
-        # print(r.text)
+        print(r.text)
 
     # HTTP GET
     else:
+        print("GET")
         r = requests.get(uri, data = query, headers = headers)
 
     # return

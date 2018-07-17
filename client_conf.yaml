@@ -43,6 +43,10 @@ values:
 
 queries:
 
+  CONS_ALL:
+    sparql: "CONSTRUCT { ?s ?p ?o }
+            WHERE { ?s ?p ?o } LIMIT 200"
+  
   TEN_TRIPLES:
     sparql: "CONSTRUCT { ?s ?p ?o }
             WHERE { ?s ?p ?o }

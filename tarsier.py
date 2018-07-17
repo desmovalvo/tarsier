@@ -2,10 +2,12 @@
 
 # global reqs
 import os
+import pdb
 import sys
 import json
 import uuid
 import yaml
+import time
 import queue
 import logging
 import threading
@@ -41,6 +43,9 @@ class HTTPHandler(tornado.web.RequestHandler):
         msg = json.loads(self.request.body)
         logging.info("Received request: %s" % msg["command"])
         logging.info(msg)
+
+        # init time
+        st = et = None
         
         # generate a session UUID
         sessionID = str(uuid.uuid4())
@@ -70,9 +75,10 @@ class HTTPHandler(tornado.web.RequestHandler):
             results = doQuery(msg["endpoint"], msg["sparql"])
             if not results:
                 self.write({})
-                
+
             # 2 - put data into a local graph
-            logging.info(results)
+            st = time.time()
+            logging.info(results)            
             for r in results["results"]["bindings"]:
 
                 # 2.1 - build the triple
@@ -172,8 +178,6 @@ class HTTPHandler(tornado.web.RequestHandler):
             results = graphs[sessionID].query(yamlConf["queries"]["DATA_PROPERTIES_AND_VALUES"]["sparql"])
             for row in results:
 
-                print(row)
-                
                 key = str(row["p"])
                 if not(key in f_results["pvalues"]["datatype"]):
                     f_results["pvalues"]["datatype"][key] = []
@@ -183,8 +187,6 @@ class HTTPHandler(tornado.web.RequestHandler):
 
                 # also bind the property to the individual
                 newkey = str(row["s"])
-                print("ROW 186 -- " + newkey)
-                print(f_results["resources"])
                 if newkey in f_results["resources"]:                
                     if not key in f_results["resources"][newkey]["statements"]:
                         f_results["resources"][newkey]["statements"][key] = []                        
@@ -219,6 +221,7 @@ class HTTPHandler(tornado.web.RequestHandler):
             logging.info(yamlConf["queries"]["ALL_CLASSES"]["sparql"])
             results = graphs[sessionID].query(yamlConf["queries"]["ALL_CLASSES"]["sparql"])
             for row in results:
+                print(row)
                 key = str(row["class"])
                 f_results["classes"].append(key)
                 f_results["resources"][key]["drawAsRes"] = False
@@ -233,6 +236,8 @@ class HTTPHandler(tornado.web.RequestHandler):
                     f_results["individuals_num"] += 1
             
             # send the reply
+            et = time.time()
+            print(et-st)
             self.write(f_results)
     
         elif msg["command"] == "sparql":
@@ -267,9 +272,12 @@ class HTTPHandler(tornado.web.RequestHandler):
                         pass
                     res_dict["results"]["bindings"].append(d)
             logging.info(res_dict)
-                      
+
+            et = time.time()
+            print(et-st)
             self.write(res_dict)
-            
+
+        
 
 ########################################################################
 #
@@ -322,7 +330,7 @@ if __name__ == '__main__':
     
     # logging configuration
     logger = logging.getLogger("Tarsier")
-    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
+    #    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
     logging.debug("Logging subsystem initialized")
 
     # create a YAMLCONF object
