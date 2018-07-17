@@ -41,8 +41,7 @@ class HTTPHandler(tornado.web.RequestHandler):
 
         # parse the request
         msg = json.loads(self.request.body)
-        logging.info("Received request: %s" % msg["command"])
-        logging.info(msg)
+        logging.debug("Received request: %s" % msg["command"])
 
         # init time
         st = et = None
@@ -72,13 +71,14 @@ class HTTPHandler(tornado.web.RequestHandler):
             f_results["sessionID"] = sessionID
             
             # 1 - do the construct
-            results = doQuery(msg["endpoint"], msg["sparql"])
-            if not results:
-                self.write({})
+            status, results = doQuery(msg["endpoint"], msg["sparql"])
+            if not status:
+                logging.error("Connection to endpoint failed")
+                self.write({"error":"Connection Failed"})
+                return
 
             # 2 - put data into a local graph
             st = time.time()
-            logging.info(results)            
             for r in results["results"]["bindings"]:
 
                 # 2.1 - build the triple
@@ -144,11 +144,9 @@ class HTTPHandler(tornado.web.RequestHandler):
                         if not l in f_results["literals"]:
                             f_results["literals"].append(l)
                         
-                logging.info("Adding triple %s, %s, %s" % (s,p,o))
                 graphs[sessionID].add((s,p,o))
                 
             # get all the resources
-            logging.info("Getting resources")
             results = graphs[sessionID].query(yamlConf["queries"]["ALL_RESOURCES"]["sparql"])
             for row in results:
                 key = str(row["res"])
@@ -158,7 +156,6 @@ class HTTPHandler(tornado.web.RequestHandler):
                     f_results["resources"][key]["statements"] = {}
                 
             # get all the instances
-            logging.info("Getting instances")
             results = graphs[sessionID].query(yamlConf["queries"]["ALL_INSTANCES"]["sparql"])
             for row in results:
                 key = row["instance"]
@@ -166,7 +163,6 @@ class HTTPHandler(tornado.web.RequestHandler):
                     f_results["instances"][key] = {}                
 
             # get all the data properties
-            logging.info("Getting data properties")
             results = graphs[sessionID].query(yamlConf["queries"]["DATA_PROPERTIES"]["sparql"])
             for r in results:
                 key = str(r["p"])
@@ -174,7 +170,6 @@ class HTTPHandler(tornado.web.RequestHandler):
                 f_results["resources"][key]["drawAsRes"] = False
 
             # get all the data properties and their values
-            logging.info("Getting data properties values")
             results = graphs[sessionID].query(yamlConf["queries"]["DATA_PROPERTIES_AND_VALUES"]["sparql"])
             for row in results:
 
@@ -197,7 +192,6 @@ class HTTPHandler(tornado.web.RequestHandler):
                     f_results["bnodes"][newkey]["statements"][key].append(row["o"])
              
             # get all the object properties
-            logging.info("Getting object properties")
             results = graphs[sessionID].query(yamlConf["queries"]["OBJECT_PROPERTIES"]["sparql"])
             for row in results:
                 key = str(row["p"])
@@ -205,7 +199,6 @@ class HTTPHandler(tornado.web.RequestHandler):
                 f_results["resources"][key]["drawAsRes"] = False
 
             # get all the object properties and their values
-            logging.info("Getting object properties values")
             results = graphs[sessionID].query(yamlConf["queries"]["OBJECT_PROPERTIES_AND_VALUES"]["sparql"])
             for row in results:
                 key = row["p"]
@@ -217,17 +210,14 @@ class HTTPHandler(tornado.web.RequestHandler):
                 #full["uris"][str(key)]["isOP"] = True
                                 
             # get the list of classes
-            logging.info("Getting classes")
-            logging.info(yamlConf["queries"]["ALL_CLASSES"]["sparql"])
             results = graphs[sessionID].query(yamlConf["queries"]["ALL_CLASSES"]["sparql"])
             for row in results:
-                print(row)
                 key = str(row["class"])
                 f_results["classes"].append(key)
                 f_results["resources"][key]["drawAsRes"] = False
             
             # done
-            logging.info("Done!")
+            logging.debug("Done!")
 
             # update statistics
             f_results["individuals_num"] = 0
@@ -237,14 +227,10 @@ class HTTPHandler(tornado.web.RequestHandler):
             
             # send the reply
             et = time.time()
-            print(et-st)
             self.write(f_results)
     
         elif msg["command"] == "sparql":
 
-            # debug
-            logging.info(self.request)
-            logging.info(msg["sparql"])
             # do the query            
             results = graphs[msg["sessionID"]].query(msg["sparql"])
 
@@ -271,10 +257,8 @@ class HTTPHandler(tornado.web.RequestHandler):
                     except KeyError:
                         pass
                     res_dict["results"]["bindings"].append(d)
-            logging.info(res_dict)
 
             et = time.time()
-            print(et-st)
             self.write(res_dict)
 
         
@@ -291,12 +275,10 @@ class HTTPThread(threading.Thread):
     def __init__(self, port, n):
         self.port = port
         self.n = n
-        logging.debug("Initializing thread " + self.n)
         threading.Thread.__init__(self)
 
     # the main loop
     def run(self):
-        logging.debug("Running thread " + self.n)
 
         # define routes
         settings = {"static_path": os.path.join(os.getcwd(), "static"),
@@ -309,8 +291,6 @@ class HTTPThread(threading.Thread):
 
         # start the main loop
         application.listen(8080)
-        logging.debug('Starting main loop for thread ' + self.n)
-        logging.debug('Starting server ' + self.n + ' on port ' + str(self.port))
         ioloop = tornado.ioloop.IOLoop()
         ioloop.current().start()    
         
@@ -330,7 +310,10 @@ if __name__ == '__main__':
     
     # logging configuration
     logger = logging.getLogger("Tarsier")
-    #    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
+    logging.getLogger("urllib3").setLevel(50)
+    logging.getLogger("tornado").setLevel(50)
+    logging.getLogger("requests").setLevel(50)        
     logging.debug("Logging subsystem initialized")
 
     # create a YAMLCONF object

@@ -46,7 +46,11 @@ sessionID = null;
 myYAML = null;
 
 function sendRequest(serverUri, getAll){
-
+    
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
 
     // Disable plot field
     document.getElementById("plotButton").classList.add("disabled");
@@ -187,8 +191,11 @@ function sendRequest(serverUri, getAll){
 
 function loadEndpointConf(name){
 
-    console.log(myYAML["endpoints"][name]);
-
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // load the uri
     document.getElementById("queryUriInput").value = myYAML["endpoints"][name]["host"]
 
@@ -288,6 +295,11 @@ function loadYAML(){
 
 function draw(){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // start time
     var t0 = performance.now();
     
@@ -556,7 +568,7 @@ function draw(){
     // confirm
     ab = document.getElementById("alertBox");
     ab.className="alert alert-success";
-    ab.innerHTML = "Graph drawn in " + (t1-t0) + " ms !";
+    ab.innerHTML = "Graph drawn in " + Math.round(t1-t0) + " ms !";
 }
 
 function cutHex(nStr) {

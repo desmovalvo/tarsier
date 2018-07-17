@@ -21,7 +21,6 @@ def doQuery(endpoint, q):
         finalQuery = json.loads(query)
     except:
         finalQuery = query
-    print(query)
         
     # manipulate input headers
     try:
@@ -31,21 +30,21 @@ def doQuery(endpoint, q):
         
     # HTTP POST
     if verb == "POST":
-        print("POST")
-        print(finalQuery)
-        print(finalHeaders)
-        r = requests.post(uri, data = finalQuery, headers = finalHeaders)
-        print(r.status_code)
-        print(r.text)
+        try:
+            r = requests.post(uri, data = finalQuery, headers = finalHeaders)
+        except:
+            return False, None
 
     # HTTP GET
     else:
-        print("GET")
-        r = requests.get(uri, data = query, headers = headers)
+        try:
+            r = requests.get(uri, data = query, headers = headers)
+        except:
+            return False, None
 
     # return
     try:
         res = json.loads(r.text)
+        return True, res
     except:
-        return None
-    return res
+        return False, None
