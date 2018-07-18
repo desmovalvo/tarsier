@@ -4,24 +4,24 @@
 import pdb
 import json
 import requests
+import traceback
 
 def doQuery(endpoint, q):
 
     # read input
     uri = endpoint["url"]
-    query = endpoint["queryPrefix"] % q    
+    query = endpoint["queryPrefix"]    
     headers = endpoint["httpHeaders"]
     verb = endpoint["httpVerb"]
 
-    # sanitize query
-    query = query.replace("\n", " ")
-    
     # manipulate input query
     try:
-        finalQuery = json.loads(query)
+        finalQuery = json.loads(endpoint["queryPrefix"])
+        finalQuery["query"] = q
     except:
-        finalQuery = query
-        
+        print(traceback.print_exc())
+        finalQuery = endpoint["queryPrefix"] % q
+    
     # manipulate input headers
     try:
         finalHeaders = json.loads(headers)
@@ -31,6 +31,9 @@ def doQuery(endpoint, q):
     # HTTP POST
     if verb == "POST":
         try:
+            print(uri)
+            print(type(finalQuery))
+            print(headers)
             r = requests.post(uri, data = finalQuery, headers = finalHeaders)
         except:
             return False, None

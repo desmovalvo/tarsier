@@ -72,6 +72,7 @@ class HTTPHandler(tornado.web.RequestHandler):
             
             # 1 - do the construct
             status, results = doQuery(msg["endpoint"], msg["sparql"])
+            print(status)
             if not status:
                 logging.error("Connection to endpoint failed")
                 self.write({"error":"Connection Failed"})
