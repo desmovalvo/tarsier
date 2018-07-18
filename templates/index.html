@@ -138,7 +138,7 @@
 		<br>
 		<div class="input-group input-group-sm">
 		  <span class="input-group-addon" id="basic-addon1">Level of detail</span>
-		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="lod" value="16">
+		  <input type="text" class="form-control" aria-describedby="basic-addon1" id="lod" value="8">
 		</div>
 		<br>
 		<div class="input-group input-group-sm">
@@ -171,6 +171,7 @@
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetPlanes();"><i class="fas fa-window-minimize"></i>&nbsp;Reset planes</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:resetView();"><i class="fas fa-trash"></i>&nbsp;Reset view</button>
 	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:screenshot();"><i class="fas fa-image"></i>&nbsp;Save PNG</button>
+	  <button type="button" class="btn btn-light btn-sm" onClick="jacascript:showHelp();"><i class="fas fa-image"></i>&nbsp;Help</button>
 
 	  <div class="card" id="renderCard">
 	    <canvas id="renderCanvas" style="height:100%; width:100%;"></canvas>
@@ -437,7 +438,7 @@
 		</ul>
 	      </div>
 	      <br>
-	      <textarea class="form-control" id="sparql" rows="10">SELECT ?s ?p ?o&#13;&#10;WHERE { ?s ?p ?o }&#13;&#10;LIMIT 10</textarea>
+	      <textarea class="form-control" id="sparql" rows="10">CONSTRUCT { ?s ?p ?o }&#13;&#10;WHERE { ?s ?p ?o }&#13;&#10;LIMIT 100</textarea>
 	    </div>
 	    <div class="card-body text-center">	    
 	      <div class="btn-group btn-group-sm text-center" align="center">		  

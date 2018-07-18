@@ -45,13 +45,18 @@ rdftypeMat = null;
 sessionID = null;
 myYAML = null;
 
+function showHelp(){
+    console.log("Help requested!");
+    alert("1) Load your YAML configuration file (optional) \n2) Configure the endpoint \n3) Type/select your pre-filter CONSTRUCT query in the SPARQL box\n4) Get data \n5)Plot!");
+}
+
 function sendRequest(serverUri, getAll){
     
     // reset the alert box
     ab = document.getElementById("alertBox");
-    ab.className="alert alert-light";
-    ab.innerHTML = "";
-
+    ab.className="alert alert-warning";
+    ab.innerHTML = "Retrieving data...";
+    
     // Disable plot field
     document.getElementById("plotButton").classList.add("disabled");
     
@@ -1309,6 +1314,11 @@ function screenshot(){
 ///////////////////////////////////////////////////////////////////////
 function raiseQueryResults(results, multilayer){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[INFO] raiseNodes() invoked;");
 
@@ -1458,7 +1468,12 @@ function moveCamera(direction, step){
 ///////////////////////////////////////////////////////////////////////
 
 function raiseOp(how){
-
+    
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // read colors
     getColors();
 
@@ -1547,11 +1562,22 @@ function raiseOp(how){
 
     // draw planes
     drawPlanes();
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Object properties moved";
+
     
 }
 
 function raiseClasses(classes, raise){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // parameters:
     // - classes is a boolean used to determine whether we should move the classes or their instances
     // - raise is a boolean to decide if we have to raise or lower the selected meshes
@@ -1627,6 +1653,11 @@ function raiseClasses(classes, raise){
     // draw planes
     drawPlanes();
     
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Classes moved";
+    
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1636,6 +1667,11 @@ function raiseClasses(classes, raise){
 /////////////////////////////////////////////////////////////////////
 function showHideDP(show){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[DEBUG] showHideDP() invoked");
 
@@ -1665,7 +1701,13 @@ function showHideDP(show){
 		for (mo in dpEdgeMesh[p][ms])
 		    dpEdgeMesh[p][ms][mo].visibility = newVisib;
 	}
-    }    
+    }
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Visibility of data properties modified";
+    
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1701,6 +1743,11 @@ function showHideOP(show){
 			opEdgeMesh[p][ks][ko].visibility = newVisib;
 	}
     }   
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Visibility of object properties modified";
 }
 
 
@@ -1712,6 +1759,11 @@ function showHideOP(show){
 
 function showHideRes(show){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[DEBUG] showHideRes() invoked");
 
@@ -1760,6 +1812,10 @@ function showHideRes(show){
     // even classes, data properties and object properties are resources!
     // TODO: show/hide them!
     
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Visibility of resources properties modified";
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1769,7 +1825,12 @@ function showHideRes(show){
 /////////////////////////////////////////////////////////////////////
 
 function showHideClasses(show){
-
+    
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[DEBUG] showHideClasses() invoked");
 
@@ -1817,6 +1878,11 @@ function showHideClasses(show){
 		}		
 	}
     }
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Visibility of classes modified";
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1827,6 +1893,11 @@ function showHideClasses(show){
 
 function showHideBNodes(show){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[DEBUG] showHideBNodes() invoked");
 
@@ -1870,7 +1941,12 @@ function showHideBNodes(show){
 			    opEdgeMesh[p][kelse][k].visibility = newVisib;
 		}		
 	}
-    }    
+    }
+    
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Visibility of blank nodes modified";
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1881,6 +1957,11 @@ function showHideBNodes(show){
 
 function showHideLiterals(show){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[DEBUG] showHideLiterals() invoked");
 
@@ -1909,7 +1990,12 @@ function showHideLiterals(show){
 		}
 	    }
 	}
-    }    
+    }
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Visibility of literals modified";
 }
 
 
@@ -1921,6 +2007,11 @@ function showHideLiterals(show){
 
 function raiseResources(raise){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // parameters:
     // - raise is a boolean to decide if we have to raise or lower the selected meshes
 
@@ -1962,6 +2053,11 @@ function raiseResources(raise){
     
     // draw planes
     drawPlanes();
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Resources moved";
     
 }
 
@@ -1974,6 +2070,11 @@ function raiseResources(raise){
 
 function raiseBNodes(raise){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // parameters:
     // - raise is a boolean to decide if we have to raise or lower the selected meshes
 
@@ -2015,6 +2116,11 @@ function raiseBNodes(raise){
     
     // draw planes
     drawPlanes();
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Blank nodes moved";
     
 }
 
@@ -2025,6 +2131,12 @@ function raiseBNodes(raise){
 /////////////////////////////////////////////////////////////////////
 function raiseDP(raise){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+
+    
     // debug
     console.log("[DEBUG] raiseDP() invoked");
 
@@ -2069,6 +2181,10 @@ function raiseDP(raise){
     // Draw planes
     drawPlanes();
     
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Data properties moved";
 }
 
 
@@ -2079,6 +2195,11 @@ function raiseDP(raise){
 /////////////////////////////////////////////////////////////////////
 function raiseLiterals(raise){
 
+    // reset the alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-light";
+    ab.innerHTML = "";
+    
     // debug
     console.log("[DEBUG] raiseLiterals() invoked");
 
@@ -2124,6 +2245,11 @@ function raiseLiterals(raise){
     }
     // Draw planes
     drawPlanes();
+
+    // alert box
+    ab = document.getElementById("alertBox");
+    ab.className="alert alert-success";
+    ab.innerHTML = "Literals moved";
     
 }
 
