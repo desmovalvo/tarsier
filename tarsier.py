@@ -72,7 +72,6 @@ class HTTPHandler(tornado.web.RequestHandler):
             
             # 1 - do the construct
             status, results = doQuery(msg["endpoint"], msg["sparql"])
-            print(status)
             if not status:
                 logging.error("Connection to endpoint failed")
                 self.write({"error":"Connection Failed"})
@@ -336,5 +335,6 @@ if __name__ == '__main__':
     threadHTTP = HTTPThread(myConf["httpPort"], "HTTP Interface")
 
     # Start new Threads
+    logging.debug("Ready! Tarsier is now running on http://localhost:%s" % myConf["httpPort"])
     threadHTTP.start()
 
