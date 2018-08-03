@@ -1,0 +1,80 @@
+endpoints:
+
+  dbpedia:
+    host: "http://dbpedia.org/sparql"
+    verb: "POST"
+    headers: ""
+    queryPrefix: '{"query":"%s", "format":"json"}'
+
+colors:
+
+  dataProperties: "#00CC00"  
+  objectProperties: "#3399FF"
+  instances: "#7F00FF"
+  bnodes: "#FF00FF"
+  classes: "#FF8000"
+  ground: "#444444"
+  rdftype: "#FF0000"
+
+values:
+
+  planesGap: 20
+  meshPlaneGap: 1
+  LOD: 16
+  bump: 5
+
+queries:
+
+  CONS_BOLOGNA_ARTISTS:
+    sparql: "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+	PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+	PREFIX dbo: <http://dbpedia.org/ontology/>
+	PREFIX : <http://dbpedia.org/resource/>
+	CONSTRUCT {
+	  ?artist rdf:type dbo:Artist .
+	  ?artist rdf:type foaf:Person .
+	  ?artist foaf:name ?artName .
+	  ?artist dbo:birthDate ?artBirthD .
+	  ?artist dbo:birthPlace ?city .
+	  ?artist dbo:birthPlace :Bologna .
+	  ?artist dbo:deathDate ?artDeathD .
+	  ?artist dbo:deathPlace ?artDeathP .
+	  ?artist dbo:influencedBy ?ins .
+	  ?ins rdf:type foaf:Person .
+	  ?ins dbo:birthPlace ?insBirthP .
+	  ?ins dbo:birthDate ?insBirthD .
+	  ?ins dbo:deathPlace ?insDeathP .
+	  ?ins dbo:deathDate ?insDeathD 
+	}
+	WHERE {
+	  ?artist rdf:type dbo:Artist .
+	  ?artist rdf:type foaf:Person .
+	  ?artist foaf:name ?artName .
+	  ?artist dbo:birthDate ?artBirthD .	
+	  ?artist dbo:birthPlace :Bologna .
+    	  OPTIONAL { 
+	    ?artist dbo:deathDate ?artDeathD } .
+  	  OPTIONAL {
+	    ?artist dbo:deathPlace ?artDeathP } .
+	  OPTIONAL {
+	    ?artist dbo:influencedBy ?ins .
+	    ?ins rdf:type foaf:Person .
+	    ?ins dbo:birthPlace ?insBirthP .
+	    ?ins dbo:birthDate ?insBirthD .
+    	  OPTIONAL {
+	    ?ins dbo:deathPlace ?insDeathP .
+	    ?ins dbo:deathDate ?insDeathD }} .
+	  FILTER (?artBirthD > '1000-01-01'^^xsd:date).
+	  FILTER (?artBirthD < '2000-01-01'^^xsd:date)
+	}"
+
+  LIVING_ARTISTS:
+    sparql: "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT ?art
+	WHERE {
+	  ?art rdf:type dbo:Artist .
+          FILTER NOT EXISTS {?art dbo:deathPlace ?dp } .
+          FILTER NOT EXISTS {?art dbo:deathDate ?dd }
+        }"
