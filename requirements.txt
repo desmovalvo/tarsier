@@ -1,4 +1,4 @@
-tornado==4.5.2
 requests==2.18.1
 rdflib==4.2.2
-PyYAML==3.12
+tornado==4.5.2
+PyYAML==3.13
