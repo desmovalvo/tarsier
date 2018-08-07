@@ -6,7 +6,7 @@ Tarsier is a 3d viewer for RDF knowledge bases. It is highly experimental! Tarsi
 
 Before trying Tarsier, have a look at these two videos!
 
-[![Tarsier - local endpoint](https://img.youtube.com/vi/szA2W2awT1Y/1.jpg)](https://www.youtube.com/watch?v=szA2W2awT1Y) [![Tarsier - DBpedia](https://img.youtube.com/vi/OgoxFWAb1vQ/1.jpg)](https://www.youtube.com/watch?v=OgoxFWAb1vQ)
+[![Tarsier - local endpoint](https://img.youtube.com/vi/szA2W2awT1Y/1.jpg)](https://www.youtube.com/watch?v=szA2W2awT1Y) [![Tarsier - DBpedia](https://img.youtube.com/vi/OgoxFWAb1vQ/1.jpg)](https://www.youtube.com/watch?v=OgoxFWAb1vQ) [![Tarsier - reification](https://img.youtube.com/vi/DvWmItNzvKs/1.jpg)](https://youtu.be/DvWmItNzvKs)
 
 ## Getting started
 
@@ -35,3 +35,4 @@ The basic configuration file is contained in the `server_conf.yaml`. The local Y
 ## Using the client
 
 Using the client is easy (and will be even easier in the future, I hope). Load a YAML file (you may use `client_conf.yaml`). In the YAML file you may specify the URIs of your endpoint and custom queries that you recall from the UI to filter the KB. Once the YAML file is loaded, you can specify the initial knowledge base from the "SPARQL" box and retrieve data with "Get Data". Then click on "Plot!" and here you are the graph!
+      
