@@ -6,12 +6,6 @@ endpoints:
     headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
     queryPrefix: "%s"
 
-  sepa:
-    host: "http://localhost:8000/query"
-    verb: "POST"
-    headers: '{"Content-Type": "application/sparql-query", "Accept": "application/json"}'
-    queryPrefix: '%s'
-
 colors:
 
   dataProperties: "#00CC00"  
