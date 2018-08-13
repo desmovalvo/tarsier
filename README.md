@@ -4,7 +4,7 @@ Tarsier is a 3d viewer for RDF knowledge bases. It is highly experimental! Tarsi
 
 ## Videos
 
-Before trying Tarsier, have a look at these two videos!
+Before trying Tarsier, have a look at these three videos!
 
 [![Tarsier - local endpoint](https://img.youtube.com/vi/szA2W2awT1Y/1.jpg)](https://www.youtube.com/watch?v=szA2W2awT1Y) [![Tarsier - DBpedia](https://img.youtube.com/vi/OgoxFWAb1vQ/1.jpg)](https://www.youtube.com/watch?v=OgoxFWAb1vQ) [![Tarsier - reification](https://img.youtube.com/vi/DvWmItNzvKs/1.jpg)](https://youtu.be/DvWmItNzvKs)
 
